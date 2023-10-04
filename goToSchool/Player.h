@@ -7,6 +7,8 @@
 #define DOWN 1
 #define LEFT 2
 #define RIGHT 3
+#define SLOW 4
+#define FAST 5
 class Player
 {
 public:
@@ -17,7 +19,7 @@ public:
 	SDL_FRect r;
 	float speed;
 	float crossSpeed;
-	bool moveKey[4];
+	bool moveKey[6];
 
 	void init(SDL_Renderer* renderer);
 	void draw(SDL_Renderer* renderer);

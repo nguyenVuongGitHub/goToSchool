@@ -43,6 +43,7 @@ void GameState::gameLoop()
 	{
 		// tắt con trỏ chuột
 		SDL_ShowCursor(SDL_DISABLE);
+
 		//frameStart = SDL_GetTicks();
 		while (SDL_PollEvent(&e))
 		{
@@ -68,7 +69,10 @@ void GameState::gameLoop()
 				
 				else if (e.key.keysym.sym == SDLK_DOWN) 
 					player.moveKey[DOWN] = true;
-				
+				else if (e.key.keysym.sym == SDLK_LSHIFT)
+					player.moveKey[SLOW] = true;
+				else if (e.key.keysym.sym == SDLK_SPACE)
+					player.moveKey[FAST] = true;
 			}
 
 			if (e.type == SDL_KEYUP)
@@ -84,13 +88,18 @@ void GameState::gameLoop()
 				
 				else if (e.key.keysym.sym == SDLK_DOWN) 
 					player.moveKey[DOWN] = false;
-				
+				else if (e.key.keysym.sym == SDLK_LSHIFT)
+					player.moveKey[SLOW] = false;
+				else if (e.key.keysym.sym == SDLK_SPACE)
+					player.moveKey[FAST] = false;
 			}
 		}
 
+
+		// process
+		collesion();
 		//move
 		player.move();
-
 
 		// Render và cập nhật trạng thái của trò chơi tại đây
 		/*frameTime = SDL_GetTicks() - frameStart;
@@ -103,6 +112,15 @@ void GameState::gameLoop()
 		player.draw(renderer);
 		SDL_RenderPresent(renderer);
 	}
+}
+bool GameState::checkCollesion(SDL_Rect &r1, SDL_Rect &r2)
+{
+	return (r1.x + r1.w >= r2.x && r2.x + r2.w >= r1.x
+		&& r1.y + r1.h >= r2.y && r2.y + r2.h >= r1.y);
+}
+void GameState::collesion()
+{
+
 }
 void GameState::freeAll()
 {

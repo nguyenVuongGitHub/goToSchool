@@ -19,6 +19,8 @@ public:
 	
 	void init();
 	void gameLoop();
+	void collesion();
+	bool checkCollesion(SDL_Rect &r1, SDL_Rect &r2);
 	void freeAll();
 	
 };

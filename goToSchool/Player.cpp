@@ -5,7 +5,7 @@ Player::Player() :
 	t(NULL),
 	r({ 0,0,0,0 }), 
 	speed(0),
-	moveKey{0,0,0,0},
+	moveKey{0,0,0,0,0,0},
 	crossSpeed(0)
 
 {}
@@ -27,6 +27,26 @@ void Player::init(SDL_Renderer *renderer)
 }
 void Player::move()
 {
+	
+	//slow move
+	if (moveKey[SLOW])
+	{
+		speed = 4.8;
+		crossSpeed = 3.5;
+	}
+	else if (moveKey[FAST])
+	{
+		speed = 15;
+		crossSpeed = 9.5;
+	}
+	else {
+		// default speed
+		speed = 10;
+		crossSpeed = (speed * sqrt(2)) / 2;
+	}
+	//fast move
+
+	// base case move
 	if (moveKey[UP] && moveKey[RIGHT])
 	{
 		
@@ -51,7 +71,7 @@ void Player::move()
 	{
 		
 		
-		if (r.y <= 1080 + 100) {
+		if (r.y <= 1080 - 60) {
 			r.y += crossSpeed;
 		}
 
@@ -61,7 +81,7 @@ void Player::move()
 	}
 	else if (moveKey[DOWN] && moveKey[LEFT])
 	{
-		if (r.y <= 1080 + 100) {
+		if (r.y <= 1080 - 60) {
 			r.y += crossSpeed;
 		}
 		if (r.x >= 0 + 10) {
@@ -76,7 +96,7 @@ void Player::move()
 	}
 	else if (moveKey[DOWN])
 	{
-		if (r.y <= 1080 + 100) {
+		if (r.y <= 1080 - 60) {
 			r.y += speed;
 		}
 	}
