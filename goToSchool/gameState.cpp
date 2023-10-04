@@ -115,11 +115,11 @@ void GameState::collisionDetect(SDL_Rect& obj1, SDL_Rect& obj2)
 {
 		if (obj1.x + obj1.w >= obj2.x + 10 && obj1.x <= obj2.x + obj2.w - 10)
 		{
-			if (obj1.y + obj1.h > obj2.y && obj1.y < obj2.y) //On brick
+			if (obj1.y + obj1.h > obj2.y && obj1.y < obj2.y) //On
 			{
 				obj1.y = obj2.y - obj1.h;
 			}
-			if (obj1.y < obj2.y + obj2.h && obj1.y > obj2.y) //Brick above
+			if (obj1.y < obj2.y + obj2.h && obj1.y > obj2.y) //above
 			{
 				obj1.y = obj2.y + obj2.h;
 			}
