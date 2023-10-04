@@ -14,7 +14,7 @@ public:
 	~Player();
 	SDL_Surface* s;
 	SDL_Texture* t;
-	SDL_FRect r;
+	SDL_Rect r;
 	float speed;
 	float crossSpeed;
 	bool moveKey[4];

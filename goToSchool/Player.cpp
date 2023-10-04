@@ -96,5 +96,5 @@ void Player::move()
 
 void Player::draw(SDL_Renderer *renderer)
 {
-	SDL_RenderCopyF(renderer, t, NULL, &r);
+	SDL_RenderCopy(renderer, t, NULL, &r);
 }

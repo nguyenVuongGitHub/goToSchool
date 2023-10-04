@@ -87,8 +87,11 @@ void GameState::gameLoop()
 				
 			}
 		}
+		//add a block
+		SDL_Rect block = { 100, 100, 100 ,100 };
 
 		//move
+		collisionDetect(player.r, block);
 		player.move();
 
 
@@ -100,10 +103,51 @@ void GameState::gameLoop()
 
 
 		SDL_RenderClear(renderer);
+
+		SDL_RenderCopy(renderer, player.t, NULL, &block);
+
 		player.draw(renderer);
 		SDL_RenderPresent(renderer);
 	}
 }
+
+void GameState::collisionDetect(SDL_Rect& obj1, SDL_Rect& obj2)
+{
+		if (obj1.x + obj1.w >= obj2.x + 10 && obj1.x <= obj2.x + obj2.w - 10)
+		{
+			if (obj1.y + obj1.h > obj2.y && obj1.y < obj2.y) //On brick
+			{
+				obj1.y = obj2.y - obj1.h;
+			}
+			if (obj1.y < obj2.y + obj2.h && obj1.y > obj2.y) //Brick above
+			{
+				obj1.y = obj2.y + obj2.h;
+			}
+		}
+		if (obj1.y + obj1.h > obj2.y + 6 && obj1.y < obj2.y + obj2.h * 39 / 40)
+		{
+			if (obj1.x + obj1.w > obj2.x && obj1.x < obj2.x)
+			{
+				obj1.x = obj2.x - obj1.w; //edge left
+			}
+			else if (obj1.x < obj2.x + obj2.w && obj1.x + obj1.w> obj2.x + obj2.w)
+			{
+				obj1.x = obj2.x + obj2.w; //edge right
+			}
+			else if (obj1.x + obj1.w >= obj2.x && obj1.x + obj1.w <= obj2.x + obj2.w) //Inside
+			{
+				if (obj1.x + obj1.w < obj2.x + obj2.w / 2)
+				{
+					obj1.x = obj2.x - obj1.w;
+				}
+				else
+				{
+					obj1.x = obj2.x + obj2.w;
+				}
+			}
+		}
+}
+
 void GameState::freeAll()
 {
 	SDL_DestroyRenderer(renderer);

@@ -17,6 +17,7 @@ public:
 	short mouseY;
 	bool isGameRunning;
 	
+	void collisionDetect(SDL_Rect &obj1, SDL_Rect &obj2);
 	void init();
 	void gameLoop();
 	void freeAll();
