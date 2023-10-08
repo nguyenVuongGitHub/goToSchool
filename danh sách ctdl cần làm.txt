@@ -1,0 +1,3 @@
++ queue : danh sách đạn
++ vector: danh sách vật phẩm
++ vector: danh sách quái vật

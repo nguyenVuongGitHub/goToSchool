@@ -1,0 +1,38 @@
+﻿===================================================================================================================================
+tại sảnh sẽ là thành phố, trong thành phố sẽ có một vài cổng dịch chuyển để đi đến địa điểm tiêu diệt quái vật
+xong mỗi màn tiêu diệt quái vật thì timer thành phó sẽ được tăng
+nếu timer thành phố giảm xuống về 0 thì trái đất sẽ bị hủy diệt và thua game
+còn nếu tiêu diệt hết các quái trong cổng dịch chuyển thì sẽ win game
+
+
+cổng dịch chuyển sẽ có độ khó khác nhau dựa vào màu sắc của cổng
+
+
+hệ thống súng 
+{
+	+ dao
+	+ súng lục
+	+ súng ak
+	+ súng tiểu liên
+	+ súng máy
+	+ ... (phát triển thêm)
+}
+hệ thống đạn
+{
+	+ đạn .45 (súng lục)
+	+ đạn 5.56mm (súng máy)
+	+ đạn 7.62mm (súng ak)
+	+ đạn 9mm (súng tiểu liên)
+}
+hệ thống quái 
+{
+	+ quái tầm gần
+	+ quái tầm xa
+	+ quái boss ( cổng dịch chuyển cuối cùng )
+}
+hệ thống vật phẩm rơi ra khi người chơi tiêu diệt quái
+{
+	+ máu (hp người chơi sẽ là 200, ăn hp sẽ + 50)
+	+ giáp (giáp nhẹ, giáp vừa, giáp khủng) (tăng lượng máu ảo, nhưng sát thương lên máu ảo sẽ cao hơn)
+	+ đạn (tùy loại súng đang sỡ hữu)
+}
