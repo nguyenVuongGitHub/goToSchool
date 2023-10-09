@@ -2,6 +2,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "Player.h"
+#include "bullet.h"
+#include <vector>
+using namespace std;
 class GameState
 {
 public:
@@ -13,8 +16,9 @@ public:
 
 	short heightWindow;
 	short widthWindow;
-	short mouseX;
-	short mouseY;
+	int mouseX;
+	int mouseY;
+	bool holdMouse;
 	bool isGameRunning;
 	
 	void init();
