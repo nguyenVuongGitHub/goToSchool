@@ -1,4 +1,4 @@
-#include "Player.h"
+﻿#include "Player.h"
 Player::Player() :
 
 	s(NULL),
@@ -17,7 +17,7 @@ Player::~Player()
 }
 void Player::init(SDL_Renderer *renderer)
 {
-	s = IMG_Load("img/ball.png");
+	s = IMG_Load("img/tamGiac.png");
 
 	t = SDL_CreateTextureFromSurface(renderer, s);
 	r = { 250,440,60,60 };
@@ -114,7 +114,18 @@ void Player::move()
 	}
 }
 
-void Player::draw(SDL_Renderer *renderer)
+void Player::draw(SDL_Renderer* renderer)
 {
-	SDL_RenderCopyF(renderer, t, NULL, &r);
+	int curXMouse;
+	int curYMouse;
+	SDL_GetMouseState(&curXMouse, &curYMouse);
+
+	// Tính toán góc giữa chuột và tâm tam giác
+	float deltaX = curXMouse - r.x - (r.w / 2);
+	float deltaY = curYMouse - r.y - (r.h / 2);
+	float angle = atan2(deltaY, deltaX) * 180 / M_PI;
+
+	// Đảo ngược góc quay để đỉnh tam giác hướng về phía chuột
+	angle += 90;
+	SDL_RenderCopyExF(renderer, t, NULL, &r, angle, NULL, SDL_FLIP_NONE);
 }

@@ -20,7 +20,7 @@ public:
 	float speed;
 	float crossSpeed;
 	bool moveKey[6];
-
+	
 	void init(SDL_Renderer* renderer);
 	void draw(SDL_Renderer* renderer);
 	void move();
