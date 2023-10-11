@@ -18,10 +18,13 @@ Player::~Player()
 void Player::init(SDL_Renderer *renderer)
 {
 	s = IMG_Load("img/tamGiac.png");
+	weapon[0].type = USP;
+	weapon[1].type = AK_47;
+	weapon[2].type = MP5;
 
 	t = SDL_CreateTextureFromSurface(renderer, s);
 	r = { 250,440,60,60 };
-	speed = 5;
+	speed = 10;
 	crossSpeed = (speed * sqrt(2)) / 2;
 	memset(moveKey, 0, sizeof(moveKey));
 }
@@ -31,17 +34,17 @@ void Player::move()
 	//slow move
 	if (moveKey[SLOW])
 	{
-		speed = 4.8;
-		crossSpeed = 3.5;
+		speed = 2.1;
+		crossSpeed = (speed * sqrt(2)) / 2;
 	}
 	else if (moveKey[FAST])
 	{
-		speed = 15;
-		crossSpeed = 9.5;
+		speed = 10;
+		crossSpeed = (speed * sqrt(2)) / 2;
 	}
 	else {
 		// default speed
-		speed = 10;
+		speed = 5;
 		crossSpeed = (speed * sqrt(2)) / 2;
 	}
 	//fast move

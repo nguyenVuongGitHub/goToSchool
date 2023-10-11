@@ -3,6 +3,8 @@
 #include <SDL_image.h>
 #include <iostream>
 #include <math.h>
+#include "weapon.h"
+#include <vector>
 #define UP 0
 #define DOWN 1
 #define LEFT 2
@@ -20,7 +22,7 @@ public:
 	float speed;
 	float crossSpeed;
 	bool moveKey[6];
-	
+	Weapon weapon[3];
 	void init(SDL_Renderer* renderer);
 	void draw(SDL_Renderer* renderer);
 	void move();

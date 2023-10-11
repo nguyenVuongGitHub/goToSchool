@@ -1,3 +1,4 @@
-+ queue : danh sách đạn (done)
++ vector: danh sách đạn (done)
 + vector: danh sách vật phẩm
 + vector: danh sách quái vật
++ doubleLinkedList: danh sách súng hiện có

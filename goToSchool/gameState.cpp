@@ -29,16 +29,20 @@ void GameState::gameLoop()
 	// object
 	Player player;
 	player.init(renderer);
+
 	vector<Bullet> ListBullet;
-
 	
-	//
+	// declare list weapon
+	player.weapon[0].type = USP;
+	player.weapon[1].type = AK_47;
+	player.weapon[2].type = MP5;
+	player.weapon[0].init();
+	player.weapon[1].init();
+	player.weapon[2].init();
+	
+	int curWeapon = 0;
+	int countDistance = 0;
 
-	// Khai báo biến cho việc kiểm soát tốc độ vòng lặp
-	/*const int targetFPS = 60;
-	const int frameDelay = 1000 / targetFPS;
-	Uint32 frameStart;
-	int frameTime;*/
 	Uint32 last_shot_time = 0;
 	SDL_Event e;
 	while (isGameRunning)
@@ -57,16 +61,16 @@ void GameState::gameLoop()
 			
 			if (e.type == SDL_KEYDOWN)
 			{
-				if (e.key.keysym.sym == SDLK_LEFT) 
+				if (e.key.keysym.sym == SDLK_a) 
 					player.moveKey[LEFT] = true;
 
-				else if (e.key.keysym.sym == SDLK_RIGHT)
+				else if (e.key.keysym.sym == SDLK_d)
 					player.moveKey[RIGHT] = true;
 
-				else if (e.key.keysym.sym == SDLK_UP) 
+				else if (e.key.keysym.sym == SDLK_w) 
 					player.moveKey[UP] = true;
 				
-				else if (e.key.keysym.sym == SDLK_DOWN) 
+				else if (e.key.keysym.sym == SDLK_s) 
 					player.moveKey[DOWN] = true;
 
 				else if (e.key.keysym.sym == SDLK_LSHIFT)
@@ -78,16 +82,16 @@ void GameState::gameLoop()
 
 			if (e.type == SDL_KEYUP)
 			{
-				if (e.key.keysym.sym == SDLK_LEFT) 
+				if (e.key.keysym.sym == SDLK_a)
 					player.moveKey[LEFT] = false;		
 
-				else if (e.key.keysym.sym == SDLK_RIGHT) 
+				else if (e.key.keysym.sym == SDLK_d)
 					player.moveKey[RIGHT] = false;			
 				
-				else if (e.key.keysym.sym == SDLK_UP) 
+				else if (e.key.keysym.sym == SDLK_w)
 					player.moveKey[UP] = false;				
 				
-				else if (e.key.keysym.sym == SDLK_DOWN) 
+				else if (e.key.keysym.sym == SDLK_s)
 					player.moveKey[DOWN] = false;
 				
 				else if (e.key.keysym.sym == SDLK_LSHIFT)
@@ -102,47 +106,48 @@ void GameState::gameLoop()
 
 			if (e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LMASK)
 				holdMouse = false;
-		
+			
+			// kiểm tra sự kiện lăn chuột
+			if (e.type == SDL_MOUSEWHEEL) {
+				int scrollDirection = e.wheel.y;
+				if (scrollDirection > 0) {
+					curWeapon++;
+					if (curWeapon > 2)
+						curWeapon = 0;
+				}
+				else if (scrollDirection < 0) {
+					curWeapon--;
+					if (curWeapon < 0)
+						curWeapon = 2;
+					
+				}
+			}
+			
 		}
 
 
 		// process
 		collesion();
+
 		//move
 		player.move();
+
 		//acttack
 		if (holdMouse)
-		{
-			Uint32 current_time = SDL_GetTicks();
-			Uint32 time_since_last_shot = current_time - last_shot_time;
+			player.weapon[curWeapon].shoot(renderer, ListBullet, player.r.x, player.r.y, heightWindow, widthWindow);
+		
 
-			// Kiểm tra xem đã đủ thời gian để bắn đạn tiếp theo chưa
-			if (time_since_last_shot >= 50)
-			{
-				SDL_GetMouseState(&mouseX, &mouseY);
-				//khởi tạo viên đạn mới
-				Bullet newBullet;
-				newBullet.init(renderer, player.r.x, player.r.y, mouseX, mouseY);
-				ListBullet.push_back(newBullet);
-				// Lưu lại thời gian bắn đạn
-				last_shot_time = current_time;
-			}
-		}
+		
 
 
-		// Render và cập nhật trạng thái của trò chơi tại đây
-		/*frameTime = SDL_GetTicks() - frameStart;
-		if (frameDelay > frameTime) {
-			SDL_Delay(frameDelay - frameTime);
-		}*/
 		SDL_RenderClear(renderer);
 		player.draw(renderer);
 
-		//vẽ viên đạn và di chuyển đạn trong danh sách đạn
+		////vẽ viên đạn và di chuyển đạn trong danh sách đạn
 		for (int i = 0; i < ListBullet.size(); i++)
 		{
 			ListBullet[i].draw(renderer);
-			ListBullet[i].move(heightWindow,widthWindow);
+			ListBullet[i].move();
 		}
 
 		SDL_RenderPresent(renderer);
