@@ -4,9 +4,9 @@
 #include <SDL_image.h>
 using namespace std;
 
-#define USP 1
-#define AK_47 2
-#define MP5 3
+#define USP 0
+#define AK_47 1
+#define MP5 2
 
 // type bullet
 #define T_556mm 1
@@ -14,11 +14,6 @@ using namespace std;
 #define T_900mm 3
 
 
-/*
-	sung luc: speed  60, time_since_last_shot = 500
-	sung ak: speed 100, time_since_last_shot = 300
-	sung tieuLien: speed 120, time_since_last_shot 300
-*/
 
 class Bullet
 {

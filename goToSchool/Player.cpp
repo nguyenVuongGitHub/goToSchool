@@ -24,7 +24,7 @@ void Player::init(SDL_Renderer *renderer)
 
 	t = SDL_CreateTextureFromSurface(renderer, s);
 	r = { 250,440,60,60 };
-	speed = 10;
+	speed = 5;
 	crossSpeed = (speed * sqrt(2)) / 2;
 	memset(moveKey, 0, sizeof(moveKey));
 }

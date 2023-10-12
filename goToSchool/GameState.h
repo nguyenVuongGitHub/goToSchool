@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include "Player.h"
 #include "bullet.h"
+#include "Enemy.h"
 #include <vector>
 using namespace std;
 class GameState
@@ -24,7 +25,7 @@ public:
 	void init();
 	void gameLoop();
 	void collesion();
-	bool checkCollesion(SDL_Rect &r1, SDL_Rect &r2);
+	bool checkCollesion(SDL_FRect &r1, SDL_FRect &r2);
 	void freeAll();
 	
 };

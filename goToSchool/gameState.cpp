@@ -30,16 +30,18 @@ void GameState::gameLoop()
 	Player player;
 	player.init(renderer);
 
-	vector<Bullet> ListBullet;
+	vector<Enemy> ListEnemy;
 	
 	// declare list weapon
-	player.weapon[0].type = USP;
-	player.weapon[1].type = AK_47;
-	player.weapon[2].type = MP5;
-	player.weapon[0].init();
-	player.weapon[1].init();
-	player.weapon[2].init();
-	
+	vector<Bullet> ListBullet;
+	player.weapon[USP].type = USP;
+	player.weapon[AK_47].type = AK_47;
+	player.weapon[MP5].type = MP5;
+	player.weapon[USP].init();
+	player.weapon[AK_47].init();
+	player.weapon[MP5].init();
+
+
 	int curWeapon = 0;
 	int countDistance = 0;
 
@@ -111,12 +113,12 @@ void GameState::gameLoop()
 			if (e.type == SDL_MOUSEWHEEL) {
 				int scrollDirection = e.wheel.y;
 				if (scrollDirection > 0) {
-					curWeapon++;
+						curWeapon++;
 					if (curWeapon > 2)
 						curWeapon = 0;
 				}
 				else if (scrollDirection < 0) {
-					curWeapon--;
+						curWeapon--;
 					if (curWeapon < 0)
 						curWeapon = 2;
 					
@@ -128,43 +130,96 @@ void GameState::gameLoop()
 
 		// process
 		collesion();
+		for (int i = 0; i < ListBullet.size(); i++)
+		{
+			for (int j = 0; j < ListEnemy.size(); j++)
+			{
+				if (ListEnemy[j].hp <= 0)
+					ListEnemy[j].active = 0;
 
+				
+				if (checkCollesion(ListBullet[i].r, ListEnemy[j].r))
+				{
+					ListBullet[i].active = 0;
+					ListEnemy[j].hp -= player.weapon[curWeapon].damage;
+				}
+
+			}
+		}
 		//move
 		player.move();
 
 		//acttack
+	// Kiểm tra nếu chuột đang được giữ
 		if (holdMouse)
-			player.weapon[curWeapon].shoot(renderer, ListBullet, player.r.x, player.r.y, heightWindow, widthWindow);
-		
+		{
+			// Lấy thời gian hiện tại tính bằng mili giây
+			Uint32 current_time = SDL_GetTicks();
 
-		
+			// Tính thời gian đã trôi qua kể từ lần bắn trước đó
+			Uint32 time_since_last_shot = current_time - last_shot_time;
 
+			// Kiểm tra nếu đã đủ thời gian trôi qua từ lần bắn trước đó (200 mili giây)
+			if (time_since_last_shot >= 200) {
+				// Giảm số lượng đạn còn lại của vũ khí hiện tại
+				player.weapon[curWeapon].totalBullets--;
+
+				// Bắn vũ khí bằng cách gọi hàm shoot với các tham số cần thiết
+				player.weapon[curWeapon].shoot(renderer, ListBullet, player.r.x, player.r.y, heightWindow, widthWindow);
+
+				// Cập nhật thời gian bắn cuối cùng thành thời gian hiện tại
+				last_shot_time = current_time;
+			}
+		}
+
+		if (ListEnemy.size() <= 10)
+		{
+			Enemy newEnemy;
+			newEnemy.init(renderer);
+			newEnemy.spam(heightWindow, widthWindow);
+			ListEnemy.push_back(newEnemy);
+		}
 
 		SDL_RenderClear(renderer);
 		player.draw(renderer);
 
-		////vẽ viên đạn và di chuyển đạn trong danh sách đạn
+		//vẽ viên đạn và di chuyển đạn trong danh sách đạn
 		for (int i = 0; i < ListBullet.size(); i++)
 		{
 			ListBullet[i].draw(renderer);
 			ListBullet[i].move();
 		}
-
+		for (int i = 0; i < ListEnemy.size(); i++)
+		{
+			ListEnemy[i].setTargetToPlayer(player);
+			ListEnemy[i].draw(renderer);
+			ListEnemy[i].move();
+		}
 		SDL_RenderPresent(renderer);
 
 		// xóa viên đạn ra khỏi danh sách nếu như viên đạn không còn hoạt động (active = 0)
 		for (int i = 0; i < ListBullet.size(); i++)
 			if (!ListBullet[i].active)
 				ListBullet.erase(ListBullet.begin() + i);
+
+
+		// xóa quái ra khỏi danh sách nếu viên đạn chạm quái 
+		for (int i = 0; i < ListEnemy.size(); i++)
+			if (!ListEnemy[i].active)
+				ListEnemy.erase(ListEnemy.begin() + i);
+		
 	}
 }
-bool GameState::checkCollesion(SDL_Rect &r1, SDL_Rect &r2)
+bool GameState::checkCollesion(SDL_FRect &r1, SDL_FRect &r2)
 {
 	return (r1.x + r1.w >= r2.x && r2.x + r2.w >= r1.x
 		&& r1.y + r1.h >= r2.y && r2.y + r2.h >= r1.y);
 }
 void GameState::collesion()
 {
+	
+
+
 }
 void GameState::freeAll()
 {

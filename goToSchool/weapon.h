@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <SDL.h>
 #include <string>
 #include <iostream>
@@ -24,7 +24,8 @@ class Weapon
 public:
 	string name;
 	short type;
-	short numberBullet;
+	short numberBullets; // so luong vien dan moi bang dan
+	long long totalBullets; // tổng số lượng đạn 
 	int distance;
 	int damage;
 	int speed;

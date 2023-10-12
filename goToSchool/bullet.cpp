@@ -17,6 +17,7 @@ Bullet::Bullet()
 
 void Bullet::init(SDL_Renderer* renderer, string pathImg, short typeWeapon)
 {
+	// cài đặt thông số sẽ hiển thị trong game
 	if (typeWeapon == USP)
 	{
 		name = "Dan sung luc";
@@ -32,13 +33,11 @@ void Bullet::init(SDL_Renderer* renderer, string pathImg, short typeWeapon)
 		name = "Dan tieu lien";
 		type = T_900mm;
 	}
-	
-	//set vị trí tại trung tâm của hình
 
 	s = IMG_Load(pathImg.c_str());
-	
 	t = SDL_CreateTextureFromSurface(renderer, s);
 	SDL_FreeSurface(s);
+	//set trạng thái hoạt động lÀ TRUE
 	active = 1;
 
 }
