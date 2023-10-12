@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "Player.h"
+#include "FlatVector.h"
 #include "bullet.h"
 #include <vector>
 using namespace std;
@@ -21,10 +22,10 @@ public:
 	bool holdMouse;
 	bool isGameRunning;
 	
+	bool playerCollisionDetect(Player &p, Player &obj);
+	
 	void init();
 	void gameLoop();
-	void collesion();
-	bool checkCollesion(SDL_Rect &r1, SDL_Rect &r2);
 	void freeAll();
 	
 };
