@@ -45,6 +45,12 @@ void GameState::gameLoop()
 	int curWeapon = 0;
 	int countDistance = 0;
 
+	if (ListEnemy.size() <= 10)
+	{
+		//newEnemy.spawn(heightWindow, widthWindow);
+	}
+
+
 	Uint32 last_shot_time = 0;
 	SDL_Event e;
 	while (isGameRunning)
@@ -126,9 +132,22 @@ void GameState::gameLoop()
 			
 		}
 
+		if(ListEnemy.size() <= 10)
+		{
+			Enemy newEnemy;
+			newEnemy.init(renderer);
+			newEnemy.spawn(heightWindow, widthWindow);
+			ListEnemy.push_back(newEnemy);
+		}
 
 		// process
-		collesion();
+			for (int i = 0; i < ListEnemy.size()-1; i++)
+			{
+				for (int j = i + 1; j < ListEnemy.size(); j++)
+				{
+					playerCollisionDetect(ListEnemy[i], ListEnemy[j]);
+				}
+			}
 
 		for (int i = 0; i < ListBullet.size(); i++)
 		{
@@ -146,7 +165,6 @@ void GameState::gameLoop()
 
 			}
 		}
-		//move
 			//UpdateGmae
 			//if (transformUpdateRequired)
 			//{
@@ -185,13 +203,6 @@ void GameState::gameLoop()
 			}
 		}
 
-		if (ListEnemy.size() <= 10)
-		{
-			Enemy newEnemy;
-			newEnemy.init(renderer);
-			newEnemy.spam(heightWindow, widthWindow);
-			ListEnemy.push_back(newEnemy);
-		}
 
 		SDL_RenderClear(renderer);
 		player.draw(renderer);
@@ -216,7 +227,7 @@ void GameState::gameLoop()
 				ListBullet.erase(ListBullet.begin() + i);
 
 
-		// xóa quái ra khỏi danh sách nếu viên đạn chạm quái 
+		 //xóa quái ra khỏi danh sách nếu viên đạn chạm quái 
 		for (int i = 0; i < ListEnemy.size(); i++)
 			if (!ListEnemy[i].active)
 				ListEnemy.erase(ListEnemy.begin() + i);
@@ -246,7 +257,7 @@ FlatVector FindArithmeticMean(std::vector<FlatVector> vertices)
 	return tmp;
 }
 
-bool GameState::playerCollisionDetect(Player &p, Player& obj)
+bool GameState::playerCollisionDetect(Enemy &p, Enemy& obj)
 {
 	float depth = INFINITY; // Khởi tạo độ sâu mà vật thể bị trùng
 	FlatVector normal; // Khởi tạo vector đơn vị
@@ -254,7 +265,7 @@ bool GameState::playerCollisionDetect(Player &p, Player& obj)
 	{
 		// Tìm đường x để xét
 		FlatVector va = p.vertices[i];
-		FlatVector vb = p.vertices[(i + 1) % p.vertices.size()];
+		FlatVector vb = p.vertices[(i + 1) % p.vertices.size()]; 
 		FlatVector edge = vb - va;
 		FlatVector axis(edge.x, edge.y);
 
@@ -351,10 +362,12 @@ bool GameState::playerCollisionDetect(Player &p, Player& obj)
 		normal = normal * -1; // Đổi hướng vector normal để xác định đúng hướng mà vật thể cần được đặt ra
 	}
 	
-	p.r.x -= normal.x * depth;
-	p.r.y -= normal.y * depth;
+	p.r.x -= normal.x * depth/2;
+	p.r.y -= normal.y * depth/2;
+	obj.r.x += normal.x * depth/2;
+	obj.r.y += normal.y * depth/2;
+	
 	return true;
-
 }
 
 void GameState::freeAll()

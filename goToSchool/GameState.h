@@ -20,7 +20,7 @@ public:
 	bool holdMouse;
 	bool isGameRunning;
 	
-	bool playerCollisionDetect(Player &p, Player &obj);
+	bool playerCollisionDetect(Enemy &p, Enemy &obj);
 	
 	void init();
 	void gameLoop();

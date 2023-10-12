@@ -19,10 +19,13 @@ public:
 	short speed;
 	float angle;
 	bool active;
+	float radius;
+	vector<FlatVector> vertices;
+	FlatVector center;
 	Enemy();
 	void init(SDL_Renderer* renderer);
 	void move();
-	void spam(int heightWindow, int widthWindow);
+	void spawn(int heightWindow, int widthWindow);
 	void setTargetToPlayer(Player& player);
 	void draw(SDL_Renderer* renderer);
 };
