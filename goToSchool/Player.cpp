@@ -1,100 +1,114 @@
-#include "Player.h"
-Player::Player() :
+﻿#include "Player.h"
+Player::Player()
+{
+	// Các tài nguyên cần thiết
+	s = NULL;
+	t = NULL;
+	r = { 0,0,0,0 };
 
-	s(NULL),
-	t(NULL),
-	r({ 0,0,0,0 }), 
-	speed(0),
-	moveKey{0,0,0,0},
-	crossSpeed(0)
+	// Thông số cơ bản
+	angle = 0;
+	speed = 0;
+	isFlip = SDL_FLIP_NONE;
+	memset(moveKey, 0, sizeof(moveKey));
+	crossSpeed = 0;
 
-{}
+	//Các tọa độ
+	center = { 0,0 };
+	//vertices.push_back({ 0,0 });
+	//vertices.push_back({ 0,0 });
+	//vertices.push_back({ 0,0 });
+	//vertices.push_back({ 0,0 });
+}
+
 
 Player::~Player()
 {
 	SDL_FreeSurface(s);
 	SDL_DestroyTexture(t);
 }
-void Player::init(SDL_Renderer *renderer)
+void Player::init(SDL_Renderer *renderer, SDL_FRect r)
 {
-	s = IMG_Load("img/ball.png");
-
+	// Các tài nguyên cần thiết
+	s = IMG_Load("img/grass_block.png");
 	t = SDL_CreateTextureFromSurface(renderer, s);
-	r = { 250,440,60,60 };
-	speed = 5;
-	crossSpeed = (speed * sqrt(2)) / 2;
+	this->r = r;
+
+	// Thông số cơ bản
+	angle = 0;
+	speed = 10;
+	isFlip = SDL_FLIP_NONE;
+	crossSpeed = 5;
 	memset(moveKey, 0, sizeof(moveKey));
+	
+	//Các tọa độ
+	center = { (r.x + r.w) / 2, (r.y + r.h) / 2 };
+	vertices.push_back({ r.x, r.y });
+	vertices.push_back({ r.x + r.w, r.y });
+	vertices.push_back({ r.x + r.w, r.y + r.h });
+	vertices.push_back({ r.x, r.y + r.h });
+
+	transformVertices.push_back({ r.x, r.y });
+	transformVertices.push_back({ r.x + r.w, r.y });
+	transformVertices.push_back({ r.x + r.w, r.y + r.h });
+	transformVertices.push_back({ r.x, r.y + r.h });
 }
 void Player::move()
 {
 	if (moveKey[UP] && moveKey[RIGHT])
 	{
-		
-		if (r.y >= 0 + 10) {
-			r.y -= crossSpeed;
-		}
-		if (r.x <= 1920 - 70) {
-			r.x += crossSpeed;
-		}
+		r.y -= crossSpeed;
+		r.x += crossSpeed;
+		isFlip = SDL_FLIP_HORIZONTAL;
 	}
 	else if (moveKey[UP] && moveKey[LEFT])
 	{
-		
-		if (r.y >= 0 + 10) {
-			r.y -= crossSpeed;
-		}
-		if (r.x >= 0 + 10) {
-			r.x -= crossSpeed;
-		}
+		isFlip = SDL_FLIP_NONE;
+		r.y -= crossSpeed;
+		r.x -= crossSpeed;
+
 	}
 	else if (moveKey[DOWN] && moveKey[RIGHT])
 	{
-		
-		
-		if (r.y <= 1080 + 100) {
-			r.y += crossSpeed;
-		}
-
-		if (r.x <= 1920 - 70) {
-			r.x += crossSpeed;
-		}
+		r.y += crossSpeed;
+		r.x += crossSpeed;
+		isFlip = SDL_FLIP_HORIZONTAL;
 	}
 	else if (moveKey[DOWN] && moveKey[LEFT])
 	{
-		if (r.y <= 1080 + 100) {
-			r.y += crossSpeed;
-		}
-		if (r.x >= 0 + 10) {
-			r.x -= crossSpeed;
-		}
+		isFlip = SDL_FLIP_NONE;
+		r.y += crossSpeed;
+		r.x -= crossSpeed;
 	}
 	else if (moveKey[UP])
 	{
-		if (r.y >= 0 + 10) {
-			r.y -= speed;
-		}
+		r.y -= speed;
 	}
 	else if (moveKey[DOWN])
 	{
-		if (r.y <= 1080 + 100) {
-			r.y += speed;
-		}
+		r.y += speed;
 	}
 	else if (moveKey[LEFT])
 	{
-		if (r.x >= 0 + 10) {
-			r.x -= speed;
-		}
+		isFlip = SDL_FLIP_NONE;
+		r.x -= speed;
 	}
 	else if (moveKey[RIGHT])
 	{
-		if (r.x <= 1920 - 70) {
-			r.x += speed;
-		}
+		isFlip = SDL_FLIP_HORIZONTAL;
+		r.x += speed;
 	}
+	// Update center point
+	center = { (r.x + r.w) / 2, (r.y + r.h) / 2 };
+
+	// Update vertices
+	vertices[0] = { r.x, r.y };
+	vertices[1] = { r.x + r.w, r.y };
+	vertices[2] = { r.x + r.w, r.y + r.h };
+	vertices[3] = { r.x, r.y + r.h };
 }
 
 void Player::draw(SDL_Renderer *renderer)
 {
-	SDL_RenderCopy(renderer, t, NULL, &r);
+	SDL_RenderCopyExF(renderer, t, NULL, &r, angle, NULL, isFlip);
 }

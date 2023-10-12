@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "Player.h"
+#include "FlatVector.h"
 class GameState
 {
 public:
@@ -17,7 +18,8 @@ public:
 	short mouseY;
 	bool isGameRunning;
 	
-	void collisionDetect(SDL_Rect &obj1, SDL_Rect &obj2);
+	bool playerCollisionDetect(Player &p, Player &obj);
+	
 	void init();
 	void gameLoop();
 	void freeAll();
