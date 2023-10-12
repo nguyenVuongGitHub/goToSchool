@@ -1,10 +1,6 @@
 #pragma once
-#include <SDL.h>
-#include <SDL_image.h>
 #include "Player.h"
-#include "FlatVector.h"
 #include "bullet.h"
-#include <vector>
 using namespace std;
 class GameState
 {

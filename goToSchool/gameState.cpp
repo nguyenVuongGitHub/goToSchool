@@ -27,24 +27,17 @@ void GameState::init()
 void GameState::gameLoop()
 {
 	// object
-	Player block;
-	SDL_FRect rBlock = { 90, 490, 40 , 40 };
 	Player player;
-	SDL_FRect rPlayer = { 500, 400, 40, 40 };
-	player.init(renderer, rPlayer);
-	block.init(renderer, rBlock);
+	player.init(renderer);
 
-
-	//float x1 = 3.0;
-	//float y1 = 4.0;
-	//FlatVector vectorA(x1, y1);
-	bool transformUpdateRequired = false;
+	bool transformUpdateRequired = false; // Cờ để cập nhật lại tọa độ khi xoay;
 
 	// Khai báo biến cho việc kiểm soát tốc độ vòng lặp
 	/*const int targetFPS = 60;
 	const int frameDelay = 1000 / targetFPS;
 	Uint32 frameStart;
 	int frameTime;*/
+
 	vector<Bullet> ListBullet;
 	
 	// declare list weapon
@@ -60,6 +53,7 @@ void GameState::gameLoop()
 
 	Uint32 last_shot_time = 0;
 	SDL_Event e;
+	int i = 0;
 	while (isGameRunning)
 	{
 		// tắt con trỏ chuột
@@ -73,19 +67,19 @@ void GameState::gameLoop()
 
 			if (e.key.keysym.sym == SDLK_ESCAPE)
 				isGameRunning = 0;
-			
+
 			if (e.type == SDL_KEYDOWN)
 			{
-				if (e.key.keysym.sym == SDLK_a) 
+				if (e.key.keysym.sym == SDLK_a)
 					player.moveKey[LEFT] = true;
 
 				else if (e.key.keysym.sym == SDLK_d)
 					player.moveKey[RIGHT] = true;
 
-				else if (e.key.keysym.sym == SDLK_w) 
+				else if (e.key.keysym.sym == SDLK_w)
 					player.moveKey[UP] = true;
-				
-				else if (e.key.keysym.sym == SDLK_s) 
+
+				else if (e.key.keysym.sym == SDLK_s)
 					player.moveKey[DOWN] = true;
 
 				else if (e.key.keysym.sym == SDLK_LSHIFT)
@@ -94,37 +88,23 @@ void GameState::gameLoop()
 				else if (e.key.keysym.sym == SDLK_SPACE)
 					player.moveKey[FAST] = true;
 			}
-
-				if (e.key.keysym.sym == SDLK_x)
-				{
-					player.angle += 5;
-					transformUpdateRequired = true;
-
-				}
-				else if (e.key.keysym.sym == SDLK_z)
-				{
-					player.angle -= 5;
-					transformUpdateRequired = true;
-				}
-			}
-
 			if (e.type == SDL_KEYUP)
 			{
 				if (e.key.keysym.sym == SDLK_a)
-					player.moveKey[LEFT] = false;		
+					player.moveKey[LEFT] = false;
 
 				else if (e.key.keysym.sym == SDLK_d)
-					player.moveKey[RIGHT] = false;			
-				
+					player.moveKey[RIGHT] = false;
+
 				else if (e.key.keysym.sym == SDLK_w)
-					player.moveKey[UP] = false;				
-				
+					player.moveKey[UP] = false;
+
 				else if (e.key.keysym.sym == SDLK_s)
 					player.moveKey[DOWN] = false;
-				
+
 				else if (e.key.keysym.sym == SDLK_LSHIFT)
 					player.moveKey[SLOW] = false;
-				
+
 				else if (e.key.keysym.sym == SDLK_SPACE)
 					player.moveKey[FAST] = false;
 			}
@@ -134,7 +114,7 @@ void GameState::gameLoop()
 
 			if (e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LMASK)
 				holdMouse = false;
-			
+
 			// kiểm tra sự kiện lăn chuột
 			if (e.type == SDL_MOUSEWHEEL) {
 				int scrollDirection = e.wheel.y;
@@ -147,70 +127,51 @@ void GameState::gameLoop()
 					curWeapon--;
 					if (curWeapon < 0)
 						curWeapon = 2;
-					
+
 				}
 			}
-			
-		}
+			//UpdateGmae
+			//if (transformUpdateRequired)
+			//{
+			//	//update vertices
+			//	for (int i = 0; i < player.vertices.size(); i++)
+			//	{
+			//		player.transformVertices[i] = player.vertices[i].Transform(player.center, player.angle);
+			//	}
+			//	transformUpdateRequired = false;
+			//	player.angle = (int)player.angle % 90;
+			//}
 
+			//move
+			player.move();
 
-		// process
-		collesion();
+			//acttack
+			if (holdMouse)
+				player.weapon[curWeapon].shoot(renderer, ListBullet, player.r.x, player.r.y, heightWindow, widthWindow);
 
-			}
-		}
-		//UpdateGmae
-		if (transformUpdateRequired)
-		{
-			//update vertices
-			for (int i = 0; i < player.vertices.size(); i++)
+			//Draw
+			SDL_RenderClear(renderer);
+
+			//vẽ viên đạn và di chuyển đạn trong danh sách đạn
+			for (int i = 0; i < ListBullet.size(); i++)
 			{
-				player.transformVertices[i] = player.vertices[i].Transform(player.center, player.angle);
+				ListBullet[i].draw(renderer);
+				ListBullet[i].move();
 			}
-			transformUpdateRequired = false;
-			player.angle = (int)player.angle % 90;
+
+			player.draw(renderer);
+
+			SDL_RenderPresent(renderer);
+
+			// xóa viên đạn ra khỏi danh sách nếu như viên đạn không còn hoạt động (active = 0)
+			for (int i = 0; i < ListBullet.size(); i++)
+			{
+				if (!ListBullet[i].active)
+					ListBullet.erase(ListBullet.begin() + i);
+			}
 		}
-
-		//move
-		player.move();
-		block.move();
-		playerCollisionDetect(player, block);
-		
-		//Check
-		//std::cout << player.r.x << "\t" << player.r.y << std::endl;
-		//for (int i = 0; i < player.vertices.size(); i++)
-		//{
-		//	std::cout << player.transformVertices[i].x <<"\t"<< player.transformVertices[i].y <<"\t";
-		//}
-		//std::cout << std::endl << player.center.x <<"\t" << player.center.y << std::endl;
-
-
-		// Render và cập nhật trạng thái của trò chơi tại đây
-		/*frameTime = SDL_GetTicks() - frameStart;
-		if (frameDelay > frameTime) {
-			SDL_Delay(frameDelay - frameTime);
-		}*/
-		
-		//Set color to draw
-		SDL_SetRenderDrawColor(renderer, 160, 160, 160, SDL_ALPHA_OPAQUE);
-
-		//Clear screen
-		SDL_RenderClear(renderer);
-
-		//acttack
-		if (holdMouse)
-			player.weapon[curWeapon].shoot(renderer, ListBullet, player.r.x, player.r.y, heightWindow, widthWindow);
-		
-
-		
-
-
-		//SDL_RenderDrawLineF(renderer, 0, 0, vectorA.x*100, vectorA.y*100);
-
-		block.draw(renderer);
-
-		SDL_RenderClear(renderer);
-		player.draw(renderer);
+	}	
+}
 
 FlatVector FindArithmeticMean(std::vector<FlatVector> vertices)
 {
@@ -334,29 +295,9 @@ bool GameState::playerCollisionDetect(Player &p, Player& obj)
 	p.r.x -= normal.x * depth;
 	p.r.y -= normal.y * depth;
 	return true;
-		////vẽ viên đạn và di chuyển đạn trong danh sách đạn
-		for (int i = 0; i < ListBullet.size(); i++)
-		{
-			ListBullet[i].draw(renderer);
-			ListBullet[i].move();
-		}
 
-		SDL_RenderPresent(renderer);
+}
 
-		// xóa viên đạn ra khỏi danh sách nếu như viên đạn không còn hoạt động (active = 0)
-		for (int i = 0; i < ListBullet.size(); i++)
-			if (!ListBullet[i].active)
-				ListBullet.erase(ListBullet.begin() + i);
-	}
-}
-bool GameState::checkCollesion(SDL_Rect &r1, SDL_Rect &r2)
-{
-	return (r1.x + r1.w >= r2.x && r2.x + r2.w >= r1.x
-		&& r1.y + r1.h >= r2.y && r2.y + r2.h >= r1.y);
-}
-void GameState::collesion()
-{
-}
 void GameState::freeAll()
 {
 	SDL_DestroyRenderer(renderer);

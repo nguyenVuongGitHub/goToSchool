@@ -86,7 +86,7 @@ public:
 		//float x1 = v.x * std::cos(angle) - v.y * std::sin(angle) + center.x;
 		//float y1 = v.x * std::sin(angle) + v.y * std::cos(angle) + center.y;
 		//convert angle from degrees to radians
-		angle = angle * 3.14159265358979323846264338327950288 / 180;
+		angle = angle * M_PI / 180;
 		FlatVector tmp(((x - center.x) * std::cos(angle) - (y - center.y) * std::sin(angle)) + center.x
 			, (x - center.x) * std::sin(angle) + (y - center.y) * std::cos(angle) + center.y);
 		return tmp;

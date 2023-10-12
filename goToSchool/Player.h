@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include <SDL.h>
 #include <SDL_image.h>
-#include <iostream>
-#include <math.h>
 #include <vector>
 #include "FlatVector.h"
 #include "weapon.h"
@@ -33,9 +31,6 @@ public:
 	bool moveKey[6];
 	Weapon weapon[3];
 	void init(SDL_Renderer* renderer);
-	bool moveKey[4];
-
-	void init(SDL_Renderer* renderer, SDL_FRect r);
 	void draw(SDL_Renderer* renderer);
 	void move();
 	//
