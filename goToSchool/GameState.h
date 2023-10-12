@@ -1,6 +1,4 @@
 #pragma once
-#include <SDL.h>
-#include <SDL_image.h>
 #include "Player.h"
 #include "bullet.h"
 #include "Enemy.h"
@@ -21,6 +19,8 @@ public:
 	int mouseY;
 	bool holdMouse;
 	bool isGameRunning;
+	
+	bool playerCollisionDetect(Player &p, Player &obj);
 	
 	void init();
 	void gameLoop();

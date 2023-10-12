@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 #include <SDL.h>
 #include <SDL_image.h>
-#include <iostream>
-#include <math.h>
+#include <vector>
+#include "FlatVector.h"
 #include "weapon.h"
 #include <vector>
 #define UP 0
@@ -19,6 +19,12 @@ public:
 	SDL_Surface* s;
 	SDL_Texture* t;
 	SDL_FRect r;
+	std::vector<FlatVector> vertices; // Các đỉnh tạo độ
+	std::vector<FlatVector> transformVertices; // Các đỉnh được chuyển đổi
+	FlatVector center; // Vị trí trung tâm của vật thể, người chơi
+
+
+	float angle; // Góc xoay
 	float speed;
 	float crossSpeed;
 	bool moveKey[6];
