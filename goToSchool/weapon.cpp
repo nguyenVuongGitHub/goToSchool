@@ -2,7 +2,6 @@
 
 Weapon::Weapon()
 {
-	name = "";
 	type = 0;
 	numberBullets = 0;
 	distance = 0;
@@ -36,7 +35,7 @@ void Weapon::shoot(SDL_Renderer* renderer, vector<Bullet>& bulletList,Player &pl
 	// điều kiện giới hạn tốc độ bắn sau mỗi 200ms và tổng số lượng đạn còn lại phải lớn hơn 0, và trong danh sách đạn phải bé hơn số đạn mỗi băng
 	if (timeShot >= 200 && totalBullets > 0 && bulletList.size() <= numberBullets)
 	{
-		//cout << "pem\n";
+		
 		int mouseX, mouseY;
 		SDL_GetMouseState(&mouseX, &mouseY);
 
@@ -66,7 +65,6 @@ void Weapon::init(SDL_Renderer* renderer, string pathImg,short type)
 
 	if (type == AK_47)
 	{
-		name = "AK 47";
 		numberBullets = NUMBER_BULLET_AK;
 		distance = DISTANCE_AK;
 		damage = 10;
@@ -75,7 +73,6 @@ void Weapon::init(SDL_Renderer* renderer, string pathImg,short type)
 	}
 	if (type == USP)
 	{
-		name = "USP";
 		numberBullets = NUMBER_BULLET_USP;
 		distance = DISTANCE_USP;
 		damage = 3;
@@ -84,7 +81,6 @@ void Weapon::init(SDL_Renderer* renderer, string pathImg,short type)
 	}
 	if (type == MP5)
 	{
-		name = "MP5";
 		numberBullets = NUMBER_BULLET_MP5;
 		distance = DISTANCE_MP5;
 		damage = 7;

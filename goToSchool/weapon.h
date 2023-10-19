@@ -22,7 +22,7 @@ using namespace std;
 class Player;
 class Weapon : public Object
 {
-	string name;
+	
 	short type;                                                   
 	short numberBullets; // so luong vien dan moi bang dan
 	long long totalBullets; // tổng số lượng đạn 
