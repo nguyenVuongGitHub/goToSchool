@@ -1,36 +1,61 @@
 #pragma once
-#include <string>
-#include <SDL.h>
-#include <SDL_image.h>
+#include "Obj.h"
 using namespace std;
+
+#ifndef BULLET_H
+#define BULLET_H
+
+// type bullet
+#define T_556mm 0
+#define T_762mm 1
+#define T_900mm 2
 
 #define USP 0
 #define AK_47 1
 #define MP5 2
 
-// type bullet
-#define T_556mm 1
-#define T_762mm 2
-#define T_900mm 3
 
-
-
-class Bullet
+class Bullet : public Object
 {
-public:
-	string name;
 	short type;
-	SDL_Texture* t;
-	SDL_Surface* s;
-	SDL_FRect r;
 	bool active;
 	double angle;
 	double dx, dy;
 	int speed;
 	int distance;
-	Bullet();
-	void init(SDL_Renderer* renderer, string pathImg, short typeWeapon);
-	void draw(SDL_Renderer* renderer);
+	int damage;
 	void move();
+
+public:
+
+	Bullet();
+
+	void setType(short t) { type = t; };
+	void setActive(bool a) { active = a; };
+	void setAngle(double d) { angle = d; };
+	void setDxDy(double dx, double dy) { this->dx = dx; this->dy = dy; };
+	void setDistance(int d) { distance = d; };
+	void setSpeed(int s) { speed = s; };
+	void setDamage(int d) { damage = d; };
+
+	short getType() { return type; };
+	bool getActive() { return active; };
+	double getAngle() { return angle; };
+	double getDx() { return dx; };
+	double getDy() { return dy; };
+	int getSpeed() { return speed; };
+	int getDamage() { return damage; };
+	int getDistance() { return distance; };
+
+	//Bullet(string name, short type, bool active, double angle, double dx, double dy, int speed, int distance, int damage);
+	void init(SDL_Renderer* renderer, short typeWeapon);
+	void render(SDL_Renderer* renderer);
+
+	void update();
 };
+
+
+
+#endif // !BULLET_H
+
 

@@ -2,46 +2,52 @@
 
 Enemy::Enemy()
 {
-	r = { 0,0,0,0 };
-	t = NULL;
-	s = NULL;
-	hp = 0;
 	type = 0;
-	dx = 0, dy = 0;
-	speed = 0;
-	angle = 0;
-	active = 0;
+	radius = 0;
 }
 
-void Enemy::init(SDL_Renderer* renderer)
+Enemy::~Enemy()
 {
-	r = { -10,-10,30,30 };
-	s = IMG_Load("img/ball.png");
-	t = SDL_CreateTextureFromSurface(renderer, s);
-	SDL_FreeSurface(s);
+	//Character::~Character();
+	/*SDL_DestroyTexture(texture);
+	SDL_FreeSurface(surface);*/
+}
+
+void Enemy::init(SDL_Renderer* renderer,string path)
+{
+	Character::init(renderer, path);
+	f_rect = { -10,-10,30,30 };
 	hp = 30;
-	type = 0;
 	speed = 3;
 	active = 1;
 	radius = 15;
-	center = { r.x + r.w / 2, r.y + r.h / 2 };
-	vertices.push_back({ r.x, r.y });
-	vertices.push_back({ r.x + r.w, r.y });
-	vertices.push_back({ r.x + r.w, r.y + r.h });
-	vertices.push_back({ r.x, r.y + r.h });
+
+	// 1080 and 1920 is width and height of window
+	spawn(1080,1920);
+
+	//center = { f_rect.x + f_rect.w / 2, f_rect.y + f_rect.h / 2 };
+	vertices.push_back({ f_rect.x, f_rect.y });
+	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y });
+	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y + f_rect.h });
+	vertices.push_back({ f_rect.x, f_rect.y + f_rect.h });
+}
+void Enemy::update(Player& player)
+{
+	setTargetToPlayer(player);
+	move();
 }
 
 void Enemy::move()
 {
 	if (active)
 	{
-		r.x += cos(angle) * speed;
-		r.y += sin(angle) * speed;
+		f_rect.x += cos(angle) * speed;
+		f_rect.y += sin(angle) * speed;
 
-		vertices[0] = { r.x, r.y };
-		vertices[1] = { r.x + r.w, r.y };
-		vertices[2] = { r.x + r.w, r.y + r.h };
-		vertices[3] = { r.x, r.y + r.h };
+		vertices[0] = { f_rect.x, f_rect.y };
+		vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
+		vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h };
+		vertices[3] = { f_rect.x, f_rect.y + f_rect.h };
 	}
 }
 
@@ -55,17 +61,25 @@ void Enemy::spawn(int heightWindow, int widthWindow)
 	float x = disX(gen);
 	float y = disY(gen);
 
-	r = { x, y, 30, 30 };
+	f_rect = { x, y, 30, 30 };
 }
 
 void Enemy::setTargetToPlayer(Player &player)
 {
-	dx = player.r.x - r.x;
-	dy = player.r.y - r.y;
+	dx = player.getRect().x - f_rect.x;
+	dy = player.getRect().y - f_rect.y;
 	angle = atan2(dy,dx);
 }
 
-void Enemy::draw(SDL_Renderer* renderer)
+void Enemy::render(SDL_Renderer* renderer)
 {
-	SDL_RenderCopyExF(renderer, t, NULL, &r, angle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, NULL, SDL_FLIP_NONE);
+}
+
+void Enemy::freeRender(vector<Enemy>& enemyList, int i)
+{
+	if (!enemyList[i].active)
+	{
+		enemyList.erase(enemyList.begin() + i);
+	}
 }

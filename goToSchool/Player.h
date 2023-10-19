@@ -1,37 +1,37 @@
 ﻿#pragma once
-#include <SDL.h>
-#include <SDL_image.h>
-#include <vector>
-#include "FlatVector.h"
+#include "Character.h"
+#include "bullet.h"
 #include "weapon.h"
-#include <vector>
+
+#ifndef PLAYER_H
+#define PLAYER_H
+
 #define UP 0
 #define DOWN 1
 #define LEFT 2
 #define RIGHT 3
 #define SLOW 4
 #define FAST 5
-class Player
+class Player : public Character
 {
+	bool moveKey[6];
+	void move() override;
+
 public:
 	Player();
 	~Player();
-	SDL_Surface* s;
-	SDL_Texture* t;
-	SDL_FRect r;
-	std::vector<FlatVector> vertices; // Các đỉnh tạo độ
-	std::vector<FlatVector> transformVertices; // Các đỉnh được chuyển đổi
-	FlatVector center; // Vị trí trung tâm của vật thể, người chơi
+	friend class Weapon;
 
+	void attack(Weapon& weapon);
+	void init(SDL_Renderer* renderer, string pathImg);
+	void update(Weapon& weapon);
+	void setMoveKey(int x); // set move là true
+	void desetMoveKey(int x); // set move là false
+	void render(SDL_Renderer* renderer) override;
 
-	float angle; // Góc xoay
-	float speed;
-	float crossSpeed;
-	bool moveKey[6];
-	Weapon weapon[3];
-	void init(SDL_Renderer* renderer);
-	void draw(SDL_Renderer* renderer);
-	void move();
-	//
 };
+
+#endif // !PLAYER_H
+
+
 

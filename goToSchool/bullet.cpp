@@ -2,49 +2,45 @@
 #include <iostream>
 Bullet::Bullet()
 {
-	name = "";
 	type = 0;
-	int damage = 0;
-	int speed = 0;
-	s = NULL;
-	t = NULL;
-	r = { 0,0,0,0 };
+	damage = 0;
+	speed = 0;
 	active = 0;
 	angle = 0;
-	dx, dy = 0;
+	dx = 0;
+	dy = 0;
 	distance = 0;
 }
 
-void Bullet::init(SDL_Renderer* renderer, string pathImg, short typeWeapon)
+void Bullet::init(SDL_Renderer* renderer, short typeWeapon)
 {
 	// cài đặt thông số sẽ hiển thị trong game
+	string pathImg;
 	if (typeWeapon == USP)
 	{
-		name = "Dan sung luc";
+		pathImg = "img/T_556mm.png";
 		type = T_556mm;
 	}
 	if (typeWeapon == AK_47)
 	{
-		name = "Dan sung truong";
+		pathImg = "img/T_762mm.png";
 		type = T_762mm;
 	}
 	if (typeWeapon == MP5)
 	{
-		name = "Dan tieu lien";
+		pathImg = "img/T_900mm.png";
 		type = T_900mm;
 	}
-
-	s = IMG_Load(pathImg.c_str());
-	t = SDL_CreateTextureFromSurface(renderer, s);
-	SDL_FreeSurface(s);
+	surface = IMG_Load(pathImg.c_str());
+	texture = SDL_CreateTextureFromSurface(renderer, surface);
 	//set trạng thái hoạt động lÀ TRUE
 	active = 1;
-
 }
 
-void Bullet::draw(SDL_Renderer* renderer)
+void Bullet::render(SDL_Renderer* renderer)
 {
-	SDL_RenderCopyExF(renderer, t, NULL, &r, angle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, NULL, SDL_FLIP_NONE);
+
 }
 void Bullet::move()
 {
@@ -54,9 +50,14 @@ void Bullet::move()
 	}
 	if (active)
 	{
-		r.x += cos(angle) * speed;
-		r.y += sin(angle) * speed;
+		
+		f_rect.x += cos(angle) * speed;
+		f_rect.y += sin(angle) * speed;
 		distance--;
 	}
 
+}
+void Bullet::update()
+{
+	move();
 }

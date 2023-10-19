@@ -1,32 +1,51 @@
 #pragma once
+#include <iostream>
+#include <SDL.h>
+#include <SDL_image.h>
 #include "Player.h"
-#include "bullet.h"
 #include "Enemy.h"
-#include <vector>
+#include "weapon.h"
+#include "bullet.h"
 using namespace std;
 class GameState
 {
-public:
-	GameState();
-	
+private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-	
-
-	short heightWindow;
-	short widthWindow;
+	int heightWindow, widthWindow;
 	int mouseX;
 	int mouseY;
-	bool holdMouse;
 	bool isGameRunning;
+	Uint32 lastShotTime;
+	Player player;
+
+	short numberWeaponHad;
+	short curWeapon;
+	Weapon weaponList[9];
 	
-	bool playerCollisionDetect(Enemy &p, Enemy &obj);
-	
+	vector<Enemy> enemyList;
+
+	vector<Bullet> bulletList;
 	void init();
-	void gameLoop();
-	void collesion();
-	bool checkCollesion(SDL_FRect &r1, SDL_FRect &r2);
+	void processInput(SDL_Event &e);
+	void update();
+	void render();
+	void cleanRender();
+	void collision();
+	bool collisionEnemyWithEnemy(Enemy &p, Enemy& obj);
+	bool collisionBulletWithEnemy(SDL_FRect &r1, SDL_FRect& r2);
+	FlatVector FindArithmeticMean(vector<FlatVector> vertices);
 	void freeAll();
+
+public:
+	GameState();
+	 
+	//bool playerCollisionDetect(Enemy &p, Enemy &obj);
+	//bool getHoldMouse();
+	void run();
+	
+	//void collesion();
+	//bool checkCollesion(SDL_FRect &r1, SDL_FRect &r2);
 	
 };
 

@@ -2,270 +2,225 @@
 
 GameState::GameState() :
 
-	heightWindow(0),
-	widthWindow(0),
 	mouseX(0),
 	mouseY(0),
 	window(NULL),
 	renderer(NULL),
 	isGameRunning(0),
-	holdMouse(0)
+	widthWindow(0),
+	heightWindow(0),
+	numberWeaponHad(0),
+	curWeapon(0),
+	lastShotTime(0)
 {}
 
 void GameState::init()
 {
-	heightWindow = 1080;
-	widthWindow = 1920;
+	widthWindow = 1080;
+	heightWindow = 1920;
 	mouseX = 0;
 	mouseY = 0;
 	isGameRunning = 1;
 	window = SDL_CreateWindow("game test", 0, 0, widthWindow, heightWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
-	holdMouse = 0;
 	IMG_Init(IMG_INIT_PNG);
+
+	numberWeaponHad = 3;
+	curWeapon = 0;
+
+	player.init(renderer, "img/tamGiac.png");
+	weaponList[0].init(renderer,"img/USP.png" , USP);
+	weaponList[1].init(renderer,"img/AK.png" , AK_47 );
+	weaponList[2].init(renderer, "img/MP5.png", MP5);
+
 }
-void GameState::gameLoop()
+
+void GameState::run()
 {
-	// object
-	Player player;
-	player.init(renderer);
+	init();
 
-	vector<Enemy> ListEnemy;
-	
-	// declare list weapon
-	vector<Bullet> ListBullet;
-	player.weapon[USP].type = USP;
-	player.weapon[AK_47].type = AK_47;
-	player.weapon[MP5].type = MP5;
-	player.weapon[USP].init();
-	player.weapon[AK_47].init();
-	player.weapon[MP5].init();
-
-
-	int curWeapon = 0;
-	int countDistance = 0;
-
-	if (ListEnemy.size() <= 10)
-	{
-		//newEnemy.spawn(heightWindow, widthWindow);
-	}
-
-
-	Uint32 last_shot_time = 0;
 	SDL_Event e;
 	while (isGameRunning)
 	{
-		// tắt con trỏ chuột
-		//SDL_ShowCursor(SDL_DISABLE);
+		processInput(e);
 
-		//frameStart = SDL_GetTicks();
-		while (SDL_PollEvent(&e))
-		{
-			if (e.type == SDL_QUIT)
-				isGameRunning = 0;
-
-			if (e.key.keysym.sym == SDLK_ESCAPE)
-				isGameRunning = 0;
-
-			if (e.type == SDL_KEYDOWN)
-			{
-				if (e.key.keysym.sym == SDLK_a)
-					player.moveKey[LEFT] = true;
-
-				else if (e.key.keysym.sym == SDLK_d)
-					player.moveKey[RIGHT] = true;
-
-				else if (e.key.keysym.sym == SDLK_w)
-					player.moveKey[UP] = true;
-
-				else if (e.key.keysym.sym == SDLK_s)
-					player.moveKey[DOWN] = true;
-
-				else if (e.key.keysym.sym == SDLK_LSHIFT)
-					player.moveKey[SLOW] = true;
-
-				else if (e.key.keysym.sym == SDLK_SPACE)
-					player.moveKey[FAST] = true;
-			}
-			if (e.type == SDL_KEYUP)
-			{
-				if (e.key.keysym.sym == SDLK_a)
-					player.moveKey[LEFT] = false;
-
-				else if (e.key.keysym.sym == SDLK_d)
-					player.moveKey[RIGHT] = false;
-
-				else if (e.key.keysym.sym == SDLK_w)
-					player.moveKey[UP] = false;
-
-				else if (e.key.keysym.sym == SDLK_s)
-					player.moveKey[DOWN] = false;
-
-				else if (e.key.keysym.sym == SDLK_LSHIFT)
-					player.moveKey[SLOW] = false;
-
-				else if (e.key.keysym.sym == SDLK_SPACE)
-					player.moveKey[FAST] = false;
-			}
-			//bắt sự kiện giữ chuột
-			if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LMASK)
-				holdMouse = true;
-
-			if (e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LMASK)
-				holdMouse = false;
-
-			// kiểm tra sự kiện lăn chuột
-			if (e.type == SDL_MOUSEWHEEL) {
-				int scrollDirection = e.wheel.y;
-				if (scrollDirection > 0) {
-						curWeapon++;
-					if (curWeapon > 2)
-						curWeapon = 0;
-				}
-				else if (scrollDirection < 0) {
-						curWeapon--;
-					if (curWeapon < 0)
-						curWeapon = 2;
-
-				}
-			}
-			
-		}
-
-		if(ListEnemy.size() <= 10)
-		{
-			Enemy newEnemy;
-			newEnemy.init(renderer);
-			newEnemy.spawn(heightWindow, widthWindow);
-			ListEnemy.push_back(newEnemy);
-		}
-
-		// process
-			for (int i = 0; i < ListEnemy.size()-1; i++)
-			{
-				for (int j = i + 1; j < ListEnemy.size(); j++)
-				{
-					playerCollisionDetect(ListEnemy[i], ListEnemy[j]);
-				}
-			}
-
-		for (int i = 0; i < ListBullet.size(); i++)
-		{
-			for (int j = 0; j < ListEnemy.size(); j++)
-			{
-				if (ListEnemy[j].hp <= 0)
-					ListEnemy[j].active = 0;
-
-				
-				if (checkCollesion(ListBullet[i].r, ListEnemy[j].r))
-				{
-					ListBullet[i].active = 0;
-					ListEnemy[j].hp -= player.weapon[curWeapon].damage;
-				}
-
-			}
-		}
-			//UpdateGmae
-			//if (transformUpdateRequired)
-			//{
-			//	//update vertices
-			//	for (int i = 0; i < player.vertices.size(); i++)
-			//	{
-			//		player.transformVertices[i] = player.vertices[i].Transform(player.center, player.angle);
-			//	}
-			//	transformUpdateRequired = false;
-			//	player.angle = (int)player.angle % 90;
-			//}
-
-			//move
-			player.move();
-
-		//acttack
-	// Kiểm tra nếu chuột đang được giữ
-		if (holdMouse)
-		{
-			// Lấy thời gian hiện tại tính bằng mili giây
-			Uint32 current_time = SDL_GetTicks();
-
-			// Tính thời gian đã trôi qua kể từ lần bắn trước đó
-			Uint32 time_since_last_shot = current_time - last_shot_time;
-
-			// Kiểm tra nếu đã đủ thời gian trôi qua từ lần bắn trước đó (200 mili giây)
-			if (time_since_last_shot >= 200) {
-				// Giảm số lượng đạn còn lại của vũ khí hiện tại
-				player.weapon[curWeapon].totalBullets--;
-
-				// Bắn vũ khí bằng cách gọi hàm shoot với các tham số cần thiết
-				player.weapon[curWeapon].shoot(renderer, ListBullet, player.r.x, player.r.y, heightWindow, widthWindow);
-
-				// Cập nhật thời gian bắn cuối cùng thành thời gian hiện tại
-				last_shot_time = current_time;
-			}
-		}
-
-
-		SDL_RenderClear(renderer);
-		player.draw(renderer);
-
-		//vẽ viên đạn và di chuyển đạn trong danh sách đạn
-		for (int i = 0; i < ListBullet.size(); i++)
-		{
-			ListBullet[i].draw(renderer);
-			ListBullet[i].move();
-		}
-		for (int i = 0; i < ListEnemy.size(); i++)
-		{
-			ListEnemy[i].setTargetToPlayer(player);
-			ListEnemy[i].draw(renderer);
-			ListEnemy[i].move();
-		}
-		SDL_RenderPresent(renderer);
-
-		// xóa viên đạn ra khỏi danh sách nếu như viên đạn không còn hoạt động (active = 0)
-		for (int i = 0; i < ListBullet.size(); i++)
-			if (!ListBullet[i].active)
-				ListBullet.erase(ListBullet.begin() + i);
-
-
-		 //xóa quái ra khỏi danh sách nếu viên đạn chạm quái 
-		for (int i = 0; i < ListEnemy.size(); i++)
-			if (!ListEnemy[i].active)
-				ListEnemy.erase(ListEnemy.begin() + i);
+		collision();
 		
+		update();
+		
+		render();
+		
+		cleanRender();
 	}
+	freeAll();
 }
-bool GameState::checkCollesion(SDL_FRect &r1, SDL_FRect &r2)
+void GameState::processInput(SDL_Event &e)
 {
-	return (r1.x + r1.w >= r2.x && r2.x + r2.w >= r1.x
-		&& r1.y + r1.h >= r2.y && r2.y + r2.h >= r1.y);
-}
-void GameState::collesion()
-{
-}
 
-FlatVector FindArithmeticMean(std::vector<FlatVector> vertices)
-{
-	float sumX = 0;
-	float sumY = 0;
-	for (int i = 0; i < vertices.size(); i++)
+	while (SDL_PollEvent(&e))
 	{
-		FlatVector v = vertices[i];
-		sumX += v.x;
-		sumY += v.y;
-	}
-	FlatVector tmp(sumX / vertices.size(), sumY / vertices.size());
-	return tmp;
-}
+		if (e.type == SDL_QUIT)
+			isGameRunning = 0;
 
-bool GameState::playerCollisionDetect(Enemy &p, Enemy& obj)
+		if (e.key.keysym.sym == SDLK_ESCAPE)
+			isGameRunning = 0;
+
+		if (e.type == SDL_KEYDOWN)
+		{
+			if (e.key.keysym.sym == SDLK_a)
+				player.setMoveKey(LEFT);
+
+			else if (e.key.keysym.sym == SDLK_d)
+				player.setMoveKey(RIGHT);
+
+			else if (e.key.keysym.sym == SDLK_w)
+				player.setMoveKey(UP);
+
+			else if (e.key.keysym.sym == SDLK_s)
+				player.setMoveKey(DOWN);
+
+			else if (e.key.keysym.sym == SDLK_LSHIFT)
+				player.setMoveKey(SLOW);
+
+			else if (e.key.keysym.sym == SDLK_SPACE)
+				player.setMoveKey(FAST);
+		}
+		if (e.type == SDL_KEYUP)
+		{
+			if (e.key.keysym.sym == SDLK_a)
+				player.desetMoveKey(LEFT);
+
+			else if (e.key.keysym.sym == SDLK_d)
+				player.desetMoveKey(RIGHT);
+
+			else if (e.key.keysym.sym == SDLK_w)
+				player.desetMoveKey(UP);
+
+			else if (e.key.keysym.sym == SDLK_s)
+				player.desetMoveKey(DOWN);
+
+			else if (e.key.keysym.sym == SDLK_LSHIFT)
+				player.desetMoveKey(SLOW);
+
+			else if (e.key.keysym.sym == SDLK_SPACE)
+				player.desetMoveKey(FAST);
+		}
+		//bắt sự kiện giữ chuột
+		if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LMASK)
+			player.setIsAttack(true);
+
+		if (e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LMASK)
+			player.setIsAttack(false);
+
+		 //kiểm tra sự kiện lăn chuột
+		if (!player.getIsAttack() && e.type == SDL_MOUSEWHEEL) {
+			int scrollDirection = e.wheel.y;
+			if (scrollDirection > 0) {
+				curWeapon--;	
+				if (curWeapon < 0)
+					curWeapon = numberWeaponHad;
+			}
+			else if (scrollDirection < 0) {
+				curWeapon++;
+				if (curWeapon > numberWeaponHad)
+					curWeapon = 0;
+
+			}
+		}
+	}
+}
+void GameState::update()
 {
+	player.update(weaponList[curWeapon]);
+	
+	if (enemyList.size() < 10)
+	{
+		Enemy e;
+		e.init(renderer,"img/ball.png");
+		enemyList.push_back(e);
+	}
+
+	for (int i = 0; i < enemyList.size(); i++)
+		enemyList[i].update(player);
+
+
+	for (int i = 0; i < numberWeaponHad; i++)
+		weaponList[i].update(renderer,bulletList,player,lastShotTime);
+	
+
+	for (int i = 0; i < bulletList.size(); i++)
+		bulletList[i].update();
+}
+void GameState::render()
+{
+	SDL_RenderClear(renderer);
+
+	for (int i = 0; i < bulletList.size(); i++)
+		bulletList[i].render(renderer);
+
+	player.render(renderer);
+	
+	weaponList[curWeapon].render(renderer, player);
+
+	for (int i = 0; i < enemyList.size(); i++)
+		enemyList[i].render(renderer);
+
+
+	SDL_RenderPresent(renderer);
+}
+void GameState::cleanRender()
+{
+	for (int i = 0; i < bulletList.size(); i++)
+	{
+		if (!bulletList[i].getActive()) {
+			bulletList[i].setActive(false);
+			bulletList.erase(bulletList.begin() + i);
+		}
+	}
+	for (int i = 0; i < enemyList.size(); i++)
+		enemyList[i].freeRender(enemyList,i);
+}
+void GameState::collision()
+{
+	int x = enemyList.size();
+
+	// va chạm giữa quái và quái 
+	for (int i = 0; i < x-1; i++)
+		for (int j = i + 1; j < enemyList.size(); j++)
+			collisionEnemyWithEnemy(enemyList[i],enemyList[j]);
+		
+	// va chạm giữa đạn và quái
+	for (int i = 0; i < bulletList.size(); i++)
+	{
+		for (int j = 0; j < enemyList.size(); j++)
+		{
+			SDL_FRect x,y;
+			x = bulletList[i].getRect();
+			y = enemyList[j].getRect();
+
+			if (enemyList[j].getHP() <= 0)
+				enemyList[j].setActive(0);
+
+			if (collisionBulletWithEnemy(x, y))
+			{
+				bulletList[i].setActive(0);
+				enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].getDamage());
+				
+			}
+		}
+	}
+
+}
+bool GameState::collisionEnemyWithEnemy(Enemy& p, Enemy& obj)
+{
+
 	float depth = INFINITY; // Khởi tạo độ sâu mà vật thể bị trùng
 	FlatVector normal; // Khởi tạo vector đơn vị
 	for (int i = 0; i < p.vertices.size(); i++) // Duyệt tất cả các đỉnh của vật thể
 	{
 		// Tìm đường x để xét
 		FlatVector va = p.vertices[i];
-		FlatVector vb = p.vertices[(i + 1) % p.vertices.size()]; 
+		FlatVector vb = p.vertices[(i + 1) % p.vertices.size()];
 		FlatVector edge = vb - va;
 		FlatVector axis(edge.x, edge.y);
 
@@ -361,15 +316,43 @@ bool GameState::playerCollisionDetect(Enemy &p, Enemy& obj)
 	{
 		normal = normal * -1; // Đổi hướng vector normal để xác định đúng hướng mà vật thể cần được đặt ra
 	}
-	
-	p.r.x -= normal.x * depth/2;
-	p.r.y -= normal.y * depth/2;
-	obj.r.x += normal.x * depth/2;
-	obj.r.y += normal.y * depth/2;
-	
+	float x1, x2, y1, y2;
+	x1 = p.getRect().x;
+	x2 = obj.getRect().x;
+	y1 = p.getRect().y;
+	y2 = obj.getRect().y;
+	x1 -= normal.x * depth / 2;
+	y1 -= normal.y * depth / 2;
+	x2 += normal.x * depth / 2;
+	y2 += normal.y * depth / 2;
+	p.setRect({ x1,y1,p.getRect().w,p.getRect().h });
+	obj.setRect({ x2,y2,obj.getRect().w,obj.getRect().h });
+	/*p.getRect().x -= 
+	p.getRect().y -= 
+	obj.getRect().x += 
+	obj.getRect().y += */
+
 	return true;
 }
-
+bool GameState::collisionBulletWithEnemy(SDL_FRect& r1, SDL_FRect& r2)
+{
+	return (r1.x + r1.w >= r2.x && r2.x + r2.w >= r1.x
+		&& r1.y + r1.h >= r2.y && r2.y + r2.h >= r1.y);
+}
+FlatVector GameState::FindArithmeticMean(vector<FlatVector> vertices)
+{
+	float sumX = 0;
+	float sumY = 0;
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		FlatVector v = vertices[i];
+		sumX += v.x;
+		sumY += v.y;
+	}
+	FlatVector tmp(sumX / vertices.size(), sumY / vertices.size());
+	return tmp;
+	
+}
 void GameState::freeAll()
 {
 	SDL_DestroyRenderer(renderer);
