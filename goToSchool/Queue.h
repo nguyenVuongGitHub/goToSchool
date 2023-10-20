@@ -1,6 +1,12 @@
 #pragma once
 #include "Node.h"
 
+#ifndef QUEUE_H
+#define QUEUE_H
+
+
+
+
 const short MAX_SIZE = 100;
 
 template <class T>
@@ -76,3 +82,5 @@ public:
 		return size;
 	}
 };
+
+#endif // !QUEUE_H

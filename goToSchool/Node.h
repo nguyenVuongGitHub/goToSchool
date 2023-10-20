@@ -1,5 +1,9 @@
 #pragma once
 #include <iostream>
+
+#ifndef NODE_H
+#define NODE_H
+
 template <class T>
 class Node
 {
@@ -18,3 +22,6 @@ public:
 		delete next;
 	}
 };
+
+
+#endif // !NODE_H

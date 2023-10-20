@@ -3,6 +3,11 @@
 #include <SDL_image.h>
 #include <vector>
 #include "FlatVector.h"
+
+#ifndef OBJ_H
+#define OBJ_H
+
+
 using namespace std;
 enum Shape {
 	nav = 0,
@@ -30,7 +35,7 @@ public:
 		f_rect = { 0,0,0,0 };
 	}
 	~Object() = default;
-	virtual void init(SDL_Renderer *renderer, string pathImg) {
+	virtual void init(SDL_Renderer* renderer, string pathImg) {
 
 	}
 	virtual void render(SDL_Renderer* renderer) {
@@ -50,3 +55,5 @@ public:
 		return vertices;
 	}*/
 };
+
+#endif // !OBJ_H

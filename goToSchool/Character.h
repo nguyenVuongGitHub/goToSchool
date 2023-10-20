@@ -1,5 +1,10 @@
 ﻿#pragma once
 #include "Obj.h"
+
+#ifndef CHARACTER_H
+#define CHARACTER_H
+
+
 class Character : public Object
 {
 protected:
@@ -28,4 +33,8 @@ public:
 	bool getActive() { return active; };
 	void setActive(bool x) { active = x; };
 };
+
+
+#endif // !CHARACTER_H
+
 

@@ -2,7 +2,9 @@
 #include "Character.h"
 #include "Player.h"
 #include <random>
-using namespace std;
+
+#ifndef ENEMY_H
+#define ENEMY_H
 
 class Enemy : public Character
 {
@@ -19,4 +21,8 @@ public:
 	void freeRender(vector<Enemy>& enemyList, int i);
 	void update(Player& player);
 };
+
+#endif // !ENEMY_H
+
+
 

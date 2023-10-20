@@ -2,6 +2,9 @@
 #include<iostream>
 #include<math.h>
 
+#ifndef FLATVECTOR_H
+#define FLATVECTOR_H
+
 //Just a vector
 class FlatVector
 {
@@ -92,6 +95,10 @@ public:
 		return tmp;
 	}
 };
+
+#endif // !FLATVECTOR_H
+
+
 
 
 
