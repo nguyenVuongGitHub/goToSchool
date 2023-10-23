@@ -1,12 +1,11 @@
 #pragma once
-#include <SDL.h>
-#include <SDL_image.h>
-#include <vector>
-#include "FlatVector.h"
+
 
 #ifndef OBJ_H
 #define OBJ_H
 
+#include "Common.h"
+#include "FlatVector.h"
 
 using namespace std;
 enum Shape {

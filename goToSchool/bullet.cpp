@@ -1,5 +1,5 @@
 ﻿#include "bullet.h"
-#include <iostream>
+
 Bullet::Bullet()
 {
 	type = 0;
@@ -21,7 +21,7 @@ void Bullet::init(SDL_Renderer* renderer, short typeWeapon)
 		pathImg = "img/T_556mm.png";
 		type = T_556mm;
 	}
-	if (typeWeapon == AK_47)
+	if (typeWeapon == AK)
 	{
 		pathImg = "img/T_762mm.png";
 		type = T_762mm;
@@ -32,6 +32,7 @@ void Bullet::init(SDL_Renderer* renderer, short typeWeapon)
 		type = T_900mm;
 	}
 	surface = IMG_Load(pathImg.c_str());
+	
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
 	//set trạng thái hoạt động lÀ TRUE
 	active = 1;
@@ -40,7 +41,7 @@ void Bullet::init(SDL_Renderer* renderer, short typeWeapon)
 void Bullet::render(SDL_Renderer* renderer)
 {
 	SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, NULL, SDL_FLIP_NONE);
-
+	//cout << "ccc";
 }
 void Bullet::move()
 {

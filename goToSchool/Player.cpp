@@ -1,7 +1,4 @@
 ﻿#include "Player.h"
-#include "FlatVector.h"
-#include <vector>
-
 
 Player::Player()
 {
@@ -63,7 +60,12 @@ void Player::desetMoveKey(int x)
 {
 	moveKey[x] = false;
 }
-void Player::update(Weapon& weapon)
+void Player::update(Gun& weapon)
+{
+	attack(weapon);
+	move();
+}
+void Player::update(Melle& weapon)
 {
 	attack(weapon);
 	move();
@@ -136,7 +138,7 @@ void Player::move()
 	//vertices[3] = { r.x, r.y + r.h };
 }
 
-void Player::attack(Weapon &weapon)
+void Player::attack(Gun &weapon)
 {
 	// check isAttack at processInput (gameState.cpp)
 	if (isAttack)
@@ -148,19 +150,19 @@ void Player::attack(Weapon &weapon)
 	}
 }
 
+void Player::attack(Melle& weapon)
+{
+	if (isAttack)
+	{
+		weapon.setIsAttack(true);
+	}
+	else if (!isAttack && (weapon.getAngle() == 90 || weapon.getAngle() == -270)) {
+		weapon.setIsAttack(false);
+	}
+}
+
 void Player::render(SDL_Renderer* renderer)
 {
-	//int curXMouse;
-	//int curYMouse;
-	//SDL_GetMouseState(&curXMouse, &curYMouse);
-	
-	//// Tính toán góc giữa chuột và tâm tam giác
-	//float deltaX = curXMouse - f_rect.x - (f_rect.w / 2);
-	//float deltaY = curYMouse - f_rect.y - (f_rect.h / 2);
-	//float angle = atan2(deltaY, deltaX) * 180 / M_PI;
-
-	//// Đảo ngược góc quay để đỉnh tam giác hướng về phía chuột
-	//angle ++;
 	SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, NULL, SDL_FLIP_NONE);
 	
 }

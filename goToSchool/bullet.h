@@ -1,18 +1,11 @@
 #pragma once
-#include "Obj.h"
-using namespace std;
+
 
 #ifndef BULLET_H
 #define BULLET_H
 
-// type bullet
-#define T_556mm 0
-#define T_762mm 1
-#define T_900mm 2
+#include "Obj.h"
 
-#define USP 0
-#define AK_47 1
-#define MP5 2
 
 
 class Bullet : public Object

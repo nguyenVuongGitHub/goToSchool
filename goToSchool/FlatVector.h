@@ -1,10 +1,8 @@
 ﻿#pragma once
-#include<iostream>
-#include<math.h>
 
 #ifndef FLATVECTOR_H
 #define FLATVECTOR_H
-
+#include "Common.h"
 //Just a vector
 class FlatVector
 {

@@ -133,17 +133,24 @@
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EveryObject.cpp" />
     <ClCompile Include="gameState.cpp" />
+    <ClCompile Include="Gun.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Melle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bullet.h" />
     <ClInclude Include="Character.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="EveryObject.h" />
     <ClInclude Include="FlatVector.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="Gun.h" />
+    <ClInclude Include="Melle.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Obj.h" />
     <ClInclude Include="Player.h" />

@@ -1,10 +1,9 @@
 #pragma once
-#include "Character.h"
-#include "Player.h"
-#include <random>
 
 #ifndef ENEMY_H
 #define ENEMY_H
+#include "Character.h"
+#include "Player.h"
 
 class Enemy : public Character
 {

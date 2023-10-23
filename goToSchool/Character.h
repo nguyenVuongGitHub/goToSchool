@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include "Obj.h"
 
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
+#include "Obj.h"
 
 class Character : public Object
 {

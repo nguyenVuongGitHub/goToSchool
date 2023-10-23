@@ -1,12 +1,24 @@
-#pragma once
-#include <iostream>
-#include <SDL.h>
-#include <SDL_image.h>
+﻿#pragma once
+#include "Common.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "weapon.h"
 #include "bullet.h"
+#include "Gun.h"
+#include "Melle.h"
+#include "EveryObject.h"
 using namespace std;
+enum typeWeapon
+{
+	GUN,MELLE
+};
+struct WeaponList
+{
+	typeWeapon type;
+	Gun gun;
+	Melle melle;
+};
+
 class GameState
 {
 private:
@@ -17,15 +29,22 @@ private:
 	int mouseY;
 	bool isGameRunning;
 	Uint32 lastShotTime;
+
+	//EveryObject background;
+
+
+
 	Player player;
 
 	short numberWeaponHad;
 	short curWeapon;
-	Weapon weaponList[9];
-	
+	//Weapon weaponList[9];
+	//Gun weaponList[9];
+	WeaponList weaponList[9];
 	vector<Enemy> enemyList;
-
 	vector<Bullet> bulletList;
+
+
 	void init();
 	void processInput(SDL_Event &e);
 	void update();
@@ -47,7 +66,6 @@ private:
 
 public:
 	GameState();
-	 
 	//bool playerCollisionDetect(Enemy &p, Enemy &obj);
 	//bool getHoldMouse();
 	void run();

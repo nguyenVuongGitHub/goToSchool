@@ -12,7 +12,8 @@ GameState::GameState() :
 	numberWeaponHad(0),
 	curWeapon(0),
 	lastShotTime(0)
-{}
+{
+}
 
 void GameState::init()
 {
@@ -24,15 +25,43 @@ void GameState::init()
 	window = SDL_CreateWindow("game test", 0, 0, widthWindow, heightWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 	IMG_Init(IMG_INIT_PNG);
+	IMG_Init(IMG_INIT_JPG);
 
-	numberWeaponHad = 3;
+	//background.init(renderer, "img/background.jpg");
+	//background.setRect({ 0,0,1920,1080});
+	numberWeaponHad = 4;
 	curWeapon = 0;
+	Melle m1;
+	
+	Gun x1(USP, NUMBER_BULLET_USP,999999999,DISTANCE_USP,DAMAGE_USP);
+	Gun x2(AK, NUMBER_BULLET_AK, 200, DISTANCE_AK, DAMAGE_AK);
+	Gun x3(MP5, NUMBER_BULLET_MP5, 100, DISTANCE_MP5, DAMAGE_MP5);
+
+	m1.init(renderer, "img/knight.png");
+	x1.init(renderer, "img/USP.png");
+	x2.init(renderer, "img/AK.png");
+	x3.init(renderer, "img/MP5.png");
+
+	weaponList[0].type = MELLE;
+	weaponList[1].type = GUN;
+	weaponList[2].type = GUN;
+	weaponList[3].type = GUN;
+
+	weaponList[0].melle = m1;
+	weaponList[1].gun = x1;
+	weaponList[2].gun = x2;
+	weaponList[3].gun = x3;
+
+
+	/*weaponList[0] = x1;
+	weaponList[1] = x2;
+	weaponList[2] = x3;
+	weaponList[0].init(renderer,"img/USP.png");
+	weaponList[1].init(renderer,"img/AK.png" );
+	weaponList[2].init(renderer, "img/MP5.png");*/
+
 
 	player.init(renderer, "img/tamGiac.png");
-	weaponList[0].init(renderer,"img/USP.png" , USP);
-	weaponList[1].init(renderer,"img/AK.png" , AK_47 );
-	weaponList[2].init(renderer, "img/MP5.png", MP5);
-
 }
 
 void GameState::run()
@@ -44,9 +73,9 @@ void GameState::run()
 	{
 		processInput(e);
 
-		collision();
-		
 		update();
+		
+		collision();
 		
 		render();
 		
@@ -59,14 +88,20 @@ void GameState::processInput(SDL_Event &e)
 
 	while (SDL_PollEvent(&e))
 	{
+		// thoát khi bấm nút phía góc phải màn hình "X"
 		if (e.type == SDL_QUIT)
 			isGameRunning = 0;
 
+		// thoát khi bấm "esc"
 		if (e.key.keysym.sym == SDLK_ESCAPE)
 			isGameRunning = 0;
 
+		// kiểm tra nút đã được bấm xuống chưa 
 		if (e.type == SDL_KEYDOWN)
 		{
+			// nếu rồi thì kiểm tra nút đó là nút nào
+			// sau đó sẽ đặt hướng di chuyển của người chơi
+
 			if (e.key.keysym.sym == SDLK_a)
 				player.setMoveKey(LEFT);
 
@@ -85,8 +120,12 @@ void GameState::processInput(SDL_Event &e)
 			else if (e.key.keysym.sym == SDLK_SPACE)
 				player.setMoveKey(FAST);
 		}
+		// kiểm tra nút đã được thả ra chưa
 		if (e.type == SDL_KEYUP)
 		{
+			// nếu rồi thì kiểm tra nút đó là nút nào
+			// sau đó sẽ đặt hướng di chuyển của người chơi
+
 			if (e.key.keysym.sym == SDLK_a)
 				player.desetMoveKey(LEFT);
 
@@ -105,7 +144,8 @@ void GameState::processInput(SDL_Event &e)
 			else if (e.key.keysym.sym == SDLK_SPACE)
 				player.desetMoveKey(FAST);
 		}
-		//bắt sự kiện giữ chuột
+		//bắt sự kiện giữ chuột và sẽ đặt người chơi vào trạng thái tấn công
+		// SDL_BUTTON_LMASK là chuột trái
 		if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LMASK)
 			player.setIsAttack(true);
 
@@ -115,14 +155,17 @@ void GameState::processInput(SDL_Event &e)
 		 //kiểm tra sự kiện lăn chuột
 		if (!player.getIsAttack() && e.type == SDL_MOUSEWHEEL) {
 			int scrollDirection = e.wheel.y;
+			// nếu scrollDirection lớn hơn 0 thì là lăn chuột lên trên
 			if (scrollDirection > 0) {
 				curWeapon--;	
 				if (curWeapon < 0)
-					curWeapon = numberWeaponHad;
+					curWeapon = numberWeaponHad-1;
 			}
+			// nếu scrollDirection bế hơn 0 thì là lăn chuột xuống dưới
+
 			else if (scrollDirection < 0) {
 				curWeapon++;
-				if (curWeapon > numberWeaponHad)
+				if (curWeapon > numberWeaponHad-1)
 					curWeapon = 0;
 
 			}
@@ -131,8 +174,17 @@ void GameState::processInput(SDL_Event &e)
 }
 void GameState::update()
 {
-	player.update(weaponList[curWeapon]);
 	
+	//  ============= update player ==============
+	if (weaponList[curWeapon].type == GUN)
+	{
+		player.update(weaponList[curWeapon].gun);
+	}
+	else {
+		player.update(weaponList[curWeapon].melle);
+	}
+	
+	// ============== spawn enemy ===============
 	if (enemyList.size() < 10)
 	{
 		Enemy e;
@@ -140,32 +192,55 @@ void GameState::update()
 		enemyList.push_back(e);
 	}
 
+	// ============== update enemy ==============
 	for (int i = 0; i < enemyList.size(); i++)
 		enemyList[i].update(player);
 
 
+	// ============== update weaponList ==============
 	for (int i = 0; i < numberWeaponHad; i++)
-		weaponList[i].update(renderer,bulletList,player,lastShotTime);
-	
+	{
+		if (weaponList[i].type == MELLE)
+		{
+			weaponList[i].melle.update(renderer,player.getRect());
+		}
+		else {
 
+			weaponList[i].gun.update(renderer,bulletList,lastShotTime, player.getRect());
+		}
+
+	}
+	
+	// ============== update danh sách đạn ==============
 	for (int i = 0; i < bulletList.size(); i++)
 		bulletList[i].update();
 }
 void GameState::render()
 {
+	// xóa render cũ đi
 	SDL_RenderClear(renderer);
 
+	// tạo các render mới hiện tại
+
+	// tạo render cho background
+	//background.render(renderer);
+	// tạo render danh sách đạn
 	for (int i = 0; i < bulletList.size(); i++)
 		bulletList[i].render(renderer);
 
+	// tạo render người chơi
 	player.render(renderer);
 	
-	weaponList[curWeapon].render(renderer, player);
-
+	// tạo render vũ khí
+	if(weaponList[curWeapon].type == GUN)
+		weaponList[curWeapon].gun.render(renderer, player.getRect());
+	else weaponList[curWeapon].melle.render(renderer, player.getRect());
+	
+	// tạo render quái
 	for (int i = 0; i < enemyList.size(); i++)
 		enemyList[i].render(renderer);
 
-
+	// vẽ render lên màn hình
 	SDL_RenderPresent(renderer);
 }
 void GameState::cleanRender()
@@ -204,12 +279,30 @@ void GameState::collision()
 			if (collisionBulletWithEnemy(x, y))
 			{
 				bulletList[i].setActive(0);
-				enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].getDamage());
+				enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].gun.getDamage());
 				
 			}
 		}
 	}
+	// va chạm giữa kiếm và quái
+	if (weaponList[curWeapon].type == MELLE)
+	{
+		for (int j = 0; j < enemyList.size(); j++)
+		{
+			SDL_FRect x, y;
+			//x = weaponList[curWeapon].melle.getRect();
 
+			y = enemyList[j].getRect();
+
+			if (enemyList[j].getHP() <= 0)
+				enemyList[j].setActive(0);
+
+			if (collisionBulletWithEnemy(x, y))
+			{
+				enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
+			}
+		}
+	}
 }
 
 FlatVector GameState::FindArithmeticMean(vector<FlatVector> vertices)
