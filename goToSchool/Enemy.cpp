@@ -33,6 +33,12 @@ void Enemy::init(SDL_Renderer* renderer,string path)
 }
 void Enemy::update(Player& player)
 {
+	/*if (enemyList.size() < 10)
+	{
+		Enemy e;
+		e.init(renderer,"img/ball.png");
+		enemyList.push_back(e);
+	}*/
 	setTargetToPlayer(player);
 	move();
 }

@@ -54,7 +54,7 @@ void Bullet::move()
 		
 		f_rect.x += cos(angle) * speed;
 		f_rect.y += sin(angle) * speed;
-		distance--;
+		distance-=speed;
 	}
 
 }

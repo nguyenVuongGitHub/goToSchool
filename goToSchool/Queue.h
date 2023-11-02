@@ -1,9 +1,9 @@
-#pragma once
-#include "Node.h"
+//#pragma once
 
 #ifndef QUEUE_H
 #define QUEUE_H
 
+#include "Node.h"
 
 
 
@@ -17,6 +17,7 @@ private:
 	Node<T>* tail;
 	short size;
 public:
+	Node<T>* getHead() { return head; }
 	Queue()
 	{
 		head = NULL;

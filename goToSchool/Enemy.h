@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 
 #ifndef ENEMY_H
 #define ENEMY_H

@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #ifndef EVERYOBJECT_H
 #define EVERYOBJECT_H
 

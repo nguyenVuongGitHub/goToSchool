@@ -11,29 +11,57 @@ GameState::GameState() :
 	heightWindow(0),
 	numberWeaponHad(0),
 	curWeapon(0),
-	lastShotTime(0)
+	lastShotTime(0),
+	isMenuRunning(0)
 {
 }
 
-void GameState::init()
+void GameState::initData()
 {
 	widthWindow = 1080;
 	heightWindow = 1920;
 	mouseX = 0;
 	mouseY = 0;
 	isGameRunning = 1;
+	isMenuRunning = 1;
 	window = SDL_CreateWindow("game test", 0, 0, widthWindow, heightWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 	IMG_Init(IMG_INIT_PNG);
 	IMG_Init(IMG_INIT_JPG);
+	TTF_Init();	
+}
 
-	//background.init(renderer, "img/background.jpg");
-	//background.setRect({ 0,0,1920,1080});
+void GameState::menuMain()
+{
+	
+	initMenu();
+	
+	SDL_Event e;
+	while(isMenuRunning)
+	{
+		processInputMenu(e);
+
+		updateMenu();
+
+		collisionMenu();
+
+		renderMenu();
+
+		cleanRenderMenu();
+	}
+}
+
+/**
+* xử lý game loop
+*/
+
+void GameState::initGame()
+{
 	numberWeaponHad = 4;
 	curWeapon = 0;
 	Melle m1;
-	
-	Gun x1(USP, NUMBER_BULLET_USP,999999999,DISTANCE_USP,DAMAGE_USP);
+
+	Gun x1(USP, NUMBER_BULLET_USP, 999999999, DISTANCE_USP, DAMAGE_USP);
 	Gun x2(AK, NUMBER_BULLET_AK, 200, DISTANCE_AK, DAMAGE_AK);
 	Gun x3(MP5, NUMBER_BULLET_MP5, 100, DISTANCE_MP5, DAMAGE_MP5);
 
@@ -52,38 +80,30 @@ void GameState::init()
 	weaponList[2].gun = x2;
 	weaponList[3].gun = x3;
 
-
-	/*weaponList[0] = x1;
-	weaponList[1] = x2;
-	weaponList[2] = x3;
-	weaponList[0].init(renderer,"img/USP.png");
-	weaponList[1].init(renderer,"img/AK.png" );
-	weaponList[2].init(renderer, "img/MP5.png");*/
-
-
 	player.init(renderer, "img/tamGiac.png");
-}
 
-void GameState::run()
+}
+void GameState::runGameLoop()
 {
-	init();
+	initGame();
 
 	SDL_Event e;
+
 	while (isGameRunning)
 	{
-		processInput(e);
+		processInputGameLoop(e);
 
-		update();
+		updateGameLoop();
 		
-		collision();
+		collisionGameLoop();
 		
-		render();
+		renderGameLoop();
 		
-		cleanRender();
+		cleanRenderGameLoop();
 	}
-	freeAll();
+
 }
-void GameState::processInput(SDL_Event &e)
+void GameState::processInputGameLoop(SDL_Event &e)
 {
 
 	while (SDL_PollEvent(&e))
@@ -172,7 +192,8 @@ void GameState::processInput(SDL_Event &e)
 		}
 	}
 }
-void GameState::update()
+
+void GameState::updateGameLoop()
 {
 	
 	//  ============= update player ==============
@@ -185,12 +206,7 @@ void GameState::update()
 	}
 	
 	// ============== spawn enemy ===============
-	if (enemyList.size() < 10)
-	{
-		Enemy e;
-		e.init(renderer,"img/ball.png");
-		enemyList.push_back(e);
-	}
+	
 
 	// ============== update enemy ==============
 	for (int i = 0; i < enemyList.size(); i++)
@@ -215,7 +231,8 @@ void GameState::update()
 	for (int i = 0; i < bulletList.size(); i++)
 		bulletList[i].update();
 }
-void GameState::render()
+
+void GameState::renderGameLoop()
 {
 	// xóa render cũ đi
 	SDL_RenderClear(renderer);
@@ -243,7 +260,8 @@ void GameState::render()
 	// vẽ render lên màn hình
 	SDL_RenderPresent(renderer);
 }
-void GameState::cleanRender()
+
+void GameState::cleanRenderGameLoop()
 {
 	for (int i = 0; i < bulletList.size(); i++)
 	{
@@ -255,7 +273,8 @@ void GameState::cleanRender()
 	for (int i = 0; i < enemyList.size(); i++)
 		enemyList[i].freeRender(enemyList,i);
 }
-void GameState::collision()
+
+void GameState::collisionGameLoop()
 {
 	int x = enemyList.size();
 
@@ -304,6 +323,86 @@ void GameState::collision()
 		}
 	}
 }
+
+
+/**
+* Xử lý menu
+*/
+void GameState::initMenu()
+{
+	background.init(renderer, "img/background.jpg");
+	background.setRect({ 0,0,1920,1080});
+
+	t_title.init(renderer, "GO TO SCHOOL",92, widthWindow/2 + 100, 179);
+	t_play.init(renderer, "PLAY", 52,881, 369);
+	t_shop.init(renderer, "SHOP", 52,881, 559);
+	t_exit.init(renderer, "EXIT", 52,881, 749);
+
+}
+void GameState::processInputMenu(SDL_Event& e)
+{
+	while (SDL_PollEvent(&e))
+	{
+
+		isGameRunning = true;
+		if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LMASK)
+		{
+			if (t_play.getCollision())
+			{
+				runGameLoop();
+			}
+			else if (t_shop.getCollision())
+			{
+				// do something
+			}
+			else if (t_exit.getCollision())
+			{
+				isMenuRunning = false;
+			}
+			
+		}
+	}
+}
+void GameState::updateMenu()
+{
+	t_play.updateText(renderer,t_play.getColor(RED));
+	t_shop.updateText(renderer, t_play.getColor(RED));
+	t_exit.updateText(renderer, t_play.getColor(RED));
+
+}
+void GameState::renderMenu()
+{
+	SDL_RenderClear(renderer);
+
+	background.render(renderer);
+	t_title.render(renderer);
+	t_play.render(renderer);
+	t_shop.render(renderer);
+	t_exit.render(renderer);
+	
+	SDL_RenderPresent(renderer);
+}
+void GameState::cleanRenderMenu()
+{
+
+}
+void GameState::collisionMenu()
+{
+	SDL_GetMouseState(&mouseX, &mouseY);
+	if (t_play.checkCollisonWithMouse(mouseX, mouseY))
+		t_play.setCollision(true);
+	else if (t_shop.checkCollisonWithMouse(mouseX, mouseY))
+		t_shop.setCollision(true);
+	else if (t_exit.checkCollisonWithMouse(mouseX, mouseY))
+		t_exit.setCollision(true);
+	else
+	{
+		t_play.setCollision(false);
+		t_shop.setCollision(false);
+		t_exit.setCollision(false);
+	}
+}
+
 
 FlatVector GameState::FindArithmeticMean(vector<FlatVector> vertices)
 {

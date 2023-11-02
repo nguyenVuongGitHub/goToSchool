@@ -24,13 +24,12 @@ using namespace std;
 #define MP5 2
 
 #define SPEED_USP 25
-#define SPEED_AK 30
+#define SPEED_AK 35
 #define SPEED_MP5 40
 
-
-#define DISTANCE_USP 20
-#define DISTANCE_AK 25
-#define DISTANCE_MP5 22
+#define DISTANCE_USP 375
+#define DISTANCE_AK 525
+#define DISTANCE_MP5 600
 
 #define NUMBER_BULLET_USP 2
 #define NUMBER_BULLET_AK 5

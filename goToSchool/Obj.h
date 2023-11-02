@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 
 
 #ifndef OBJ_H
@@ -56,3 +56,4 @@ public:
 };
 
 #endif // !OBJ_H
+

@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #include <iostream>
 
 #ifndef NODE_H

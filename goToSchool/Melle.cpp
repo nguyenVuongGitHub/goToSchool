@@ -2,15 +2,20 @@
 
 void Melle::attack(int curXMouse , float rectPlayer)
 {
+	// 90 và -270 là góc phía dưới tính từ -90
+	//
+	//	       -90
+	// -speed      +speed			
+	//		 -270,90
+	//
 	if (angle == 90 || angle == -270) angle = -90;
-	cout << angle << endl;
-	if (angle <= 90 && isAttack && curXMouse < rectPlayer)
+
+	if ( isAttack && curXMouse < rectPlayer)
 	{
-		cout << isAttack << endl;
 		angle -= speed;
 	}
 	
-	else if (angle <= 90 && isAttack && curXMouse > rectPlayer)
+	else if ( isAttack && curXMouse > rectPlayer)
 	{
 		angle += speed;
 	}

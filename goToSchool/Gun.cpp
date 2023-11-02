@@ -1,11 +1,11 @@
 ﻿#include "Gun.h"
 
-void Gun::attack(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32 lastShotTime, const SDL_FRect& rectPlayer)
+void Gun::attack(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32 &lastShotTime, const SDL_FRect& rectPlayer)
 {
 	Uint32 curentTime = SDL_GetTicks();
 	Uint32 timeShot = curentTime - lastShotTime;
 	// điều kiện giới hạn tốc độ bắn sau mỗi 200ms và tổng số lượng đạn còn lại phải lớn hơn 0, và trong danh sách đạn phải bé hơn số đạn mỗi băng
-	if (/*timeShot >= 200 &&*/ totalBullets > 0 && bulletList.size() <= numberBullets)
+	if (timeShot >= 200 && totalBullets > 0 && bulletList.size() <= numberBullets)
 	{
 
 		int mouseX, mouseY;
@@ -70,7 +70,7 @@ void Gun::render(SDL_Renderer* renderer, const SDL_FRect &rectPlayer)
 		SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, NULL, SDL_FLIP_NONE);
 }
 
-void Gun::update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32 lastShotTime,const SDL_FRect& rectPlayer)
+void Gun::update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime,const SDL_FRect& rectPlayer)
 {
 	f_rect = rectPlayer;
 		

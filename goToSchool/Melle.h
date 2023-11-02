@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #ifndef MELLE_H
 #define MELLE_H
 

@@ -4,7 +4,8 @@
 int main(int argc, char *argv[])
 {
 	 GameState gameMain;
-	 gameMain.run();
-	 
+	 gameMain.initData();
+	 gameMain.menuMain();
+	 gameMain.freeAll();
 	return 0;
 }

@@ -1,4 +1,4 @@
-﻿#pragma once
+﻿//#pragma once
 
 #ifndef FLATVECTOR_H
 #define FLATVECTOR_H
