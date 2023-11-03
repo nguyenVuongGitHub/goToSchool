@@ -8,6 +8,8 @@
 #include "Melle.h"
 #include "EveryObject.h"
 #include "Text.h"
+#include "coin.h"
+#include "BulletDropped.h"
 using namespace std;
 enum typeWeapon
 {
@@ -35,7 +37,10 @@ private:
 	bool isGameRunning;
 	bool isMenuRunning;
 
-	
+	/**
+	* numberframe
+	*/
+	float frameCoin;
 	/**
 	* Thông tin người chơi và vũ khí
 	* 
@@ -48,6 +53,12 @@ private:
 	vector<Bullet> bulletList;
 	Uint32 lastShotTime;
 
+	long long money;
+	long long experience;
+	int lever;
+
+	vector<coin> coins;
+	vector<BulletDropped> bulletsDropped;
 	/**
 	* xử lý của game loop
 	*/
@@ -86,7 +97,7 @@ private:
 	*/
 
 	bool collisionEnemyWithEnemy(Enemy &p, Enemy& obj);
-	bool collisionBulletWithEnemy(SDL_FRect &r1, SDL_FRect& r2);
+	bool collisionTwoRect(SDL_FRect &r1, SDL_FRect& r2);
 	bool PolygonCollisionDetect(vector<FlatVector> vertices1, SDL_FRect& r1, vector<FlatVector> vertices2, SDL_FRect& r2);
 	bool CircleCollisionDetect(FlatVector center1, float radius1, SDL_FRect& r1, FlatVector center2, float radius2, SDL_FRect& r2);
 	bool CirclePolygonCollisionDetect(vector<FlatVector> vertices, SDL_FRect& r1, FlatVector centerCircle, float radius, SDL_FRect& r2);

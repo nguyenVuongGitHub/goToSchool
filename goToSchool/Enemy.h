@@ -4,6 +4,10 @@
 #define ENEMY_H
 #include "Character.h"
 #include "Player.h"
+#include "coin.h"
+#include "BulletDropped.h"
+#include <random>
+#include <time.h>
 
 class Enemy : public Character
 {
@@ -12,12 +16,14 @@ class Enemy : public Character
 	void move() override;
 	void spawn(int heightWindow, int widthWindow);
 	void setTargetToPlayer(Player& player);
+	void itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped);
+	int dropChance();
 public:
 	Enemy();
 	~Enemy();
 	void init(SDL_Renderer* renderer, string path);
 	void render(SDL_Renderer* renderer) override;
-	void freeRender(vector<Enemy>& enemyList, int i);
+	void freeRender(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped, vector<Enemy>& enemyList, int i);
 	void update(Player& player);
 };
 

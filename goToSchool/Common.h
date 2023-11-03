@@ -19,9 +19,10 @@ using namespace std;
 #define T_762mm 1
 #define T_900mm 2
 
-#define USP 0
-#define AK 1
-#define MP5 2
+#define KNIGHT = 0
+#define USP 1
+#define AK 2
+#define MP5 3
 
 #define SPEED_USP 25
 #define SPEED_AK 35

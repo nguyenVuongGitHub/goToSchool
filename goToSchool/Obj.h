@@ -22,6 +22,7 @@ private:
 protected:
 	SDL_Texture* texture;
 	SDL_Surface* surface;
+	SDL_Rect srcRect;
 	SDL_FRect f_rect;
 public:
 	vector<FlatVector> vertices;

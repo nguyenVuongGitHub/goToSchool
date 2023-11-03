@@ -33,12 +33,7 @@ void Enemy::init(SDL_Renderer* renderer,string path)
 }
 void Enemy::update(Player& player)
 {
-	/*if (enemyList.size() < 10)
-	{
-		Enemy e;
-		e.init(renderer,"img/ball.png");
-		enemyList.push_back(e);
-	}*/
+	
 	setTargetToPlayer(player);
 	move();
 }
@@ -77,15 +72,51 @@ void Enemy::setTargetToPlayer(Player &player)
 	angle = atan2(dy,dx);
 }
 
+void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped)
+{
+	/**
+	* why 17 and 11 ??
+	* because this is my birthday
+	*/
+	int x = dropChance();
+	//cout << "X : " << x << endl;
+	/*if (x == 17 || x == 11)
+	{*/
+		coin coin;
+		for (int i = 0; i <= 5; i++)
+		{
+			coin.init(renderer, "img//coin.png");
+			coin.setRect({ getRect().x+getRect().w/2 , getRect().y + getRect().h/2 ,64, 64}); // lấy vị trí là trung tâm của quái để phát ra
+			coin.setAngle(i*17 + (getRect().y + getRect().x)*11 + 2004); // góc đặt đại
+			coins.push_back(coin);
+		}
+	//}
+	if (x <= 10)
+	{
+		BulletDropped bd;
+		bd.init(renderer, "img//T_556mm.png");
+		bd.setRect({ getRect().x + getRect().w / 2 , getRect().y + getRect().h / 2 ,15 , 15 }); // lấy vị trí là trung tâm của quái để phát ra
+		bd.setType(AK);
+		bulletsDropped.push_back(bd);
+	}
+		
+}
+
+int Enemy::dropChance()
+{
+	return rand() % 31;
+}
+
 void Enemy::render(SDL_Renderer* renderer)
 {
 	SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, NULL, SDL_FLIP_NONE);
 }
 
-void Enemy::freeRender(vector<Enemy>& enemyList, int i)
+void Enemy::freeRender(SDL_Renderer* renderer, vector<coin>& coins,vector<BulletDropped> &bulletsDropped, vector<Enemy>& enemyList, int i)
 {
 	if (!enemyList[i].active)
 	{
+		itemDroped(renderer, coins,bulletsDropped);
 		enemyList.erase(enemyList.begin() + i);
 	}
 }

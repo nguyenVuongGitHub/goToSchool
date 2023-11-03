@@ -12,9 +12,12 @@ class Gun : public Weapon
 	short distance;
 	void attack(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime, const SDL_FRect& rectPlayer);
 public:
-	Gun() {};
+	Gun();
 	Gun(short type, short numbetBullets, long long totalBullets,short distance, short damage);
 	
+	long long getTotalBullets() { return totalBullets; }
+	void setTotalBullets(long long totalBullets) { this->totalBullets = totalBullets; }
+
 	void init(SDL_Renderer* renderer, string pathImg) override;
 	void render(SDL_Renderer* renderer, const SDL_FRect& rectPlayer);
 	void update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime, const SDL_FRect& rectPlayer);

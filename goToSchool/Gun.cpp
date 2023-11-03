@@ -1,5 +1,11 @@
 ﻿#include "Gun.h"
-
+Gun::Gun()
+{
+	type = 0;
+	numberBullets = 0;
+	totalBullets = 0;
+	distance = 0;
+}
 void Gun::attack(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32 &lastShotTime, const SDL_FRect& rectPlayer)
 {
 	Uint32 curentTime = SDL_GetTicks();
