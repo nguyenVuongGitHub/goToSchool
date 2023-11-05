@@ -14,9 +14,8 @@ private:
     int tilemap[32][32];
 public:
     Map() {
-
+        tile_texture = NULL;
     }
-    Map(SDL_Renderer* renderer);
     ~Map();
 
     void loadTileTexture(SDL_Renderer* renderer, string filePath);
