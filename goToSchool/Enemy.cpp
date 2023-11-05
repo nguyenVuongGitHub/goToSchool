@@ -80,8 +80,8 @@ void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<Bulle
 	*/
 	int x = dropChance();
 	//cout << "X : " << x << endl;
-	/*if (x == 17 || x == 11)
-	{*/
+	if (x == 17 || x == 11)
+	{
 		coin coin;
 		for (int i = 0; i <= 5; i++)
 		{
@@ -90,7 +90,7 @@ void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<Bulle
 			coin.setAngle(i*17 + (getRect().y + getRect().x)*11 + 2004); // góc đặt đại
 			coins.push_back(coin);
 		}
-	//}
+	}
 	if (x <= 10)
 	{
 		BulletDropped bd;
