@@ -363,13 +363,13 @@ void GameState::collisionGameLoop()
 			//{
 			//	enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
 			//}
-			if (PolygonCollisionDetect(weaponList[curWeapon].melle.vertices, weaponList[curWeapon].melle.f_rect, enemyList[j].vertices, enemyList[j].f_rect))
+			if (CirclePolygonCollisionDetectPolygonStatic(weaponList[curWeapon].melle.vertices, weaponList[curWeapon].melle.f_rect, enemyList[j].center(), enemyList[j].getRadius(), enemyList[j].f_rect))
 			{
-				enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
+				//enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
 			}
 		}
 	}
-	// va chạm giữa người và item dropped
+	// va chạm giữa người và các vật thể xung quanh
 	for (int i = 0; i < coins.size(); i++)
 	{
 		SDL_FRect x,y;
@@ -393,6 +393,10 @@ void GameState::collisionGameLoop()
 			weaponList[ bulletsDropped[i].getType() ].gun.setTotalBullets(x);
 			bulletsDropped.erase(bulletsDropped.begin() + i);
 		}
+	}
+	for (int i = 0; i < enemyList.size(); i++)
+	{
+		CirclePolygonCollisionDetectPolygonStatic(player.vertices, player.f_rect, enemyList[i].center(), enemyList[i].getRadius(), enemyList[i].f_rect);
 	}
 }
 
@@ -953,6 +957,146 @@ bool GameState::CirclePolygonCollisionDetect(vector<FlatVector> vertices, SDL_FR
 
 	return true;
 }
+
+/**
+*
+* Va chạm giữa hình polygon (đa giác) và hình tròn, đồng thời thay đổi tọa độ của polygon và hình tròn có va chạm
+*
+* \Used Định lý sparating axis theorem (SAT) và định lý aixs aligned bounding box (AABB)
+*
+* \param vertices : Các đỉnh của polygon
+* \param r1 : tọa độ của polypon
+* \param centerCircle : Tâm của đường tròn
+* \param radius : Bán kình của đường tròn
+* \param r2 : tọa độ của đường tròn
+*
+* \returns Hàm này trả về true khi va chạm, false khi không va chạm
+*/
+bool GameState::CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> vertices, SDL_FRect& r1, FlatVector centerCircle, float radius, SDL_FRect& r2)
+{
+	float depth = INFINITY; // Khởi tạo độ sâu mà vật thể bị trùng
+	FlatVector normal;  // Khởi tạo vector đơn vị, thứ sẽ cho vật thể biết phải chạy ra hướng nào
+	float axisDepth;
+	for (int i = 0; i < vertices.size(); i++) // Duyệt tất cả các đỉnh của vật thể
+	{
+		// Tìm đường x để xét
+		FlatVector va = vertices[i];
+		FlatVector vb = vertices[(i + 1) % vertices.size()];
+		FlatVector edge = vb - va;
+		FlatVector axis(-edge.y, edge.x);
+
+		float min1 = INFINITY; // Khởi tạo biến lưu điểm thấp nhất cùa vật thể 2 khi chiếu lên đường axis vừa tạo
+		float max1 = -INFINITY; // Khởi tạo biến lưu điểm lớn nhất cùa vật thể 2 khi chiếu lên đường axis vừa tạo
+
+		for (int i = 0; i < vertices.size(); i++) // Duyệt qua các đỉnh của vật thể 1 để tìm điểm cao, thấp nhất
+		{
+			FlatVector v = vertices[i];
+			float proj = axis.Dot(v);
+			if (proj < min1) min1 = proj;
+			if (proj > max1) max1 = proj;
+		}
+
+		float min2; // Khởi tạo biến lưu điểm thấp nhất cùa vật thể 2 khi chiếu lên đường axis vừa tạo
+		float max2; // Khởi tạo biến lưu điểm lớn nhất cùa vật thể 2 khi chiếu lên đường axis vừa tạo
+
+		FlatVector direction = axis.Normalize(); // Lấy vector dơn vị chỉ phương hướng của trục đang xét(axis)
+		FlatVector directionRadius = direction * radius; // Vector tượng trưng cho vector từ tâm đường tròn tới đường tròn (vector bán kính)
+
+		FlatVector vectorRadius1 = centerCircle + directionRadius; // Vector bán kính thứ nhất
+		FlatVector vectorRadius2 = centerCircle - directionRadius; // Vector bán kính thứ hai có chiều ngược lại so với vector bán kính thứ nhất
+
+		min2 = axis.Dot(vectorRadius1); // Lấy giá trị độ lớn của vector bán kính khi chiếu lên trục axis đang xét
+		max2 = axis.Dot(vectorRadius2); // Lấy giá trị độ lớn của vector bán kính khi chiếu lên trục axis đang xét
+
+		if (min2 > max2) // Chính sửa lại giá trị. Vì khi lấy giá trị từ vector bán kính không thề biết trước cái nào sẽ lơn hơn hay bé hơn
+		{
+			// Đổi giá trị
+			float t = min2;
+			min2 = max2;
+			max2 = t;
+		}
+
+		if (min1 >= max2 || min2 >= max1) // Sử dụng định lý xác định va chạm AABB để kiểm tra va chạm 
+		{
+			return false; //Nếu không có va chạm thì trả về false;
+		}
+
+		axisDepth = std::min(max2 - min1, max1 - min2); // Cập nhật giá trị độ sâu mà 2 vật thể bị trùng
+
+		if (axisDepth < depth) // Nếu độ sâu của 2 vật thể nhỏ hơn độ sâu 2 vật thể lúc trước
+		{
+			depth = axisDepth; // Lưu lại giá trị bị trùng
+			normal = axis; // Lưu lại trục (axis) đang xét
+		}
+	}
+
+	int cpIndex = FindClosestPointFromPolygonToCircle(centerCircle, vertices); // Lấy thứ tự định gần tâm đường tròn nhất
+	FlatVector cp = vertices[cpIndex]; // Đỉnh gần tâm đường tròn nhất
+
+	FlatVector axis = cp - centerCircle; // Trục axit cần xét
+
+	float min1 = INFINITY; // Khởi tạo biến lưu điểm thấp nhất cùa vật thể 2 khi chiếu lên đường axis vừa tạo
+	float max1 = -INFINITY; // Khởi tạo biến lưu điểm lớn nhất cùa vật thể 2 khi chiếu lên đường axis vừa tạo
+
+	for (int i = 0; i < vertices.size(); i++) // Duyệt qua các đỉnh của vật thể 1 để tìm điểm cao, thấp nhất
+	{
+		FlatVector v = vertices[i];
+		float proj = axis.Dot(v);
+		if (proj < min1) min1 = proj;
+		if (proj > max1) max1 = proj;
+	}
+
+	float min2; // Khởi tạo biến lưu điểm thấp nhất cùa vật thể 2 khi chiếu lên đường axis vừa tạo
+	float max2; // Khởi tạo biến lưu điểm lớn nhất cùa vật thể 2 khi chiếu lên đường axis vừa tạo
+
+	FlatVector directionRadius = axis.Normalize() * radius; // Vector tượng trưng cho vector từ tâm đường tròn tới đường tròn (vector bán kính)
+
+	FlatVector vectorRadius1 = centerCircle + directionRadius; // Vector bán kính thứ nhất
+	FlatVector vectorRadius2 = centerCircle - directionRadius; // Vector bán kính thứ hai có chiều ngược lại so với vector bán kính thứ nhất
+
+	min2 = axis.Dot(vectorRadius1); // Lấy giá trị độ lớn của vector bán kính khi chiếu lên trục axis đang xét
+	max2 = axis.Dot(vectorRadius2); // Lấy giá trị độ lớn của vector bán kính khi chiếu lên trục axis đang xét
+
+	if (min2 > max2) // Chính sửa lại giá trị. Vì khi lấy giá trị từ vector bán kính không thề biết trước cái nào sẽ lơn hơn hay bé hơn
+	{
+		// Đổi giá trị
+		float t = min2;
+		min2 = max2;
+		max2 = t;
+	}
+
+	if (min1 >= max2 || min2 >= max1) // Sử dụng định lý xác định va chạm AABB để kiểm tra va chạm 
+	{
+		return false; //Nếu không có va chạm thì trả về false;
+	}
+
+	axisDepth = std::min(max2 - min1, max1 - min2); // Cập nhật giá trị độ sâu mà 2 vật thể bị trùng
+
+	if (axisDepth < depth) // Nếu độ sâu của 2 vật thể nhỏ hơn độ sâu 2 vật thể lúc trước
+	{
+		depth = axisDepth; // Lưu lại giá trị bị trùng
+		normal = axis; // Lưu lại trục (axis) đang xét
+	}
+
+	depth /= normal.Length(); // Chia độ dài của vector để lấy được tỉ số với vector đơn vị
+	normal = normal.Normalize(); // Chuyển đổi thành vector đơn vị
+	FlatVector centerPolygon = FindArithmeticMean(vertices); // Tính trung bình cộng để tìm vị trí trung tâm
+
+	FlatVector direction = centerCircle - centerPolygon; // Khởi tạo một vector có hướng từ tâm trong polygon tới tâm đường tròn
+
+	if (normal.Dot(direction) < 0) // Nếu hướng của normal và direction không trùng
+	{
+		normal = normal * -1; // Đổi hướng vector normal để xác định đúng hướng mà vật thể cần được đặt ra
+	}
+
+
+	// Sửa lại tọa độ của r2(vật thể hình tròn)
+	r2.x += normal.x * depth * 2 / 3;
+	r2.y += normal.y * depth * 2 / 3;
+
+	return true;
+}
+
 
 
 void GameState::freeAll()
