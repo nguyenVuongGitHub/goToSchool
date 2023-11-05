@@ -10,10 +10,11 @@ class Map {
 private:
     SDL_Texture* tile_texture;
     SDL_Rect tile[32][32];
-    SDL_Rect select_tile[54];
+    SDL_Rect select_tile[55];
     int tilemap[32][32];
 public:
-    Map() {
+    Map(){
+
         tile_texture = NULL;
     }
     ~Map();

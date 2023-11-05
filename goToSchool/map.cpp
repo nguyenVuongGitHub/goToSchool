@@ -37,27 +37,29 @@ void Map::setmap() {
 
 void Map::loadTileSet() {
     
+    //int tam1, tam2, tam3, tam4;
+    //tam1 = tilemap[0][0];
+    //tam2 = tilemap[0][1];
+    //tam3 = tilemap[0][2];
+    //tam4 = tilemap[0][3];
+    //int* p = &tilemap[0][0];
     int tmp = 1;
     for (int i = 0; i < 6; i++) {
         for (int j = 0; j < 9; j++) {
-            //cout << " vong j = " << j << " tilemap: " << tilemap[0][0] << "\n"; //11
-            //cout << " vong j = " << j << " tilemap: " << tilemap[0][1] << "\n"; //11
-            //cout << " vong j = " << j << " tilemap: " << tilemap[0][2] << "\n"; //11
-            //cout << " vong j = " << j << " tilemap: " << tilemap[0][3] << "\n"; //11
-
             select_tile[tmp].x = j * 64;
             select_tile[tmp].y = i * 64;
             select_tile[tmp].w = 64;
             select_tile[tmp].h = 64;
             tmp++;
-        }
-        
-        //cout << " vong i  = " << i << " tilemap: " << tilemap[0][0] << "\n"; //11
-        //cout << " vong i  = " << i << " tilemap: " << tilemap[0][1] << "\n"; //11
-        //cout << " vong i  = " << i << " tilemap: " << tilemap[0][2] << "\n"; //11
-        //cout << " vong i  = " << i << " tilemap: " << tilemap[0][3] << "\n"; //11
 
+        }
+        //cout << "i = " << i << " p = " << p << "    *p =" << *p << endl;
     }
+    /*tilemap[0][0] = tam1;
+    tilemap[0][1] = tam2;
+    tilemap[0][2] = tam3;
+    tilemap[0][3] = tam4;*/
+
     //cout << "sau cung : tilemap: " << tilemap[0][0] << "\n"; //512
     //cout << "sau cung : tilemap: " << tilemap[0][1] << "\n"; //320
     //cout << "sau cung : tilemap: " << tilemap[0][2] << "\n"; //64
@@ -80,14 +82,7 @@ void Map::InsertDataIntoTilemap(string filePath) {
         }
         //cout << endl;
     }
-
-    cout << tilemap[0][0] << " ";
-    cout << tilemap[0][1] << " ";
-    cout << tilemap[0][2] << " ";
-    cout << tilemap[0][3] << "\n";
-
     inputFile.close();
-    
 }
 
 void Map::loadMap(SDL_Renderer* map_renderer) {
