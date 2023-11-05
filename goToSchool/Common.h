@@ -10,6 +10,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <string>
+#include <fstream>
 using namespace std;
 
 // các định nghĩa chung khác

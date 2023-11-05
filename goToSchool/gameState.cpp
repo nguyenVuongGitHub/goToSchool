@@ -86,6 +86,8 @@ void GameState::initGame()
 
 	player.init(renderer, "img/tamGiac.png");
 
+	m.loadMap(renderer);
+
 }
 void GameState::runGameLoop()
 {
@@ -258,6 +260,7 @@ void GameState::renderGameLoop()
 {
 	// xóa render cũ đi
 	SDL_RenderClear(renderer);
+	m.render(renderer);
 
 	// tạo render danh sách đạn
 	for (int i = 0; i < bulletList.size(); i++)

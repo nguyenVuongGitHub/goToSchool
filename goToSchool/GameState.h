@@ -8,6 +8,7 @@
 #include "Melle.h"
 #include "EveryObject.h"
 #include "Text.h"
+#include "map.h"
 #include "coin.h"
 #include "BulletDropped.h"
 using namespace std;
@@ -72,8 +73,9 @@ private:
 	void collisionGameLoop();
 
 
-	/**
-	* xử lý của menu
+	/*chèn map*/
+	Map m;
+	/* xử lý của menu
 	* 
 	*/
 

@@ -140,6 +140,7 @@
     <ClCompile Include="BulletDroped.cpp" />
     <ClCompile Include="ItemDropped.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="map.cpp" />
     <ClCompile Include="Melle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Text.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="Gun.h" />
     <ClInclude Include="BulletDropped.h" />
     <ClInclude Include="ItemDropped.h" />
+    <ClInclude Include="map.h" />
     <ClInclude Include="Melle.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Obj.h" />
