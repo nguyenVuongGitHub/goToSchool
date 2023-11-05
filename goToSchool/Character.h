@@ -32,6 +32,18 @@ public:
 	void setHP(short h) { hp = h; };
 	bool getActive() { return active; };
 	void setActive(bool x) { active = x; };
+	FlatVector center() const
+	{
+		float x = 0, y = 0;
+		for (int i = 0; i < vertices.size(); i++)
+		{
+			x += vertices[i].x;
+			y += vertices[i].y;
+		}
+		x /= (float)vertices.size();
+		y /= (float)vertices.size();
+		return FlatVector(x, y);
+	}
 };
 
 

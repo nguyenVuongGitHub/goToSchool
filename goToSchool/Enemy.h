@@ -21,6 +21,7 @@ class Enemy : public Character
 public:
 	Enemy();
 	~Enemy();
+	float getRadius() const { return radius; }
 	void init(SDL_Renderer* renderer, string path);
 	void render(SDL_Renderer* renderer) override;
 	void freeRender(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped, vector<Enemy>& enemyList, int i);

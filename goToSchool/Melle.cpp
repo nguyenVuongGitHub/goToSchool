@@ -1,6 +1,6 @@
 ﻿#include "Melle.h"
 
-void Melle::attack(int curXMouse , float rectPlayer)
+void Melle::attack(int curXMouse , float centerPlayer)
 {
 	// 90 và -270 là góc phía dưới tính từ -90
 	//
@@ -8,19 +8,15 @@ void Melle::attack(int curXMouse , float rectPlayer)
 	// -speed      +speed			
 	//		 -270,90
 	//
-	if (angle == 90 || angle == -270) angle = -90;
-
-	if ( isAttack && curXMouse < rectPlayer)
-	{
-		angle -= speed;
-	}
-	
-	else if ( isAttack && curXMouse > rectPlayer)
-	{
-		angle += speed;
-	}
-
-	
+	//if((int)angle % 90 == 0 )
+	//if ( isAttack && curXMouse < centerPlayer)
+	//{
+	//	angle -= speed;
+	//}
+	//else if ( isAttack && curXMouse > centerPlayer)
+	//{
+	//	angle += speed;
+	//}
 }
 
 void Melle::init(SDL_Renderer* renderer, string pathImg)
@@ -29,40 +25,54 @@ void Melle::init(SDL_Renderer* renderer, string pathImg)
 	texture = SDL_CreateTextureFromSurface(renderer,surface);
 
 	f_rect = { 0,0,128,20 };
+	vertices.push_back({ f_rect.x, f_rect.y });
+	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y });
+	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y + f_rect.h });
+	vertices.push_back({ f_rect.x, f_rect.y + f_rect.h });
+
 }
 
-void Melle::render(SDL_Renderer* renderer, const SDL_FRect& rectPlayer)
+void Melle::render(SDL_Renderer* renderer, const SDL_FRect& rectPlayer, const FlatVector &centerPlayer)
 {
 	int curXMouse, curYMouse;
 	SDL_GetMouseState(&curXMouse, &curYMouse);
-
-	if (curXMouse <= rectPlayer.x + rectPlayer.w/2)
+	point = { 0, 0};
+	if (curXMouse <= centerPlayer.x)
 	{
-		f_rect.x = rectPlayer.x-20;
-		f_rect.y = rectPlayer.y + rectPlayer.h / 2;
-		point = { 0,0};
 		SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, &point, SDL_FLIP_VERTICAL);
-
-	}else
+	}
+	else
 	{
-		f_rect.x = rectPlayer.x + rectPlayer.w;
-		f_rect.y = rectPlayer.y + rectPlayer.h / 2;
-		point = { 0,0 };
 		SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, &point, SDL_FLIP_NONE);
 	}
 
 }
 
-void Melle::update(SDL_Renderer* renderer, const SDL_FRect &rectPlayer)
+void Melle::update(SDL_Renderer* renderer, const SDL_FRect &rectPlayer , const FlatVector &centerPlayer)
 {
 	int curXMouse, curYMouse;
 	SDL_GetMouseState(&curXMouse, &curYMouse);
+	//Updating rect as default
+	f_rect = { centerPlayer.x,centerPlayer.y,128,20 };
+	//Updating vertices
+	vertices[0] = { f_rect.x, f_rect.y };
+	vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
+	vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h };
+	vertices[3] = { f_rect.x, f_rect.y + f_rect.h };
+	if (!isAttack)
+	{
+		float deltaX = curXMouse - centerPlayer.x;
+		float deltaY = curYMouse - centerPlayer.y;
+		// tính góc giữa người chơi và chuột, and also convert radians to degrees
+		angle = atan2(deltaY, deltaX) * 180 / M_PI;
+	}
+	//Tranforming position from rotation
+	vertices[0] = vertices[0].ClockwiseTransform(centerPlayer, angle);
+	vertices[1] = vertices[1].ClockwiseTransform(centerPlayer, angle);
+	vertices[2] = vertices[2].ClockwiseTransform(centerPlayer, angle);
+	vertices[3] = vertices[3].ClockwiseTransform(centerPlayer, angle);
+	//cout << centerPlayer.x << "\t" << centerPlayer.y << endl;
+	//cout << vertices[0].x << "\t" << vertices[0].y << endl;
 
-
-	//float deltaX = curXMouse - (rectPlayer.x + rectPlayer.w / 2);
-	//float deltaY = curYMouse - (rectPlayer.y + rectPlayer.h / 2);
-	//// tính góc giữa người chơi và chuột
-	//angle = atan2(deltaY, deltaX) * 180 / M_PI;
-
-	attack(curXMouse,rectPlayer.x + rectPlayer.w/2);
+	//attack(curXMouse,centerPlayer.x);
 }

@@ -67,8 +67,8 @@ void Enemy::spawn(int heightWindow, int widthWindow)
 
 void Enemy::setTargetToPlayer(Player &player)
 {
-	dx = player.getRect().x - f_rect.x;
-	dy = player.getRect().y - f_rect.y;
+	dx = player.f_rect.x - f_rect.x;
+	dy = player.f_rect.y - f_rect.y;
 	angle = atan2(dy,dx);
 }
 
@@ -86,8 +86,8 @@ void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<Bulle
 		for (int i = 0; i <= 5; i++)
 		{
 			coin.init(renderer, "img//coin.png");
-			coin.setRect({ getRect().x+getRect().w/2 , getRect().y + getRect().h/2 ,64, 64}); // lấy vị trí là trung tâm của quái để phát ra
-			coin.setAngle(i*17 + (getRect().y + getRect().x)*11 + 2004); // góc đặt đại
+			coin.f_rect = { f_rect.x+f_rect.w/2 , f_rect.y + f_rect.h/2 ,64, 64}; // lấy vị trí là trung tâm của quái để phát ra
+			coin.setAngle(i*17 + (f_rect.y + f_rect.x)*11 + 2004); // góc đặt đại
 			coins.push_back(coin);
 		}
 	}
@@ -95,7 +95,7 @@ void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<Bulle
 	{
 		BulletDropped bd;
 		bd.init(renderer, "img//T_556mm.png");
-		bd.setRect({ getRect().x + getRect().w / 2 , getRect().y + getRect().h / 2 ,15 , 15 }); // lấy vị trí là trung tâm của quái để phát ra
+		bd.f_rect = { f_rect.x + f_rect.w / 2 , f_rect.y + f_rect.h / 2 ,15 , 15 }; // lấy vị trí là trung tâm của quái để phát ra
 		bd.setType(AK);
 		bulletsDropped.push_back(bd);
 	}

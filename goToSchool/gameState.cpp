@@ -232,11 +232,11 @@ void GameState::updateGameLoop()
 	{
 		if (weaponList[i].type == MELLE)
 		{
-			weaponList[i].melle.update(renderer,player.getRect());
+			weaponList[i].melle.update(renderer,player.f_rect, player.center());
 		}
 		else {
 
-			weaponList[i].gun.update(renderer,bulletList,lastShotTime, player.getRect());
+			weaponList[i].gun.update(renderer,bulletList,lastShotTime, player.f_rect);
 		}
 
 	}
@@ -244,11 +244,11 @@ void GameState::updateGameLoop()
 	for (int i = 0; i < coins.size(); i++)
 	{
 		
-		coins[i].update(player.getRect());
+		coins[i].update(player.f_rect);
 	}
 	for (int i = 0; i < bulletsDropped.size(); i++)
 	{
-		bulletsDropped[i].update(player.getRect());
+		bulletsDropped[i].update(player.f_rect);
 	}
 
 	// ============== update danh sách đạn ==============
@@ -271,8 +271,8 @@ void GameState::renderGameLoop()
 	
 	// tạo render vũ khí
 	if(weaponList[curWeapon].type == GUN)
-		weaponList[curWeapon].gun.render(renderer, player.getRect());
-	else weaponList[curWeapon].melle.render(renderer, player.getRect());
+		weaponList[curWeapon].gun.render(renderer, player.f_rect);
+	else weaponList[curWeapon].melle.render(renderer, player.f_rect, player.center());
 	
 	// tạo render quái
 	for (int i = 0; i < enemyList.size(); i++)
@@ -318,35 +318,31 @@ void GameState::cleanRenderGameLoop()
 		if (!bulletsDropped[i].getActive())
 			bulletsDropped.erase(bulletsDropped.begin() + i);
 }
-
+// TODO change the way obj collision
 void GameState::collisionGameLoop()
 {
 	int x = enemyList.size();
 
 	// va chạm giữa quái và quái 
-	for (int i = 0; i < x-1; i++)
+	for (int i = 0; i < x - 1; i++)
 		for (int j = i + 1; j < enemyList.size(); j++)
-			collisionEnemyWithEnemy(enemyList[i],enemyList[j]);
+			CircleCollisionDetect(enemyList[i].center(), enemyList[i].getRadius(), enemyList[i].f_rect, enemyList[j].center(), enemyList[j].getRadius(), enemyList[j].f_rect);
+			//collisionEnemyWithEnemy(enemyList[i],enemyList[j]);
 		
 	// va chạm giữa đạn và quái
 	for (int i = 0; i < bulletList.size(); i++)
 	{
 		for (int j = 0; j < enemyList.size(); j++)
 		{
-			SDL_FRect x,y;
-			x = bulletList[i].getRect();
-			y = enemyList[j].getRect();
-
 			// nếu máu quái <= 0 thì xét active về lại false
 			if (enemyList[j].getHP() <= 0)
 				enemyList[j].setActive(0);
 			
 			// kiểm tra va chạm giữa đạn và quái
-			if (collisionTwoRect(x, y))
+			if (PolygonCollisionDetect(bulletList[i].vertices, bulletList[i].f_rect, enemyList[j].vertices, enemyList[j].f_rect))
 			{
 				bulletList[i].setActive(0);
 				enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].gun.getDamage());
-				
 			}
 		}
 	}
@@ -355,15 +351,19 @@ void GameState::collisionGameLoop()
 	{
 		for (int j = 0; j < enemyList.size(); j++)
 		{
-			SDL_FRect x, y;
+			//SDL_FRect x, y;
 			//x = weaponList[curWeapon].melle.getRect();
 
-			y = enemyList[j].getRect();
+			//y = enemyList[j].f_rect;
 
 			if (enemyList[j].getHP() <= 0)
 				enemyList[j].setActive(0);
 
-			if (collisionTwoRect(x, y))
+			//if (collisionTwoRect(x, y))
+			//{
+			//	enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
+			//}
+			if (PolygonCollisionDetect(weaponList[curWeapon].melle.vertices, weaponList[curWeapon].melle.f_rect, enemyList[j].vertices, enemyList[j].f_rect))
 			{
 				enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
 			}
@@ -373,8 +373,8 @@ void GameState::collisionGameLoop()
 	for (int i = 0; i < coins.size(); i++)
 	{
 		SDL_FRect x,y;
-		x = coins[i].getRect();
-		y = player.getRect();
+		x = coins[i].f_rect;
+		y = player.f_rect;
 		if (collisionTwoRect(x, y))
 		{
 			money++;
@@ -384,8 +384,8 @@ void GameState::collisionGameLoop()
 	for (int i = 0; i < bulletsDropped.size(); i++)
 	{
 		SDL_FRect x, y;
-		x = bulletsDropped[i].getRect();
-		y = player.getRect();
+		x = bulletsDropped[i].f_rect;
+		y = player.f_rect;
 		if (collisionTwoRect(x, y))
 		{
 			long long x = weaponList[bulletsDropped[i].getType()].gun.getTotalBullets();
@@ -403,7 +403,7 @@ void GameState::collisionGameLoop()
 void GameState::initMenu()
 {
 	background.init(renderer, "img/background.jpg");
-	background.setRect({ 0,0,1920,1080});
+	background.f_rect = { 0,0,1920,1080};
 
 	t_title.init(renderer, "GO TO SCHOOL",92, widthWindow/2 + 100, 179);
 	t_play.init(renderer, "PLAY", 52,881, 369);
@@ -597,16 +597,16 @@ bool GameState::collisionEnemyWithEnemy(Enemy& p, Enemy& obj)
 		normal = normal * -1; // Đổi hướng vector normal để xác định đúng hướng mà vật thể cần được đặt ra
 	}
 	float x1, x2, y1, y2;
-	x1 = p.getRect().x;
-	x2 = obj.getRect().x;
-	y1 = p.getRect().y;
-	y2 = obj.getRect().y;
+	x1 = p.f_rect.x;
+	x2 = obj.f_rect.x;
+	y1 = p.f_rect.y;
+	y2 = obj.f_rect.y;
 	x1 -= normal.x * depth / 2;
 	y1 -= normal.y * depth / 2;
 	x2 += normal.x * depth / 2;
 	y2 += normal.y * depth / 2;
-	p.setRect({ x1,y1,p.getRect().w,p.getRect().h });
-	obj.setRect({ x2,y2,obj.getRect().w,obj.getRect().h });
+	p.f_rect = { x1,y1,p.f_rect.w,p.f_rect.h };
+	obj.f_rect = { x2,y2,obj.f_rect.w,obj.f_rect.h };
 	/*p.getRect().x -= 
 	p.getRect().y -= 
 	obj.getRect().x += 
