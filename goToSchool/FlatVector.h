@@ -80,7 +80,19 @@ public:
 	// center là vị trí ở giữa
 	// angle là góc quay
 	// return về 1 FlatVector
-	FlatVector Transform(FlatVector center, float angle)
+	FlatVector ClockwiseTransform(FlatVector center, float angle)
+	{
+		//x1 s= x0cos(angle) – y0sin(angle)
+		//y1 = x0sin(angle) + y0cos(angle)
+		//float x1 = v.x * std::cos(angle) - v.y * std::sin(angle) + center.x;
+		//float y1 = v.x * std::sin(angle) + v.y * std::cos(angle) + center.y;
+		//convert angle from degrees to radians
+		angle = angle * M_PI / 180;
+		FlatVector tmp(((x - center.x) * std::cos(angle) - (y - center.y) * std::sin(angle)) + center.x
+			, (x - center.x) * std::sin(angle) + (y - center.y) * std::cos(angle) + center.y);
+		return tmp;
+	}
+	FlatVector AntiClockwiseTransform(FlatVector center, double angle)
 	{
 		//x1 s= x0cos(angle) – y0sin(angle)
 		//y1 = x0sin(angle) + y0cos(angle)

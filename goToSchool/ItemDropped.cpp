@@ -11,7 +11,7 @@ ItemDropped::ItemDropped()
 
 float ItemDropped::distanceFromPlayer(SDL_FRect rectPlayer)
 {
-	return sqrt(pow(rectPlayer.x - getRect().x, 2) + pow(rectPlayer.y - getRect().y, 2));
+	return sqrt(pow(rectPlayer.x - f_rect.x, 2) + pow(rectPlayer.y - f_rect.y, 2));
 }
 
 void ItemDropped::setTargetToPlayer(SDL_FRect rectPlayer)

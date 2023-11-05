@@ -29,6 +29,7 @@ public:
 	void desetMoveKey(int x); // set move là false
 	void render(SDL_Renderer* renderer) override;
 
+
 };
 
 #endif // !PLAYER_H

@@ -36,6 +36,10 @@ void Bullet::init(SDL_Renderer* renderer, short typeWeapon)
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
 	//set trạng thái hoạt động lÀ TRUE
 	active = 1;
+	vertices.push_back({ f_rect.x, f_rect.y });
+	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y });
+	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y + f_rect.h });
+	vertices.push_back({ f_rect.x, f_rect.y + f_rect.h });
 }
 
 void Bullet::render(SDL_Renderer* renderer)
@@ -55,8 +59,11 @@ void Bullet::move()
 		f_rect.x += cos(angle) * speed;
 		f_rect.y += sin(angle) * speed;
 		distance-=speed;
+		vertices[0] = { f_rect.x, f_rect.y };
+		vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
+		vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h };
+		vertices[3] = { f_rect.x, f_rect.y + f_rect.h };
 	}
-
 }
 void Bullet::update()
 {

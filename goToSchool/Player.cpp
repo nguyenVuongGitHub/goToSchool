@@ -21,6 +21,10 @@ void Player::init(SDL_Renderer* renderer, string pathImg)
 	crossSpeed = (speed * sqrt(2)) / 2;
 	hp = 100;
 	active = true;
+	vertices.push_back({ f_rect.x, f_rect.y });
+	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y });
+	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y + f_rect.h });
+	vertices.push_back({ f_rect.x, f_rect.y + f_rect.h });
 
 }
 //void Player::init(SDL_Renderer *renderer)
@@ -131,11 +135,11 @@ void Player::move()
 	// Update center point
 	//center = { (r.x + r.w) / 2, (r.y + r.h) / 2 };
 
-	// Update vertices
-	//vertices[0] = { r.x, r.y };
-	//vertices[1] = { r.x + r.w, r.y };
-	//vertices[2] = { r.x + r.w, r.y + r.h };
-	//vertices[3] = { r.x, r.y + r.h };
+	 //Update vertices
+	vertices[0] = { f_rect.x, f_rect.y };
+	vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
+	vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h };
+	vertices[3] = { f_rect.x, f_rect.y + f_rect.h };
 }
 
 void Player::attack(Gun &weapon)
@@ -152,13 +156,13 @@ void Player::attack(Gun &weapon)
 
 void Player::attack(Melle& weapon)
 {
-	if (isAttack)
-	{
-		weapon.setIsAttack(true);
-	}
-	else if (!isAttack && (weapon.getAngle() == 90 || weapon.getAngle() == -270)) {
-		weapon.setIsAttack(false);
-	}
+	//if (isAttack)
+	//{
+	//	weapon.setIsAttack(true);
+	//}
+	//else if (!isAttack && ((int)weapon.getAngle() % 90 == 0)) {
+	//	weapon.setIsAttack(false);
+	//}
 }
 
 void Player::render(SDL_Renderer* renderer)

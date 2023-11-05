@@ -23,8 +23,8 @@ protected:
 	SDL_Texture* texture;
 	SDL_Surface* surface;
 	SDL_Rect srcRect;
-	SDL_FRect f_rect;
 public:
+	SDL_FRect f_rect;
 	vector<FlatVector> vertices;
 
 	Object()
@@ -41,12 +41,12 @@ public:
 	virtual void render(SDL_Renderer* renderer) {
 
 	}
-	SDL_FRect getRect() {
-		return f_rect;
-	}
-	void setRect(SDL_FRect f_rect) {
-		this->f_rect = f_rect;
-	}
+	//SDL_FRect getRect() {
+	//	return f_rect;
+	//}
+	//void setRect(SDL_FRect f_rect) {
+	//	this->f_rect = f_rect;
+	//}
 	/*SDL_Texture* getTexture() {
 		return texture;
 	}
