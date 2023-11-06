@@ -24,7 +24,7 @@ void Melle::init(SDL_Renderer* renderer, string pathImg)
 	surface = IMG_Load(pathImg.c_str());
 	texture = SDL_CreateTextureFromSurface(renderer,surface);
 
-	f_rect = { 0,0,128,20 };
+	f_rect = { 0,0,64,10 };
 	vertices.push_back({ f_rect.x, f_rect.y });
 	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y });
 	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y + f_rect.h });
@@ -53,7 +53,7 @@ void Melle::update(SDL_Renderer* renderer, const SDL_FRect &rectPlayer , const F
 	int curXMouse, curYMouse;
 	SDL_GetMouseState(&curXMouse, &curYMouse);
 	//Updating rect as default
-	f_rect = { centerPlayer.x,centerPlayer.y,128,20 };
+	f_rect = { centerPlayer.x,centerPlayer.y,64,10 };
 	//Updating vertices
 	vertices[0] = { f_rect.x, f_rect.y };
 	vertices[1] = { f_rect.x + f_rect.w, f_rect.y };

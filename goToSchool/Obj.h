@@ -23,6 +23,7 @@ protected:
 	SDL_Texture* texture;
 	SDL_Surface* surface;
 	SDL_Rect srcRect;
+	SDL_FPoint point;
 public:
 	SDL_FRect f_rect;
 	vector<FlatVector> vertices;

@@ -16,14 +16,15 @@ GameState::GameState() :
 	money(0),
 	experience(0),
 	lever(0),
-	frameCoin(0)
+	frameCoin(0),
+	hadInit(0)
 {
 }
 
 void GameState::initData()
 {
-	widthWindow = 1080;
 	heightWindow = 1920;
+	widthWindow = 1080;
 	mouseX = 0;
 	mouseY = 0;
 	isGameRunning = 1;
@@ -61,40 +62,42 @@ void GameState::menuMain()
 
 void GameState::initGame()
 {
-	numberWeaponHad = 4;
-	curWeapon = 0;
-	Melle m1;
+	if (!hadInit)
+	{
+		numberWeaponHad = 4;
+		curWeapon = 0;
+		Melle m1;
 
-	Gun x1(USP, NUMBER_BULLET_USP, 999999999, DISTANCE_USP, DAMAGE_USP);
-	Gun x2(AK, NUMBER_BULLET_AK, 200, DISTANCE_AK, DAMAGE_AK);
-	Gun x3(MP5, NUMBER_BULLET_MP5, 100, DISTANCE_MP5, DAMAGE_MP5);
+		Gun x1(USP, NUMBER_BULLET_USP, 999999999, DISTANCE_USP, DAMAGE_USP);
+		Gun x2(AK, NUMBER_BULLET_AK, 200, DISTANCE_AK, DAMAGE_AK);
+		Gun x3(MP5, NUMBER_BULLET_MP5, 100, DISTANCE_MP5, DAMAGE_MP5);
 
-	m1.init(renderer, "img/knight.png");
-	x1.init(renderer, "img/USP.png");
-	x2.init(renderer, "img/AK.png");
-	x3.init(renderer, "img/MP5.png");
+		m1.init(renderer, "img/knight.png");
+		x1.init(renderer, "img/USP.png");
+		x2.init(renderer, "img/AK.png");
+		x3.init(renderer, "img/MP5.png");
 
-	weaponList[0].type = MELLE;
-	weaponList[1].type = GUN;
-	weaponList[2].type = GUN;
-	weaponList[3].type = GUN;
+		weaponList[0].type = MELLE;
+		weaponList[1].type = GUN;
+		weaponList[2].type = GUN;
+		weaponList[3].type = GUN;
 
-	weaponList[0].melle = m1;
-	weaponList[1].gun = x1;
-	weaponList[2].gun = x2;
-	weaponList[3].gun = x3;
+		weaponList[0].melle = m1;
+		weaponList[1].gun = x1;
+		weaponList[2].gun = x2;
+		weaponList[3].gun = x3;
 
-	player.init(renderer, "img/tamGiac.png");
+		player.init(renderer, "img/tamGiac.png");
 
-	m.loadMap(renderer);
-
+		m.loadMap(renderer);
+		hadInit = true;
+	}
 }
 void GameState::runGameLoop()
 {
 	initGame();
 
 	SDL_Event e;
-
 	while (isGameRunning)
 	{
 		processInputGameLoop(e);
@@ -216,15 +219,15 @@ void GameState::updateGameLoop()
 	
 	// ============== spawn enemy ===============
 	
-	if (enemyList.size() < 10)
-	{
-		Enemy e;
-		e.init(renderer,"img/ball.png");
-		enemyList.push_back(e);
-	}
+	//if (enemyList.size() < 10)
+	//{
+	//	Enemy e;
+	//	e.init(renderer,"img/ball.png");
+	//	enemyList.push_back(e);
+	//}
 	// ============== update enemy ==============
-	for (int i = 0; i < enemyList.size(); i++)
-		enemyList[i].update(player);
+	for (int i = 0; i < m.enemyList.size(); i++)
+		m.enemyList[i].update(player);
 
 
 	// ============== update weaponList ==============
@@ -236,7 +239,7 @@ void GameState::updateGameLoop()
 		}
 		else {
 
-			weaponList[i].gun.update(renderer,bulletList,lastShotTime, player.f_rect);
+			weaponList[i].gun.update(renderer,bulletList,lastShotTime, player.f_rect, player.center());
 		}
 
 	}
@@ -275,8 +278,8 @@ void GameState::renderGameLoop()
 	else weaponList[curWeapon].melle.render(renderer, player.f_rect, player.center());
 	
 	// tạo render quái
-	for (int i = 0; i < enemyList.size(); i++)
-		enemyList[i].render(renderer);
+	for (int i = 0; i < m.enemyList.size(); i++)
+		m.enemyList[i].render(renderer);
 
 	// render item dropped
 	
@@ -305,8 +308,8 @@ void GameState::cleanRenderGameLoop()
 		}
 	}
 	// xóa quái vật nếu như quái không còn hoạt động nữa
-	for (int i = 0; i < enemyList.size(); i++)
-		enemyList[i].freeRender(renderer,coins,bulletsDropped,enemyList,i);
+	for (int i = 0; i < m.enemyList.size(); i++)
+		m.enemyList[i].freeRender(renderer,coins,bulletsDropped, m.enemyList,i);
 
 
 	// xóa item nếu item không còn hoạt động nữa
@@ -318,58 +321,66 @@ void GameState::cleanRenderGameLoop()
 		if (!bulletsDropped[i].getActive())
 			bulletsDropped.erase(bulletsDropped.begin() + i);
 }
-// TODO change the way obj collision
+
 void GameState::collisionGameLoop()
 {
-	int x = enemyList.size();
+	int x = m.enemyList.size();
 
 	// va chạm giữa quái và quái 
 	for (int i = 0; i < x - 1; i++)
-		for (int j = i + 1; j < enemyList.size(); j++)
-			CircleCollisionDetect(enemyList[i].center(), enemyList[i].getRadius(), enemyList[i].f_rect, enemyList[j].center(), enemyList[j].getRadius(), enemyList[j].f_rect);
+		for (int j = i + 1; j < m.enemyList.size(); j++)
+			CircleCollisionDetect(m.enemyList[i].center(), m.enemyList[i].getRadius(), m.enemyList[i].f_rect, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect);
 			//collisionEnemyWithEnemy(enemyList[i],enemyList[j]);
 		
 	// va chạm giữa đạn và quái
 	for (int i = 0; i < bulletList.size(); i++)
 	{
-		for (int j = 0; j < enemyList.size(); j++)
+		for (int j = 0; j < m.enemyList.size(); j++)
 		{
 			// nếu máu quái <= 0 thì xét active về lại false
-			if (enemyList[j].getHP() <= 0)
-				enemyList[j].setActive(0);
+			if (m.enemyList[j].getHP() <= 0)
+				m.enemyList[j].setActive(0);
 			
 			// kiểm tra va chạm giữa đạn và quái
-			if (PolygonCollisionDetect(bulletList[i].vertices, bulletList[i].f_rect, enemyList[j].vertices, enemyList[j].f_rect))
+			if (PolygonCollisionDetect(bulletList[i].vertices, bulletList[i].f_rect, m.enemyList[j].vertices, m.enemyList[j].f_rect))
 			{
 				bulletList[i].setActive(0);
-				enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].gun.getDamage());
+				m.enemyList[j].setHP(m.enemyList[j].getHP() - weaponList[curWeapon].gun.getDamage());
 			}
 		}
 	}
-	// va chạm giữa kiếm và quái
+	// va chạm giữa vũ khí và quái
 	if (weaponList[curWeapon].type == MELLE)
 	{
-		for (int j = 0; j < enemyList.size(); j++)
+		for (int j = 0; j < m.enemyList.size(); j++)
 		{
 			//SDL_FRect x, y;
 			//x = weaponList[curWeapon].melle.getRect();
 
 			//y = enemyList[j].f_rect;
 
-			if (enemyList[j].getHP() <= 0)
-				enemyList[j].setActive(0);
+			if (m.enemyList[j].getHP() <= 0)
+				m.enemyList[j].setActive(0);
 
 			//if (collisionTwoRect(x, y))
 			//{
 			//	enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
 			//}
-			if (CirclePolygonCollisionDetectPolygonStatic(weaponList[curWeapon].melle.vertices, weaponList[curWeapon].melle.f_rect, enemyList[j].center(), enemyList[j].getRadius(), enemyList[j].f_rect))
+			if (CirclePolygonCollisionDetectPolygonStatic(weaponList[curWeapon].melle.vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect))
 			{
-				//enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
+				m.enemyList[j].setHP(m.enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
 			}
 		}
 	}
-	// va chạm giữa người và các vật thể xung quanh
+	if (weaponList[curWeapon].type == GUN)
+	{
+		for (int j = 0; j < m.enemyList.size(); j++)
+		{
+			CirclePolygonCollisionDetectPolygonStatic(weaponList[curWeapon].gun.vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect);
+		}
+	}
+	// Va chạm của người chơi
+	// Va chạm giữa người và tiền
 	for (int i = 0; i < coins.size(); i++)
 	{
 		SDL_FRect x,y;
@@ -381,6 +392,7 @@ void GameState::collisionGameLoop()
 			coins.erase(coins.begin() + i);
 		}
 	}
+	// Va chạm người chơi và item
 	for (int i = 0; i < bulletsDropped.size(); i++)
 	{
 		SDL_FRect x, y;
@@ -394,9 +406,23 @@ void GameState::collisionGameLoop()
 			bulletsDropped.erase(bulletsDropped.begin() + i);
 		}
 	}
-	for (int i = 0; i < enemyList.size(); i++)
+	// Va chạm người chơi và quái
+	for (int i = 0; i < m.enemyList.size(); i++)
 	{
-		CirclePolygonCollisionDetectPolygonStatic(player.vertices, player.f_rect, enemyList[i].center(), enemyList[i].getRadius(), enemyList[i].f_rect);
+		CirclePolygonCollisionDetectPolygonStatic(player.vertices, m.enemyList[i].center(), m.enemyList[i].getRadius(), m.enemyList[i].f_rect);
+	}
+	// Va chạm người chơi và tường
+	for (int i = 0; i < m.getWall().size(); i++)
+	{
+		PolygonCollisionDetectOneSatic(m.getWall()[i].vertices, player.vertices, player.f_rect);
+	}
+	//cout << m.getWall()[0].vertices[0].x << "\t" << m.getWall()[0].vertices[0].y << endl << endl;
+	for (int i = 0; i < m.getWall().size(); i++)
+	{
+		for (int j = 0; j < m.enemyList.size(); j++)
+		{
+			CirclePolygonCollisionDetectPolygonStatic(m.getWall()[i].vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect);
+		}
 	}
 }
 
@@ -790,6 +816,128 @@ bool GameState::PolygonCollisionDetect(vector<FlatVector> vertices1, SDL_FRect& 
 }
 
 /**
+*
+* Va chạm giữa các hình polygon (đa giác) và thay đổi tọa độ của các polygon có va chạm riêng polygon 1 không thay đổi
+*
+* \used Định lý sparating axis theorem (SAT) và định lý aixs aligned bounding box (AABB)
+*
+* \param vertices1 : Các đỉnh của polygon thứ nhất
+* \param vertices2 : Các đỉnh của polygon thứ hai
+* \param r2 : tọa độ của polypon thứ hai
+*
+* \returns Hàm này trả về true khi va chạm, false khi không va chạm
+*/
+bool GameState::PolygonCollisionDetectOneSatic(vector<FlatVector> vertices1, vector<FlatVector> vertices2, SDL_FRect& r2)
+{
+	float depth = INFINITY; // Khởi tạo độ sâu mà vật thể bị trùng
+	FlatVector normal; // Khởi tạo vector đơn vị, thứ sẽ cho vật thể biết phải chạy ra hướng nào
+	for (int i = 0; i < vertices1.size(); i++) // Duyệt tất cả các đỉnh của vật thể
+	{
+		// Tìm trục (axis) để xét
+		FlatVector va = vertices1[i];
+		FlatVector vb = vertices1[(i + 1) % vertices1.size()];
+		FlatVector edge = vb - va;
+		FlatVector axis(-edge.y, edge.x);
+
+		float min1 = INFINITY; // Khởi tạo biến lưu điểm thấp nhất cùa vật thể 2 khi chiếu lên đường axis vừa tạo
+		float max1 = -INFINITY; // Khởi tạo biến lưu điểm lớn nhất cùa vật thể 2 khi chiếu lên đường axis vừa tạo
+
+		for (int i = 0; i < vertices1.size(); i++) // Duyệt qua các đỉnh của vật thể 1 để tìm điểm cao, thấp nhất
+		{
+			float proj = axis.Dot(vertices1[i]); // Lấy giá trị của tích vô hướng = độ lớn bé của vector khi được chiếu lên trục (axis)
+			if (proj < min1) min1 = proj;
+			if (proj > max1) max1 = proj;
+		}
+
+		float min2 = INFINITY; // Khởi tạo biến lưu điểm thấp nhất cùa vật thể 1 khi chiếu lên đường axis vừa tạo
+		float max2 = -INFINITY; // Khởi tạo biến lưu điểm lớn nhất cùa vật thể 1 khi chiếu lên đường axis vừa tạo
+
+		for (int i = 0; i < vertices2.size(); i++) // Duyệt qua các đỉnh của vật thể 2 để tìm điểm cao, thấp nhất
+		{
+			float proj = axis.Dot(vertices2[i]); // Lấy giá trị của tích vô hướng = độ lớn bé của vector khi được chiếu lên trục (axis)
+			if (proj < min2) min2 = proj;
+			if (proj > max2) max2 = proj;
+		}
+
+		if (min1 >= max2 || min2 >= max1) // Sử dụng định lý xác định va chạm AABB để kiểm tra va chạm 
+		{
+			return false; //Nếu không có va chạm thì trả về false;
+		}
+
+		float axisDepth = std::min(max2 - min1, max1 - min2); // Khởi tạo cập nhật giá trị độ sâu mà 2 vật thể bị trùng
+
+		if (axisDepth < depth) // Nếu độ sâu của 2 vật thể nhỏ hơn độ sâu 2 vật thể lúc trước
+		{
+			depth = axisDepth; // Lưu lại giá trị bị trùng
+			normal = axis; // Lưu lại trục (axis) đang xét
+		}
+	}
+
+	// Y hệt như trên chỉ khác là so vật 2 với vật 1
+	for (int i = 0; i < vertices2.size(); i++)
+	{
+		// Tìm trục (axis) theo polygon thứ 2 để xét
+		FlatVector va = vertices2[i];
+		FlatVector vb = vertices2[(i + 1) % vertices2.size()];
+
+		FlatVector edge = vb - va;
+		FlatVector axis(edge.x, edge.y);
+		axis = axis.Normalize();
+
+		float min1 = INFINITY; // Khởi tạo biến lưu điểm thấp nhất cùa vật thể 1 khi chiếu lên đường axis vừa tạo
+		float max1 = -INFINITY; // Khởi tạo biến lưu điểm lớn nhất cùa vật thể 1 khi chiếu lên đường axis vừa tạo
+
+		for (int i = 0; i < vertices1.size(); i++) // Duyệt qua các đỉnh của vật thể 1 để tìm điểm cao, thấp nhất
+		{
+			float proj = axis.Dot(vertices1[i]); // Lấy giá trị của tích vô hướng = độ lớn bé của vector khi được chiếu lên trục (axis)
+			if (proj < min1) min1 = proj;
+			if (proj > max1) max1 = proj;
+		}
+
+		float min2 = INFINITY; // Khởi tạo biến lưu điểm thấp nhất cùa vật thể 1 khi chiếu lên đường axis vừa tạo
+		float max2 = -INFINITY; // Khởi tạo biến lưu điểm lớn nhất cùa vật thể 1 khi chiếu lên đường axis vừa tạo
+
+		for (int i = 0; i < vertices2.size(); i++) // Duyệt qua các đỉnh của vật thể 2 để tìm điểm cao, thấp nhất
+		{
+			float proj = axis.Dot(vertices2[i]); // Lấy giá trị của tích vô hướng = độ lớn bé của vector khi được chiếu lên trục (axis)
+			if (proj < min2) min2 = proj;
+			if (proj > max2) max2 = proj;
+		}
+
+		if (min1 >= max2 || min2 >= max1) // Sử dụng định lý xác định va chạm AABB để kiểm tra va chạm 
+		{
+			return false; //Nếu không có va chạm thì trả về false;
+		}
+		float axisDepth = std::min(max2 - min1, max1 - min2); // Khởi tạo cập nhật giá trị độ sâu mà 2 vật thể bị trùng
+
+		if (axisDepth < depth) // Nếu độ sâu của 2 vật thể nhỏ hơn độ sâu 2 vật thể lúc trước
+		{
+			depth = axisDepth; // Lưu lại giá trị bị trùng
+			normal = axis;  // Lưu lại trục (axis) đang xét
+		}
+	}
+
+	depth /= normal.Length(); // Chia độ dài của vector để lấy được tỉ số với vector đơn vị
+	normal = normal.Normalize(); // Chuyển đổi thành vector đơn vị
+	FlatVector centerA = FindArithmeticMean(vertices1); // Tính trung bình cộng để tìm vị trí trung tâm
+	FlatVector centerB = FindArithmeticMean(vertices2); // Tính trung bình cộng để tìm vị trí trung tâm
+
+	FlatVector direction = centerB - centerA; // Khởi tạo một vector có hướng từ điểm A trong vật thể 1 tới điểm B trong vật thể 2
+
+	if (normal.Dot(direction) < 0) // Nếu hướng của normal và direction không trùng
+	{
+		normal = normal * -1; // Đổi hướng vector normal để xác định đúng hướng mà vật thể cần được đặt ra
+	}
+
+
+	// Sửa lại tọa độ
+	r2.x += normal.x * depth ;
+	r2.y += normal.y * depth ;
+
+	return true;
+}
+
+/**
 * Tìm đỉnh gần tâm đường tròn nhất và trả về index của đỉnh đó
 *
 * \param centerCircle : Tâm của đường tròn
@@ -965,14 +1113,13 @@ bool GameState::CirclePolygonCollisionDetect(vector<FlatVector> vertices, SDL_FR
 * \Used Định lý sparating axis theorem (SAT) và định lý aixs aligned bounding box (AABB)
 *
 * \param vertices : Các đỉnh của polygon
-* \param r1 : tọa độ của polypon
 * \param centerCircle : Tâm của đường tròn
 * \param radius : Bán kình của đường tròn
 * \param r2 : tọa độ của đường tròn
 *
 * \returns Hàm này trả về true khi va chạm, false khi không va chạm
 */
-bool GameState::CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> vertices, SDL_FRect& r1, FlatVector centerCircle, float radius, SDL_FRect& r2)
+bool GameState::CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> vertices, FlatVector centerCircle, float radius, SDL_FRect& r2)
 {
 	float depth = INFINITY; // Khởi tạo độ sâu mà vật thể bị trùng
 	FlatVector normal;  // Khởi tạo vector đơn vị, thứ sẽ cho vật thể biết phải chạy ra hướng nào

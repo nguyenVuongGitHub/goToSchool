@@ -13,17 +13,17 @@ Enemy::~Enemy()
 	SDL_FreeSurface(surface);*/
 }
 
-void Enemy::init(SDL_Renderer* renderer,string path)
+void Enemy::init(int i, int j,SDL_Renderer* renderer,string path)
 {
 	Character::init(renderer, path);
-	f_rect = { -10,-10,30,30 };
+	f_rect = { (float)i * 64,(float)j * 64,30,30 };
 	hp = 30;
 	speed = 3;
 	active = 1;
 	radius = 15;
 
 	// 1080 and 1920 is width and height of window
-	spawn(1080,1920);
+	//spawn(1080,1920);
 
 	//center = { f_rect.x + f_rect.w / 2, f_rect.y + f_rect.h / 2 };
 	vertices.push_back({ f_rect.x, f_rect.y });
@@ -80,8 +80,8 @@ void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<Bulle
 	*/
 	int x = dropChance();
 	//cout << "X : " << x << endl;
-	if (x == 17 || x == 11)
-	{
+	//if (x == 17 || x == 11)
+	//{
 		coin coin;
 		for (int i = 0; i <= 5; i++)
 		{
@@ -90,7 +90,7 @@ void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<Bulle
 			coin.setAngle(i*17 + (f_rect.y + f_rect.x)*11 + 2004); // góc đặt đại
 			coins.push_back(coin);
 		}
-	}
+	//}
 	if (x <= 10)
 	{
 		BulletDropped bd;

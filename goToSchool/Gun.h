@@ -20,7 +20,7 @@ public:
 
 	void init(SDL_Renderer* renderer, string pathImg) override;
 	void render(SDL_Renderer* renderer, const SDL_FRect& rectPlayer);
-	void update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime, const SDL_FRect& rectPlayer);
+	void update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime, const SDL_FRect& rectPlayer, const FlatVector& centerPlayer);
 };
 
 #endif // !GUN_H

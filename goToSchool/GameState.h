@@ -50,7 +50,6 @@ private:
 	short numberWeaponHad;
 	short curWeapon;
 	WeaponList weaponList[9];
-	vector<Enemy> enemyList;
 	vector<Bullet> bulletList;
 	Uint32 lastShotTime;
 
@@ -63,7 +62,7 @@ private:
 	/**
 	* xử lý của game loop
 	*/
-
+	bool hadInit;
 	void initGame();
 	void runGameLoop();
 	void processInputGameLoop(SDL_Event &e);
@@ -101,9 +100,10 @@ private:
 	bool collisionEnemyWithEnemy(Enemy &p, Enemy& obj);
 	bool collisionTwoRect(SDL_FRect &r1, SDL_FRect& r2);
 	bool PolygonCollisionDetect(vector<FlatVector> vertices1, SDL_FRect& r1, vector<FlatVector> vertices2, SDL_FRect& r2);
+	bool PolygonCollisionDetectOneSatic(vector<FlatVector> vertices1, vector<FlatVector> vertices2, SDL_FRect& r2);
 	bool CircleCollisionDetect(FlatVector center1, float radius1, SDL_FRect& r1, FlatVector center2, float radius2, SDL_FRect& r2);
 	bool CirclePolygonCollisionDetect(vector<FlatVector> vertices, SDL_FRect& r1, FlatVector centerCircle, float radius, SDL_FRect& r2);
-	bool CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> vertices, SDL_FRect& r1, FlatVector centerCircle, float radius, SDL_FRect& r2);
+	bool CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> vertices, FlatVector centerCircle, float radius, SDL_FRect& r2);
 	FlatVector FindArithmeticMean(vector<FlatVector> vertices);
 
 public:

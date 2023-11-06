@@ -76,7 +76,7 @@ void Player::update(Melle& weapon)
 }
 void Player::move()
 {
-	
+
 	//slow moving
 	if (moveKey[SLOW])
 	{
@@ -140,6 +140,12 @@ void Player::move()
 	vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
 	vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h };
 	vertices[3] = { f_rect.x, f_rect.y + f_rect.h };
+
+	//for (int i = 0; i < vertices.size(); i++)
+	//{
+	//	cout << vertices[i].x << "\t" << vertices[i].y << endl;
+	//}
+	//cout << endl;
 }
 
 void Player::attack(Gun &weapon)

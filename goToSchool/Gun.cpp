@@ -62,32 +62,48 @@ void Gun::init(SDL_Renderer* renderer, string pathImg)
 
 	surface = IMG_Load(pathImg.c_str());
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
-	f_rect = { 0,0,64,64 };
+	f_rect = { 0,0,64,24 };
+
+	vertices.push_back({ f_rect.x, f_rect.y });
+	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y });
+	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y + f_rect.h});
+	vertices.push_back({ f_rect.x, f_rect.y + f_rect.h});
 }
 
 void Gun::render(SDL_Renderer* renderer, const SDL_FRect &rectPlayer)
 {
 	int curXMouse, curYMouse;
 	SDL_GetMouseState(&curXMouse, &curYMouse);
-		
+	point = { 0,0 };
 	if (curXMouse < rectPlayer.x)
-		SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, NULL, SDL_FLIP_VERTICAL);
+		SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, &point, SDL_FLIP_VERTICAL);
 	else 
-		SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, NULL, SDL_FLIP_NONE);
+		SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, &point, SDL_FLIP_NONE);
 }
 
-void Gun::update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime,const SDL_FRect& rectPlayer)
+void Gun::update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime,const SDL_FRect& rectPlayer, const FlatVector& centerPlayer)
 {
 	f_rect = rectPlayer;
 		
 	int curXMouse, curYMouse;
 	SDL_GetMouseState(&curXMouse, &curYMouse);
 	
-	
-	float deltaX = curXMouse - (rectPlayer.x + rectPlayer.w / 2);
-	float deltaY = curYMouse - (rectPlayer.y + rectPlayer.h / 2);
-	// tính góc giữa người chơi và chuột
+	//Updating rect as default
+	f_rect = { centerPlayer.x,centerPlayer.y,64,24 };
+	//Updating vertices
+	vertices[0] = { f_rect.x, f_rect.y };
+	vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
+	vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h};
+	vertices[3] = { f_rect.x, f_rect.y + f_rect.h};
+	float deltaX = curXMouse - centerPlayer.x;
+	float deltaY = curYMouse - centerPlayer.y;
+	// tính góc giữa người chơi và chuột, and also convert radians to degrees
 	angle = atan2(deltaY, deltaX) * 180 / M_PI;
+	//Tranforming position from rotation
+	vertices[0] = vertices[0].ClockwiseTransform(centerPlayer, angle);
+	vertices[1] = vertices[1].ClockwiseTransform(centerPlayer, angle);
+	vertices[2] = vertices[2].ClockwiseTransform(centerPlayer, angle);
+	vertices[3] = vertices[3].ClockwiseTransform(centerPlayer, angle);
 	
 	if (isAttack)
 		attack(renderer,bulletList,lastShotTime,rectPlayer);

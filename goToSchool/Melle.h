@@ -5,13 +5,12 @@
 #include "weapon.h"
 class Melle : public Weapon
 {
-	SDL_FPoint point;
 	void attack(int curXMouse, float rectPlayer);
 	
 public:
 	Melle()
 	{
-		damage = 2;
+		damage = 1;
 		speed = 15;
 		angle = 0;
 	}
