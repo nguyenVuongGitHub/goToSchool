@@ -11,6 +11,9 @@
 #include "map.h"
 #include "coin.h"
 #include "BulletDropped.h"
+#include "Collision.h"
+#include <thread>
+
 using namespace std;
 enum typeWeapon
 {
@@ -97,14 +100,6 @@ private:
 	* Xử lý va chạm sử dụng định lý SAT và AABB
 	*/
 
-	bool collisionEnemyWithEnemy(Enemy &p, Enemy& obj);
-	bool collisionTwoRect(SDL_FRect &r1, SDL_FRect& r2);
-	bool PolygonCollisionDetect(vector<FlatVector> vertices1, SDL_FRect& r1, vector<FlatVector> vertices2, SDL_FRect& r2);
-	bool PolygonCollisionDetectOneSatic(vector<FlatVector> vertices1, vector<FlatVector> vertices2, SDL_FRect& r2);
-	bool CircleCollisionDetect(FlatVector center1, float radius1, SDL_FRect& r1, FlatVector center2, float radius2, SDL_FRect& r2);
-	bool CirclePolygonCollisionDetect(vector<FlatVector> vertices, SDL_FRect& r1, FlatVector centerCircle, float radius, SDL_FRect& r2);
-	bool CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> vertices, FlatVector centerCircle, float radius, SDL_FRect& r2);
-	FlatVector FindArithmeticMean(vector<FlatVector> vertices);
 
 public:
 	GameState();
@@ -117,5 +112,23 @@ public:
 	//void collesion();
 	//bool checkCollesion(SDL_FRect &r1, SDL_FRect &r2);
 	
+
+	friend void collisionWall(GameState* gameState);
 };
+
+void collisionWall(GameState *gameState)
+{
+	while (gameState->isGameRunning)
+	{
+		//for (int i = 0; i < gameState->m.getWall().size(); i++)
+		//{
+		//	PolygonCollisionDetectOneSatic(gameState->m.getWall()[i].vertices, gameState->player.vertices, gameState->player.f_rect);
+		//	for (int j = 0; j < gameState->m.enemyList.size(); j++)
+		//	{
+		//		CirclePolygonCollisionDetectPolygonStatic(gameState->m.getWall()[i].vertices, gameState->m.enemyList[j].center(), gameState->m.enemyList[j].getRadius(), gameState->m.enemyList[j].f_rect);
+		//	}
+		//}
+		gameState->collisionGameLoop();
+	}
+}
 
