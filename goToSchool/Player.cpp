@@ -16,7 +16,7 @@ Player::~Player()
 void Player::init(SDL_Renderer* renderer, string pathImg)
 {
 	Character::init(renderer, pathImg);
-	f_rect = { 200,200,64,64 };
+	f_rect = { 200,200,32,64 };
 	speed = 5;
 	crossSpeed = (speed * sqrt(2)) / 2;
 	hp = 100;
@@ -27,6 +27,7 @@ void Player::init(SDL_Renderer* renderer, string pathImg)
 	vertices.push_back({ f_rect.x, f_rect.y + f_rect.h });
 
 }
+
 //void Player::init(SDL_Renderer *renderer)
 //{
 //	// Các tài nguyên cần thiết

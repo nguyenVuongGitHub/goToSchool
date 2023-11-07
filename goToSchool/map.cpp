@@ -69,7 +69,7 @@ void Map::loadTileSet() {
 
 bool Map::isWall(int tilemap)
 {
-    vector<int> choose = {5,7,8,9,16,18,25,26,27};
+    vector<int> choose = {7,8,9,16,18,25,26,27};
     if (find(choose.begin(), choose.end(), tilemap) != choose.end())
     {
         return true;
@@ -120,9 +120,9 @@ void Map::initWall()
 }
 
 void Map::loadMap(SDL_Renderer* renderer) {
-    InsertDataIntoTilemap(renderer, "map/demo.txt");
+    InsertDataIntoTilemap(renderer, "map/final.txt");
     
-    loadTileTexture(renderer, "map/map.png");
+    loadTileTexture(renderer, "map/map_final.png");
     loadTileSet();
     setmap();
     initWall();
