@@ -32,7 +32,7 @@ public:
 	void setHP(short h) { hp = h; };
 	bool getActive() { return active; };
 	void setActive(bool x) { active = x; };
-	FlatVector center() const
+	FlatVector center()
 	{
 		float x = 0, y = 0;
 		for (int i = 0; i < vertices.size(); i++)

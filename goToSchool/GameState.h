@@ -106,6 +106,8 @@ private:
 	bool CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> vertices, FlatVector centerCircle, float radius, SDL_FRect& r2);
 	FlatVector FindArithmeticMean(vector<FlatVector> vertices);
 
+	SDL_FRect BoxAround(const FlatVector& center);
+
 public:
 	GameState();
 	void initData();
