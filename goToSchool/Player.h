@@ -24,6 +24,7 @@ public:
 	void init(SDL_Renderer* renderer, string pathImg);
 	void update(Gun& weapon);
 	void update(Melle& weapon);
+	void MoveTo();
 
 	void setMoveKey(int x); // set move là true
 	void desetMoveKey(int x); // set move là false

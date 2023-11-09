@@ -17,8 +17,8 @@ void Player::init(SDL_Renderer* renderer, string pathImg)
 {
 	Character::init(renderer, pathImg);
 	f_rect = { 200,200,32,64 };
-	speed = 5;
-	crossSpeed = (speed * sqrt(2)) / 2;
+	speed = { 5,5 };
+	crossSpeed = 0;
 	hp = 100;
 	active = true;
 	vertices.push_back({ f_rect.x, f_rect.y });
@@ -77,61 +77,74 @@ void Player::update(Melle& weapon)
 }
 void Player::move()
 {
-
-	//slow moving
-	if (moveKey[SLOW])
-	{
-		speed = 2.1;
-		crossSpeed = (speed * sqrt(2)) / 2;
-	}
-	else if (moveKey[FAST]) //fast moving
-	{
-		speed = 10;
-		crossSpeed = (speed * sqrt(2)) / 2;
-	}
-	else {
-		// default moving
-		speed = 5;
-		crossSpeed = (speed * sqrt(2)) / 2;
-	}
+	speed.x = 0;
+	speed.y = 0;
+	////slow moving
+	//if (moveKey[SLOW])
+	//{
+	//	speed = 2.1;
+	//	crossSpeed = (speed * sqrt(2)) / 2;
+	//}
+	//else if (moveKey[FAST]) //fast moving
+	//{
+	//	speed = 10;
+	//	crossSpeed = (speed * sqrt(2)) / 2;
+	//}
+	//else {
+	//	// default moving
+	//	speed = 5;
+	//	crossSpeed = (speed * sqrt(2)) / 2;
+	//}
 
 	// base case move
 	if (moveKey[UP] && moveKey[RIGHT])
 	{
-		f_rect.y -= crossSpeed;
-		f_rect.x += crossSpeed;
+		speed.x = (-5 * sqrt(2)) / 2;
+		speed.y = (5 * sqrt(2)) / 2;
+		//f_rect.y += speed.x;
+		//f_rect.x += speed.y;
 	}
 	else if (moveKey[UP] && moveKey[LEFT])
 	{
-		f_rect.y -= crossSpeed;
-		f_rect.x -= crossSpeed;
+		speed.x = (-5 * sqrt(2)) / 2;
+		speed.y = (-5 * sqrt(2)) / 2;
+		//f_rect.y += speed.x;
+		//f_rect.x += speed.y;
 
 	}
 	else if (moveKey[DOWN] && moveKey[RIGHT])
 	{
-		f_rect.y += crossSpeed;
-		f_rect.x += crossSpeed;
+		speed.x = (5 * sqrt(2)) / 2;
+		speed.y = (5 * sqrt(2)) / 2;
+		//f_rect.y += speed.x;
+		//f_rect.x += speed.y;
 	}
 	else if (moveKey[DOWN] && moveKey[LEFT])
 	{
-		f_rect.y += crossSpeed;
-		f_rect.x -= crossSpeed;
+		speed.x = (-5 * sqrt(2)) / 2;
+		speed.y = (5 * sqrt(2)) / 2;
+		//f_rect.x += speed.x;
+		//f_rect.y += speed.y;
 	}
 	else if (moveKey[UP])
 	{
-		f_rect.y -= speed;
+		speed.y = -5;
+		//f_rect.y += speed.y;
 	}
 	else if (moveKey[DOWN])
 	{
-		f_rect.y += speed;
+		speed.y = 5;
+		//f_rect.y += speed.y;
 	}
 	else if (moveKey[LEFT])
 	{
-		f_rect.x -= speed;
+		speed.x = -5;
+		//f_rect.x += speed.x;
 	}
 	else if (moveKey[RIGHT])
 	{
-		f_rect.x += speed;
+		speed.x = 5;
+		//f_rect.x += speed.x;
 	}
 	// Update center point
 	//center = { (r.x + r.w) / 2, (r.y + r.h) / 2 };
@@ -147,6 +160,12 @@ void Player::move()
 	//	cout << vertices[i].x << "\t" << vertices[i].y << endl;
 	//}
 	//cout << endl;
+}
+
+void Player::MoveTo()
+{
+	f_rect.x += speed.x;
+	f_rect.y += speed.y;
 }
 
 void Player::attack(Gun &weapon)

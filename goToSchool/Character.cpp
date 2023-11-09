@@ -2,7 +2,7 @@
 
 Character::Character()
 {
-	speed = 0;
+	speed = { 0,0 };
 	crossSpeed = 0; // tốc độ khi đi chéo
 	hp = 0;
 	angle = 0;

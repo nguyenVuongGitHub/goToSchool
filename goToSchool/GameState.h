@@ -106,6 +106,15 @@ private:
 	bool CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> vertices, FlatVector centerCircle, float radius, SDL_FRect& r2);
 	FlatVector FindArithmeticMean(vector<FlatVector> vertices);
 
+	float sweptAABB(const SDL_FRect& object, const FlatVector objectSpeed, const SDL_FRect& other, FlatVector& result);
+
+	bool isColliding(const SDL_FRect& object, const SDL_FRect& other);
+
+	bool RayVsRect(const FlatVector& ray_origin, const FlatVector& ray_dir, const SDL_FRect* target, FlatVector& contact_normal, float& t_hit_near);
+	bool DynamicRectVsRect(const SDL_FRect* r_dynamic, const FlatVector& speedDynamic, const SDL_FRect r_static, FlatVector& contact_normal, float& contact_time);
+	bool ResolveDynamicRectVsRect(SDL_FRect* r_dynamic, const float fTimeStep, SDL_FRect* r_static);
+
+
 public:
 	GameState();
 	void initData();

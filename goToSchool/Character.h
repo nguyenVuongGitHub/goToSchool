@@ -8,7 +8,7 @@
 class Character : public Object
 {
 protected:
-	double speed;
+	FlatVector speed;
 	double crossSpeed; // tốc độ khi đi chéo
 	short hp; // máu
 	double angle;
@@ -32,6 +32,9 @@ public:
 	void setHP(short h) { hp = h; };
 	bool getActive() { return active; };
 	void setActive(bool x) { active = x; };
+	FlatVector getSpeed() { return speed; }
+	void setSpeed(FlatVector other) { speed.x = other.x; speed.y = other.y; };
+
 	FlatVector center() const
 	{
 		float x = 0, y = 0;

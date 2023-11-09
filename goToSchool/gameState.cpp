@@ -23,8 +23,8 @@ GameState::GameState() :
 
 void GameState::initData()
 {
-	heightWindow = 1920;
-	widthWindow = 1080;
+	heightWindow = 1080;
+	widthWindow = 1920;
 	mouseX = 0;
 	mouseY = 0;
 	isGameRunning = 1;
@@ -324,6 +324,7 @@ void GameState::cleanRenderGameLoop()
 
 void GameState::collisionGameLoop()
 {
+
 	int x = m.enemyList.size();
 
 	// va chạm giữa quái và quái 
@@ -381,6 +382,7 @@ void GameState::collisionGameLoop()
 	}
 	// Va chạm của người chơi
 	// Va chạm giữa người và tiền
+
 	for (int i = 0; i < coins.size(); i++)
 	{
 		SDL_FRect x,y;
@@ -412,18 +414,46 @@ void GameState::collisionGameLoop()
 		CirclePolygonCollisionDetectPolygonStatic(player.vertices, m.enemyList[i].center(), m.enemyList[i].getRadius(), m.enemyList[i].f_rect);
 	}
 	// Va chạm người chơi và tường
+
+	float ct;
 	for (int i = 0; i < m.getWall().size(); i++)
 	{
-		PolygonCollisionDetectOneSatic(m.getWall()[i].vertices, player.vertices, player.f_rect);
+		//FlatVector normal;
+		//float collisionTime = sweptAABB(player.f_rect, player.getSpeed(), m.getWall()[i].r, normal);
+		//if (collisionTime < 1.0f)
+		//{
+		//	player.setSpeed(player.getSpeed() * collisionTime);
+		//	player.f_rect.x += player.getSpeed().x;
+		//	player.f_rect.y += player.getSpeed().y;
+		//}
+		//if (DynamicRectVsRect(&player.f_rect, player.getSpeed(), m.getWall()[i].r, normal, ct))
+		//{
+		//	FlatVector tmp = { normal.x * abs(player.getSpeed().x) * (1 - ct), normal.y * abs(player.getSpeed().y) * (1 - ct) };
+		//	player.setSpeed(tmp);
+		//	SDL_RenderDrawLineF(renderer, player.center().x, player.center().y, player.center().x + player.getSpeed().x, player.center().y + player.getSpeed().y);
+		//}
+		if (collisionTwoRect(player.f_rect, m.getWall()[i].r))
+		{
+			player.setSpeed(player.getSpeed()*-1);
+		}
+		//float remainingtime = 1.0f - collisionTime;
+
+		//float dotprod = (player.getSpeed().x * normal.y + player.getSpeed().y * normal.x) * remainingtime;
+		//FlatVector tmp(dotprod * normal.y, dotprod * normal.x);
+		//player.setSpeed(tmp);
+		//cout << "sau khi xu ly : " << player.getSpeed().x << "\t" << player.getSpeed().y << endl;
+		/*cout << normal.x << "\t" << normal.y << endl;*/
+		//cout << collisionTime << endl;
 	}
 	//cout << m.getWall()[0].vertices[0].x << "\t" << m.getWall()[0].vertices[0].y << endl << endl;
-	for (int i = 0; i < m.getWall().size(); i++)
-	{
-		for (int j = 0; j < m.enemyList.size(); j++)
-		{
-			CirclePolygonCollisionDetectPolygonStatic(m.getWall()[i].vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect);
-		}
-	}
+	//for (int i = 0; i < m.getWall().size(); i++)
+	//{
+	//	for (int j = 0; j < m.enemyList.size(); j++)
+	//	{
+	//		CirclePolygonCollisionDetectPolygonStatic(m.getWall()[i].vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect);
+	//	}
+	//}
+	player.MoveTo();
 }
 
 
@@ -1244,11 +1274,187 @@ bool GameState::CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> ver
 	return true;
 }
 
-
-
 void GameState::freeAll()
 {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+}
+
+float GameState::sweptAABB(const SDL_FRect& object, const FlatVector objectSpeed, const SDL_FRect& other, FlatVector& result)
+{
+	float dxEntry, dyEntry;
+	float dxExit, dyExit;
+
+	// tìm khoảng cách các cạnh tương ứng
+	if (objectSpeed.x > 0.0f)
+	{
+		dxEntry = other.x - (object.x + object.w);
+		dxExit = (other.x + other.w) - object.x;
+	}
+	else
+	{
+		dxEntry = (other.x + other.w) - object.x;
+		dxExit = other.x - (object.x + object.w);
+	}
+
+	if (objectSpeed.y > 0.0f)
+	{
+		dyEntry = other.y - (object.y + object.h);
+		dyExit = (other.y + object.h) - object.y;
+	}
+	else
+	{
+		dyEntry = (other.y + other.h) - object.y;
+		dyExit = other.y - (object.y + object.h);
+	}
+
+	// tính thời gian từ khoảng cách tính được và vận tốc của đối tượng
+	
+	float txEntry, tyEntry;
+	float txExit, tyExit;
+
+	if (objectSpeed.x == 0.0f)
+	{
+		// đang đứng yên thì bằng vô cực (chia cho  0)
+		txEntry = -std::numeric_limits<float>::infinity();
+		txExit = std::numeric_limits<float>::infinity();
+	}
+	else
+	{
+		txEntry = dxEntry / objectSpeed.x;
+		txExit = dxExit / objectSpeed.x;
+	}
+
+	if (objectSpeed.y == 0.0f)
+	{
+		tyEntry = -std::numeric_limits<float>::infinity();
+		tyExit = std::numeric_limits<float>::infinity();
+	}
+	else
+	{
+		tyEntry = dyEntry / objectSpeed.y;
+		tyExit = dyExit / objectSpeed.y;
+	}
+
+	// thời gian va chạm là thời gian lớn nhất của 2 trục (2 trục phải cùng tiếp xúc thì mới va chạm)
+	float entryTime = max(txEntry, tyEntry);
+	// thời gian hết va chạm là thời gian của 2 trục, (1 cái ra khỏi là object hết va chạm)
+	float exitTime = min(txExit, tyExit);
+	// kiểm tra xem có thể va chạm không, mình xét ngược lại cho nhanh
+	if (entryTime > exitTime || (txEntry < 0.0f && tyEntry < 0.0f) || txEntry > 1.0f || tyEntry > 1.0f)
+	{
+		result.x = 0.0f;
+		result.y = 0.0f;
+		//cout << "enter this" << endl;
+		return 1.0f;
+	}
+	else
+	{
+		// lấy hướng va chạm
+		if (txEntry > tyEntry)
+		{
+			if (dxEntry < 0.0f)
+			{
+				result = { 1, 0 };
+			}
+			else
+			{
+				result = { -1, 0 };
+			}
+		}
+		else
+		{
+			if (dyEntry < 0.0f)
+			{
+				result = { 0, 1 };
+			}
+			else
+			{
+				result = { 0, -1 };
+			}
+		}
+		return entryTime;
+	}
+}
+
+bool GameState::isColliding(const SDL_FRect& object, const SDL_FRect& other)
+{
+	float left = other.x - (object.x + object.w);
+	float top = (other.y + other.h) - object.y;
+	float right = (other.x + other.w) - object.x;
+	float bottom = other.y - (object.y + object.h);
+
+	// mình xét ngược lại cho nhanh hơn
+	return !(left > 0 || right < 0 || top < 0 || bottom > 0);
+}
+
+bool GameState::RayVsRect(const FlatVector& ray_origin, const FlatVector& ray_dir, const SDL_FRect* target, FlatVector& contact_normal, float& t_hit_near)
+{
+	contact_normal = { 0,0 };
+
+	FlatVector invdir = { 1.0f / ray_dir.x, 1.0f / ray_dir.y };
+
+	FlatVector t_near = { ((target->x - ray_origin.x) * invdir.x), ((target->y - ray_origin.y)* invdir.y) };
+	FlatVector t_far = { ((target->x + target->w - ray_origin.x) * invdir.x), ((target->y + target->h - ray_origin.y) * invdir.y) };
+
+	if (std::isnan(t_far.y) || std::isnan(t_far.x)) return false;
+	if (std::isnan(t_near.y) || std::isnan(t_near.x)) return false;
+
+	if (t_near.x > t_far.y || t_near.y > t_far.x) return false;
+
+	t_hit_near = std::max(t_near.x, t_near.y);
+
+	float t_hit_far = std::min(t_far.x, t_far.y);
+
+	if (t_hit_far < 0) return false;
+
+	if (t_near.x > t_near.y)
+	{
+		if (invdir.x < 0)
+		{
+			contact_normal = { 1,0 };
+		}
+		else
+		{
+			contact_normal = { -1,0 };
+		}
+	}
+	else if (t_near.x < t_near.y)
+	{
+		if (invdir.y < 0)
+		{
+			contact_normal = { 0,1 };
+		}
+		else
+		{
+			contact_normal = { 0,-1 };
+		}
+	}
+	return false;
+}
+bool GameState::DynamicRectVsRect(const SDL_FRect* r_dynamic, const FlatVector& speedDynamic, const SDL_FRect r_static, FlatVector& contact_normal, float& contact_time)
+{
+	if (speedDynamic.x == 0 && speedDynamic.y == 0) return false;
+	SDL_FRect expanded_target;
+	expanded_target.x = r_static.x - r_dynamic->w / 2;
+	expanded_target.y = r_static.y - r_dynamic->h / 2;
+	expanded_target.w = r_static.w + r_dynamic->w / 2;
+	expanded_target.h = r_static.h + r_dynamic->h / 2;
+
+	FlatVector tmp = { r_dynamic->x + r_dynamic->w / 2, r_dynamic->y + r_dynamic->h / 2 };
+	//FlatVector tmp2 = { speedDynamic.x * fTimeStep, speedDynamic.y *fTimeStep };
+	if (RayVsRect(tmp, speedDynamic, &expanded_target, contact_normal, contact_time))
+	{
+		return (contact_time >= 0.0f && contact_time < 1.0f);
+	}
+	else
+	{
+		return false;
+	}
+
+}
+bool GameState::ResolveDynamicRectVsRect(SDL_FRect* r_dynamic, const float fTimeStep, SDL_FRect* r_static)
+{
+	return false;
 }
