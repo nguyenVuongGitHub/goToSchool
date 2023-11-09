@@ -16,9 +16,8 @@ Player::~Player()
 void Player::init(SDL_Renderer* renderer, string pathImg)
 {
 	Character::init(renderer, pathImg);
-	f_rect = { 320,0,32,64 };
-	speed = 5;
-	crossSpeed = (speed * sqrt(2)) / 2;
+	f_rect = { 200,200,32,64 };
+	speed = { 0,0 };
 	hp = 100;
 	active = true;
 	vertices.push_back({ f_rect.x, f_rect.y });
@@ -77,61 +76,54 @@ void Player::update(Melle& weapon)
 }
 void Player::move()
 {
-
+	speed = { 0,0 };
 	//slow moving
 	if (moveKey[SLOW])
 	{
-		speed = 2.1;
-		crossSpeed = (speed * sqrt(2)) / 2;
+		speed.x = 2.1;
+		speed.y = 2.1;
 	}
 	else if (moveKey[FAST]) //fast moving
 	{
-		speed = 10;
-		crossSpeed = (speed * sqrt(2)) / 2;
+		speed.x = 10;
+		speed.y = 10;
 	}
-	else {
-		// default moving
-		speed = 5;
-		crossSpeed = (speed * sqrt(2)) / 2;
-	}
-
 	// base case move
 	if (moveKey[UP] && moveKey[RIGHT])
 	{
-		f_rect.y -= crossSpeed;
-		f_rect.x += crossSpeed;
+		speed.x = 5 * sqrt(2) / 2;
+		speed.y = -5 * sqrt(2) / 2;
 	}
 	else if (moveKey[UP] && moveKey[LEFT])
 	{
-		f_rect.y -= crossSpeed;
-		f_rect.x -= crossSpeed;
-
+		speed.x = -5 * sqrt(2) / 2;
+		speed.y = -5 * sqrt(2) / 2;
 	}
 	else if (moveKey[DOWN] && moveKey[RIGHT])
 	{
-		f_rect.y += crossSpeed;
-		f_rect.x += crossSpeed;
+		speed.x = 5 * sqrt(2) / 2;
+		speed.y = 5 * sqrt(2) / 2;
 	}
 	else if (moveKey[DOWN] && moveKey[LEFT])
 	{
-		f_rect.y += crossSpeed;
-		f_rect.x -= crossSpeed;
+		speed.x = -5 * sqrt(2) / 2;
+		speed.y = 5 * sqrt(2) / 2;
 	}
 	else if (moveKey[UP])
 	{
-		f_rect.y -= speed;
+		speed.y = -5;
 	}
 	else if (moveKey[DOWN])
 	{
-		f_rect.y += speed;
+		speed.y = 5;
 	}
 	else if (moveKey[LEFT])
 	{
-		f_rect.x -= speed;
+		speed.x = -5;
 	}
 	else if (moveKey[RIGHT])
 	{
-		f_rect.x += speed;
+		speed.x = 5;
 	}
 	// Update center point
 	//center = { (r.x + r.w) / 2, (r.y + r.h) / 2 };
@@ -147,6 +139,12 @@ void Player::move()
 	//	cout << vertices[i].x << "\t" << vertices[i].y << endl;
 	//}
 	//cout << endl;
+}
+
+void Player::MoveTo()
+{
+	f_rect.x += speed.x;
+	f_rect.y += speed.y;
 }
 
 void Player::attack(Gun &weapon)

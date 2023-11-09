@@ -18,7 +18,7 @@ void Enemy::init(int i, int j,SDL_Renderer* renderer,string path)
 	Character::init(renderer, path);
 	f_rect = { (float)i * 64,(float)j * 64,30,30 };
 	hp = 30;
-	speed = 3;
+	speed = { 3,3 };
 	active = 1;
 	radius = 15;
 
@@ -42,8 +42,8 @@ void Enemy::move()
 {
 	if (active)
 	{
-		f_rect.x += cos(angle) * speed;
-		f_rect.y += sin(angle) * speed;
+		f_rect.x += cos(angle) * speed.x;
+		f_rect.y += sin(angle) * speed.y;
 
 		vertices[0] = { f_rect.x, f_rect.y };
 		vertices[1] = { f_rect.x + f_rect.w, f_rect.y };

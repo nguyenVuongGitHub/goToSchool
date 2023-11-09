@@ -99,7 +99,6 @@ private:
 
 	vector<FlatVector> EnemyVsWall;
 	vector<FlatVector> EnemyVsEnemy;
-	vector<int> PlayerVsWall;
 	vector<int> PlayerVsEnemy;
 	
 
@@ -117,6 +116,9 @@ private:
 	bool CirclePolygonCollisionDetect(vector<FlatVector> vertices, SDL_FRect& r1, FlatVector centerCircle, float radius, SDL_FRect& r2);
 	bool CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> vertices, FlatVector centerCircle, float radius, SDL_FRect& r2);
 	FlatVector FindArithmeticMean(vector<FlatVector> vertices);
+
+	bool RayVsRect(const FlatVector& ray_origin, const FlatVector& ray_dir, const SDL_FRect* target, FlatVector& contact_normal, float& t_hit_near);
+	bool DynamicRectVsRect(const SDL_FRect* r_dynamic, const FlatVector& speedDynamic, const SDL_FRect r_static, FlatVector& contact_normal, float& contact_time);
 
 public:
 	GameState();

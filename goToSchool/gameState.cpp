@@ -414,11 +414,14 @@ void GameState::collisionGameLoop()
 		CirclePolygonCollisionDetectPolygonStatic(player.vertices, m.enemyList[*i].center(), m.enemyList[*i].getRadius(), m.enemyList[*i].f_rect);
 	}
 	// Va chạm người chơi và tường
-	if (!PlayerVsWall.empty())
+	float ct = 0;
+	for (auto i = 0; i<m.getWall().size(); i++)
 	{
-		for (auto i = PlayerVsWall.begin(); i!=PlayerVsWall.end(); i++)
+		FlatVector normal;
+		if (DynamicRectVsRect(&player.f_rect, player.getSpeed(), m.getWall()[i].r, normal, ct))
 		{
-			PolygonCollisionDetectOneSatic(m.getWall()[*i].vertices, player.vertices, player.f_rect);
+			player.setSpeed({ 0,0 });
+			cout << "va cham" << endl;
 		}
 	}
 	//cout << m.getWall()[0].vertices[0].x << "\t" << m.getWall()[0].vertices[0].y << endl << endl;
@@ -429,6 +432,7 @@ void GameState::collisionGameLoop()
 			CirclePolygonCollisionDetectPolygonStatic(m.getWall()[it->x].vertices, m.enemyList[it->y].center(), m.enemyList[it->y].getRadius(), m.enemyList[it->y].f_rect);
 		}
 	}
+	player.MoveTo();
 }
 
 
@@ -1261,6 +1265,75 @@ void GameState::freeAll()
 }
 
 
+bool GameState::RayVsRect(const FlatVector& ray_origin, const FlatVector& ray_dir, const SDL_FRect* target, FlatVector& contact_normal, float& t_hit_near)
+{
+	contact_normal = { 0,0 };
+
+	FlatVector invdir = { 1.0f / ray_dir.x, 1.0f / ray_dir.y };
+
+	FlatVector t_near = { ((target->x - ray_origin.x) * invdir.x), ((target->y - ray_origin.y) * invdir.y) };
+	FlatVector t_far = { ((target->x + target->w - ray_origin.x) * invdir.x), ((target->y + target->h - ray_origin.y) * invdir.y) };
+
+	if (std::isnan(t_far.y) || std::isnan(t_far.x)) return false;
+	if (std::isnan(t_near.y) || std::isnan(t_near.x)) return false;
+
+	if (t_near.x > t_far.x) std::swap(t_near.x, t_far.x);
+	if (t_near.y > t_far.y) std::swap(t_near.y, t_far.y);
+
+	if (t_near.x > t_far.y || t_near.y > t_far.x) return false;
+
+	t_hit_near = std::max(t_near.x, t_near.y);
+
+	float t_hit_far = std::min(t_far.x, t_far.y);
+
+	if (t_hit_far < 0) return false;
+
+	if (t_near.x > t_near.y)
+	{
+		if (ray_dir.x < 0)
+		{
+			contact_normal = { 1,0 };
+		}
+		else
+		{
+			contact_normal = { -1,0 };
+		}
+	}
+	else if (t_near.x < t_near.y)
+	{
+		if (ray_dir.y < 0)
+		{
+			contact_normal = { 0,1 };
+		}
+		else
+		{
+			contact_normal = { 0,-1 };
+		}
+	}
+	return true;
+}
+bool GameState::DynamicRectVsRect(const SDL_FRect* r_dynamic, const FlatVector& speedDynamic, const SDL_FRect r_static, FlatVector& contact_normal, float& contact_time)
+{
+	if (speedDynamic.x == 0 && speedDynamic.y == 0) return false;
+	SDL_FRect expanded_target;
+	expanded_target.x = r_static.x - r_dynamic->w / 2;
+	expanded_target.y = r_static.y - r_dynamic->h / 2;
+	expanded_target.w = r_static.w + r_dynamic->w / 2;
+	expanded_target.h = r_static.h + r_dynamic->h / 2;
+
+	FlatVector tmp = { r_dynamic->x + r_dynamic->w / 2, r_dynamic->y + r_dynamic->h / 2 };
+	if (RayVsRect(tmp, speedDynamic, &expanded_target, contact_normal, contact_time))
+	{
+		return contact_time < 1.0f;
+	}
+	else
+	{
+		return false;
+	}
+
+}
+
+
 
 void GameState::FindCollisionRequire()
 {
@@ -1270,17 +1343,8 @@ void GameState::FindCollisionRequire()
 	{
 		EnemyVsWall.clear();
 	}
-	// Player vs wall
-	if (!PlayerVsWall.empty())
-	{
-		PlayerVsWall.clear();
-	}
 	for (int i = 0; i < m.getWall().size(); i++)
 	{
-		if (collisionTwoRect(m.getWall()[i].r, player.f_rect))
-		{
-			PlayerVsWall.push_back(i);
-		}
 		for (int j = 0; j < m.enemyList.size(); j++)
 		{
 			if (collisionTwoRect(m.getWall()[i].r, m.enemyList[j].f_rect))
