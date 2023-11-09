@@ -13,6 +13,7 @@ struct Special
     // Số ô x y
     int x, y;
     vector<FlatVector> vertices;
+    SDL_FRect r;
 };
 
 

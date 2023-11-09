@@ -11,6 +11,8 @@
 #include "map.h"
 #include "coin.h"
 #include "BulletDropped.h"
+#include <unordered_map>
+
 using namespace std;
 enum typeWeapon
 {
@@ -93,12 +95,20 @@ private:
 	void collisionMenu();
 
 
+	// Tìm vật thể cần xử lý va chạm và lưu vào mảng
+
+	vector<FlatVector> EnemyVsWall;
+	vector<FlatVector> EnemyVsEnemy;
+	vector<int> PlayerVsWall;
+
+	void FindCollisionRequire();
+
 	/**
 	* Xử lý va chạm sử dụng định lý SAT và AABB
 	*/
 
 	bool collisionEnemyWithEnemy(Enemy &p, Enemy& obj);
-	bool collisionTwoRect(SDL_FRect &r1, SDL_FRect& r2);
+	bool collisionTwoRect(const SDL_FRect &r1, const SDL_FRect& r2);
 	bool PolygonCollisionDetect(vector<FlatVector> vertices1, SDL_FRect& r1, vector<FlatVector> vertices2, SDL_FRect& r2);
 	bool PolygonCollisionDetectOneSatic(vector<FlatVector> vertices1, vector<FlatVector> vertices2, SDL_FRect& r2);
 	bool CircleCollisionDetect(FlatVector center1, float radius1, SDL_FRect& r1, FlatVector center2, float radius2, SDL_FRect& r2);
