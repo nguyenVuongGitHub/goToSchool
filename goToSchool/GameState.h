@@ -11,6 +11,7 @@
 #include "map.h"
 #include "coin.h"
 #include "BulletDropped.h"
+
 using namespace std;
 enum typeWeapon
 {
@@ -114,6 +115,7 @@ private:
 	bool DynamicRectVsRect(const SDL_FRect* r_dynamic, const FlatVector& speedDynamic, const SDL_FRect r_static, FlatVector& contact_normal, float& contact_time);
 	bool ResolveDynamicRectVsRect(SDL_FRect* r_dynamic, const float fTimeStep, SDL_FRect* r_static);
 
+	SDL_FRect GetSweptBroadphaseBox(SDL_FRect b, FlatVector speed);
 
 public:
 	GameState();

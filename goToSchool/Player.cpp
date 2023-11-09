@@ -17,7 +17,7 @@ void Player::init(SDL_Renderer* renderer, string pathImg)
 {
 	Character::init(renderer, pathImg);
 	f_rect = { 200,200,32,64 };
-	speed = { 5,5 };
+	speed = { 4,4 };
 	crossSpeed = 0;
 	hp = 100;
 	active = true;
@@ -99,51 +99,55 @@ void Player::move()
 	// base case move
 	if (moveKey[UP] && moveKey[RIGHT])
 	{
-		speed.x = (-5 * sqrt(2)) / 2;
-		speed.y = (5 * sqrt(2)) / 2;
+		speed.x = (4 * sqrt(2)) / 2;
+		speed.y = (-4 * sqrt(2)) / 2;
 		//f_rect.y += speed.x;
 		//f_rect.x += speed.y;
 	}
 	else if (moveKey[UP] && moveKey[LEFT])
 	{
-		speed.x = (-5 * sqrt(2)) / 2;
-		speed.y = (-5 * sqrt(2)) / 2;
+		speed.x = (-4 * sqrt(2)) / 2;
+		speed.y = (-4 * sqrt(2)) / 2;
 		//f_rect.y += speed.x;
 		//f_rect.x += speed.y;
 
 	}
 	else if (moveKey[DOWN] && moveKey[RIGHT])
 	{
-		speed.x = (5 * sqrt(2)) / 2;
-		speed.y = (5 * sqrt(2)) / 2;
+		speed.x = (4 * sqrt(2)) / 2;
+		speed.y = (4 * sqrt(2)) / 2;
 		//f_rect.y += speed.x;
 		//f_rect.x += speed.y;
 	}
 	else if (moveKey[DOWN] && moveKey[LEFT])
 	{
-		speed.x = (-5 * sqrt(2)) / 2;
-		speed.y = (5 * sqrt(2)) / 2;
+		speed.x = (-4 * sqrt(2)) / 2;
+		speed.y = (4 * sqrt(2)) / 2;
 		//f_rect.x += speed.x;
 		//f_rect.y += speed.y;
 	}
 	else if (moveKey[UP])
 	{
-		speed.y = -5;
+		speed.x = 0;
+		speed.y = -4;
 		//f_rect.y += speed.y;
 	}
 	else if (moveKey[DOWN])
 	{
-		speed.y = 5;
+		speed.x = 0;
+		speed.y = 4;
 		//f_rect.y += speed.y;
 	}
 	else if (moveKey[LEFT])
 	{
-		speed.x = -5;
+		speed.x = -4;
+		speed.y = 0;
 		//f_rect.x += speed.x;
 	}
 	else if (moveKey[RIGHT])
 	{
-		speed.x = 5;
+		speed.x = 4;
+		speed.y = 0;
 		//f_rect.x += speed.x;
 	}
 	// Update center point
