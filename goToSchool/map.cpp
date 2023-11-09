@@ -95,7 +95,7 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
                 x.x = i;
                 x.y = j;
                 x.vertices = {};
-                x.r = { (float)i*64 , (float)j * 64, 64, 64 };
+                x.r = { (float)j*64 , (float)i * 64, 64, 64 };
                 wall.push_back(x);
             }
             if (tilemap[i][j] == 15)
