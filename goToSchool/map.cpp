@@ -69,7 +69,7 @@ void Map::loadTileSet() {
 
 bool Map::isWall(int tilemap)
 {
-    vector<int> choose = {7,8,9,16,18,25,26,27};
+    vector<int> choose = {7,8,9,16,18,25,26,27,36};
     if (find(choose.begin(), choose.end(), tilemap) != choose.end())
     {
         return true;

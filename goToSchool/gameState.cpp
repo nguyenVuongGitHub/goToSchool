@@ -472,11 +472,16 @@ void GameState::collisionGameLoop()
 
 
 	//cout << m.getWall()[0].vertices[0].x << "\t" << m.getWall()[0].vertices[0].y << endl << endl;
+	FlatVector normal;
 	for (int i = 0; i < m.getWall().size(); i++)
 	{
 		for (int j = 0; j < m.enemyList.size(); j++)
 		{
-			CirclePolygonCollisionDetectPolygonStatic(m.getWall()[i].vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect);
+			//CirclePolygonCollisionDetectPolygonStatic(m.getWall()[i].vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect);
+			if (DynamicRectVsRect(&m.enemyList[j].f_rect, player.getSpeed(), m.getWall()[i].r, normal, ct))
+			{
+				m.enemyList[j].setSpeed({ 0,0 });
+			}
 		}
 	}
 	//cout << "sau khi xu ly : " << player.getSpeed().x << "\t" << player.getSpeed().y << endl;
