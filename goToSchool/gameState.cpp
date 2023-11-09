@@ -335,45 +335,45 @@ void GameState::collisionGameLoop()
 	}
 		
 	// va chạm giữa đạn và quái
-	//for (int i = 0; i < bulletList.size(); i++)
-	//{
-	//	for (int j = 0; j < m.enemyList.size(); j++)
-	//	{
-	//		// nếu máu quái <= 0 thì xét active về lại false
-	//		if (m.enemyList[j].getHP() <= 0)
-	//			m.enemyList[j].setActive(0);
-	//		
-	//		// kiểm tra va chạm giữa đạn và quái
-	//		if (PolygonCollisionDetect(bulletList[i].vertices, bulletList[i].f_rect, m.enemyList[j].vertices, m.enemyList[j].f_rect))
-	//		{
-	//			bulletList[i].setActive(0);
-	//			m.enemyList[j].setHP(m.enemyList[j].getHP() - weaponList[curWeapon].gun.getDamage());
-	//		}
-	//	}
-	//}
+	for (int i = 0; i < bulletList.size(); i++)
+	{
+		for (int j = 0; j < m.enemyList.size(); j++)
+		{
+			// nếu máu quái <= 0 thì xét active về lại false
+			if (m.enemyList[j].getHP() <= 0)
+				m.enemyList[j].setActive(0);
+			
+			// kiểm tra va chạm giữa đạn và quái
+			if (PolygonCollisionDetect(bulletList[i].vertices, bulletList[i].f_rect, m.enemyList[j].vertices, m.enemyList[j].f_rect))
+			{
+				bulletList[i].setActive(0);
+				m.enemyList[j].setHP(m.enemyList[j].getHP() - weaponList[curWeapon].gun.getDamage());
+			}
+		}
+	}
 	// va chạm giữa vũ khí và quái
-	//if (weaponList[curWeapon].type == MELLE)
-	//{
-	//	for (int j = 0; j < m.enemyList.size(); j++)
-	//	{
-	//		//SDL_FRect x, y;
-	//		//x = weaponList[curWeapon].melle.getRect();
+	if (weaponList[curWeapon].type == MELLE)
+	{
+		for (int j = 0; j < m.enemyList.size(); j++)
+		{
+			//SDL_FRect x, y;
+			//x = weaponList[curWeapon].melle.getRect();
 
-	//		//y = enemyList[j].f_rect;
+			//y = enemyList[j].f_rect;
 
-	//		if (m.enemyList[j].getHP() <= 0)
-	//			m.enemyList[j].setActive(0);
+			if (m.enemyList[j].getHP() <= 0)
+				m.enemyList[j].setActive(0);
 
-	//		//if (collisionTwoRect(x, y))
-	//		//{
-	//		//	enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
-	//		//}
-	//		if (CirclePolygonCollisionDetectPolygonStatic(weaponList[curWeapon].melle.vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect))
-	//		{
-	//			m.enemyList[j].setHP(m.enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
-	//		}
-	//	}
-	//}
+			//if (collisionTwoRect(x, y))
+			//{
+			//	enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
+			//}
+			if (CirclePolygonCollisionDetectPolygonStatic(weaponList[curWeapon].melle.vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect))
+			{
+				m.enemyList[j].setHP(m.enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
+			}
+		}
+	}
 	//if (weaponList[curWeapon].type == GUN)
 	//{
 	//	for (int j = 0; j < m.enemyList.size(); j++)
@@ -383,36 +383,36 @@ void GameState::collisionGameLoop()
 	//}
 	// Va chạm của người chơi
 	// Va chạm giữa người và tiền
-	//for (int i = 0; i < coins.size(); i++)
-	//{
-	//	SDL_FRect x,y;
-	//	x = coins[i].f_rect;
-	//	y = player.f_rect;
-	//	if (collisionTwoRect(x, y))
-	//	{
-	//		money++;
-	//		coins.erase(coins.begin() + i);
-	//	}
-	//}
+	for (int i = 0; i < coins.size(); i++)
+	{
+		SDL_FRect x,y;
+		x = coins[i].f_rect;
+		y = player.f_rect;
+		if (collisionTwoRect(x, y))
+		{
+			money++;
+			coins.erase(coins.begin() + i);
+		}
+	}
 	//// Va chạm người chơi và item
-	//for (int i = 0; i < bulletsDropped.size(); i++)
-	//{
-	//	SDL_FRect x, y;
-	//	x = bulletsDropped[i].f_rect;
-	//	y = player.f_rect;
-	//	if (collisionTwoRect(x, y))
-	//	{
-	//		long long x = weaponList[bulletsDropped[i].getType()].gun.getTotalBullets();
-	//		x += 50;
-	//		weaponList[ bulletsDropped[i].getType() ].gun.setTotalBullets(x);
-	//		bulletsDropped.erase(bulletsDropped.begin() + i);
-	//	}
-	//}
+	for (int i = 0; i < bulletsDropped.size(); i++)
+	{
+		SDL_FRect x, y;
+		x = bulletsDropped[i].f_rect;
+		y = player.f_rect;
+		if (collisionTwoRect(x, y))
+		{
+			long long x = weaponList[bulletsDropped[i].getType()].gun.getTotalBullets();
+			x += 50;
+			weaponList[ bulletsDropped[i].getType() ].gun.setTotalBullets(x);
+			bulletsDropped.erase(bulletsDropped.begin() + i);
+		}
+	}
 	// Va chạm người chơi và quái
-	//for (int i = 0; i < m.enemyList.size(); i++)
-	//{
-	//	CirclePolygonCollisionDetectPolygonStatic(player.vertices, m.enemyList[i].center(), m.enemyList[i].getRadius(), m.enemyList[i].f_rect);
-	//}
+	for (auto i = PlayerVsEnemy.begin(); i != PlayerVsEnemy.end(); i++)
+	{
+		CirclePolygonCollisionDetectPolygonStatic(player.vertices, m.enemyList[*i].center(), m.enemyList[*i].getRadius(), m.enemyList[*i].f_rect);
+	}
 	// Va chạm người chơi và tường
 	if (!PlayerVsWall.empty())
 	{
@@ -1306,6 +1306,16 @@ void GameState::FindCollisionRequire()
 			}
 		}
 	}
-
-
+	// enemy vs player
+	if (!PlayerVsEnemy.empty())
+	{
+		PlayerVsEnemy.clear();
+	}
+	for (int i = 0; i < m.enemyList.size(); i++)
+	{
+		if (collisionTwoRect(m.enemyList[i].f_rect, player.f_rect))
+		{
+			PlayerVsEnemy.push_back(i);
+		}
+	}
 }

@@ -100,6 +100,8 @@ private:
 	vector<FlatVector> EnemyVsWall;
 	vector<FlatVector> EnemyVsEnemy;
 	vector<int> PlayerVsWall;
+	vector<int> PlayerVsEnemy;
+	
 
 	void FindCollisionRequire();
 
