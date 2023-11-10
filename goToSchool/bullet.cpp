@@ -42,9 +42,10 @@ void Bullet::init(SDL_Renderer* renderer, short typeWeapon)
 	vertices.push_back({ f_rect.x, f_rect.y + f_rect.h });
 }
 
-void Bullet::render(SDL_Renderer* renderer)
+void Bullet::render(SDL_Renderer* renderer, float scrollX, float scrollY)
 {
-	SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, NULL, SDL_FLIP_NONE);
+	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
+	SDL_RenderCopyExF(renderer, texture, NULL, &tmp, angle, NULL, SDL_FLIP_NONE);
 	//cout << "ccc";
 }
 void Bullet::move()

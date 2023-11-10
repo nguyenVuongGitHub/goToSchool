@@ -29,9 +29,10 @@ void ItemDropped::init(SDL_Renderer* renderer, string pathImg)
 	timeExis = 250;
 }
 
-void ItemDropped::render(SDL_Renderer* renderer)
+void ItemDropped::render(SDL_Renderer* renderer, float scrollX, float scrollY)
 {
-	SDL_RenderCopyF(renderer, texture, NULL, &f_rect);
+	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
+	SDL_RenderCopyF(renderer, texture, NULL, &tmp);
 }
 
 void ItemDropped::update()

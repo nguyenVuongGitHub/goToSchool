@@ -6,7 +6,7 @@ Gun::Gun()
 	totalBullets = 0;
 	distance = 0;
 }
-void Gun::attack(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32 &lastShotTime, const SDL_FRect& rectPlayer)
+void Gun::attack(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32 &lastShotTime, const SDL_FRect& rectPlayer, float scrollX, float scrollY)
 {
 	Uint32 curentTime = SDL_GetTicks();
 	Uint32 timeShot = curentTime - lastShotTime;
@@ -21,7 +21,7 @@ void Gun::attack(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32 &las
 
 		Bullet newBullet;
 		newBullet.f_rect = { rectPlayer.x + rectPlayer.w / 2,rectPlayer.y + rectPlayer.h / 2,15,15 };
-		newBullet.setDxDy(mouseX - f_rect.x - 30, mouseY - f_rect.y - 30);
+		newBullet.setDxDy(mouseX - f_rect.x - 30 + scrollX, mouseY - f_rect.y - 30 + scrollY);
 		newBullet.setAngle(atan2(newBullet.getDy(), newBullet.getDx()));
 		newBullet.setSpeed(speed);
 		//cout << speed << endl;
@@ -81,7 +81,7 @@ void Gun::render(SDL_Renderer* renderer, const SDL_FRect &rectPlayer)
 		SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, &point, SDL_FLIP_NONE);
 }
 
-void Gun::update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime,const SDL_FRect& rectPlayer, const FlatVector& centerPlayer)
+void Gun::update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime,const SDL_FRect& rectPlayer, const FlatVector& centerPlayer, float scrollX, float scrollY)
 {
 	f_rect = rectPlayer;
 		
@@ -95,8 +95,8 @@ void Gun::update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& las
 	vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
 	vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h};
 	vertices[3] = { f_rect.x, f_rect.y + f_rect.h};
-	float deltaX = curXMouse - centerPlayer.x;
-	float deltaY = curYMouse - centerPlayer.y;
+	float deltaX = curXMouse - centerPlayer.x + scrollX;
+	float deltaY = curYMouse - centerPlayer.y + scrollY;
 	// tính góc giữa người chơi và chuột, and also convert radians to degrees
 	angle = atan2(deltaY, deltaX) * 180 / M_PI;
 	//Tranforming position from rotation
@@ -106,5 +106,5 @@ void Gun::update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& las
 	vertices[3] = vertices[3].ClockwiseTransform(centerPlayer, angle);
 	
 	if (isAttack)
-		attack(renderer,bulletList,lastShotTime,rectPlayer);
+		attack(renderer,bulletList,lastShotTime,rectPlayer, scrollX, scrollY);
 }

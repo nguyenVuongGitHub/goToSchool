@@ -48,7 +48,7 @@ void Melle::render(SDL_Renderer* renderer, const SDL_FRect& rectPlayer, const Fl
 
 }
 
-void Melle::update(SDL_Renderer* renderer, const SDL_FRect &rectPlayer , const FlatVector &centerPlayer)
+void Melle::update(SDL_Renderer* renderer, const SDL_FRect &rectPlayer , const FlatVector &centerPlayer, float scrollX, float scrollY)
 {
 	int curXMouse, curYMouse;
 	SDL_GetMouseState(&curXMouse, &curYMouse);
@@ -61,8 +61,8 @@ void Melle::update(SDL_Renderer* renderer, const SDL_FRect &rectPlayer , const F
 	vertices[3] = { f_rect.x, f_rect.y + f_rect.h };
 	if (!isAttack)
 	{
-		float deltaX = curXMouse - centerPlayer.x;
-		float deltaY = curYMouse - centerPlayer.y;
+		float deltaX = curXMouse - centerPlayer.x + scrollX;
+		float deltaY = curYMouse - centerPlayer.y + scrollY;
 		// tính góc giữa người chơi và chuột, and also convert radians to degrees
 		angle = atan2(deltaY, deltaX) * 180 / M_PI;
 	}

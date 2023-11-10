@@ -16,7 +16,7 @@ Player::~Player()
 void Player::init(SDL_Renderer* renderer, string pathImg)
 {
 	Character::init(renderer, pathImg);
-	f_rect = { 200,200,32,64 };
+	f_rect = { 1000,1000,32,64 };
 	speed = 5;
 	crossSpeed = (speed * sqrt(2)) / 2;
 	hp = 100;
@@ -172,8 +172,9 @@ void Player::attack(Melle& weapon)
 	//}
 }
 
-void Player::render(SDL_Renderer* renderer)
+void Player::render(SDL_Renderer* renderer, float scrollX, float scrollY)
 {
-	SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, NULL, SDL_FLIP_NONE);
+	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
+	SDL_RenderCopyExF(renderer, texture, NULL, &tmp, angle, NULL, SDL_FLIP_NONE);
 	
 }

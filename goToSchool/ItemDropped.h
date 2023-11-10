@@ -30,7 +30,7 @@ public:
 	int getTimeExis() { return timeExis; }
 
 	void init(SDL_Renderer* renderer, string pathImg) override;
-	void render(SDL_Renderer* renderer) override;
+	void render(SDL_Renderer* renderer, float scrollX, float scrollY);
 	void update();
 	void moveToPlayer(const SDL_FRect& rectPlayer);
 };

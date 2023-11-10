@@ -10,7 +10,7 @@ class Gun : public Weapon
 	short numberBullets;
 	long long totalBullets;
 	short distance;
-	void attack(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime, const SDL_FRect& rectPlayer);
+	void attack(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime, const SDL_FRect& rectPlayer, float scrollX, float scrollY);
 public:
 	Gun();
 	Gun(short type, short numbetBullets, long long totalBullets,short distance, short damage);
@@ -20,7 +20,7 @@ public:
 
 	void init(SDL_Renderer* renderer, string pathImg) override;
 	void render(SDL_Renderer* renderer, const SDL_FRect& rectPlayer);
-	void update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime, const SDL_FRect& rectPlayer, const FlatVector& centerPlayer);
+	void update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime, const SDL_FRect& rectPlayer, const FlatVector& centerPlayer, float scrollX, float scrollY);
 };
 
 #endif // !GUN_H

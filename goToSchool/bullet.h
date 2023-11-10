@@ -42,7 +42,7 @@ public:
 
 	//Bullet(string name, short type, bool active, double angle, double dx, double dy, int speed, int distance, int damage);
 	void init(SDL_Renderer* renderer, short typeWeapon);
-	void render(SDL_Renderer* renderer);
+	void render(SDL_Renderer* renderer, float scrollX, float scrollY);
 
 	void update();
 };

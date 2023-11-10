@@ -107,9 +107,10 @@ int Enemy::dropChance()
 	return rand() % 31;
 }
 
-void Enemy::render(SDL_Renderer* renderer)
+void Enemy::render(SDL_Renderer* renderer, float scrollX, float scrollY)
 {
-	SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, NULL, SDL_FLIP_NONE);
+	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
+	SDL_RenderCopyExF(renderer, texture, NULL, &tmp, angle, NULL, SDL_FLIP_NONE);
 }
 
 void Enemy::freeRender(SDL_Renderer* renderer, vector<coin>& coins,vector<BulletDropped> &bulletsDropped, vector<Enemy>& enemyList, int i)

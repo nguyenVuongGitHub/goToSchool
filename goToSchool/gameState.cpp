@@ -1,5 +1,8 @@
 ﻿#include "GameState.h"
 
+const int LEVEL_WIDTH = 2048;
+const int LEVEL_HEIGHT = 2048;
+
 GameState::GameState() :
 
 	mouseX(0),
@@ -23,8 +26,8 @@ GameState::GameState() :
 
 void GameState::initData()
 {
-	heightWindow = 1920;
-	widthWindow = 1080;
+	widthWindow = 1920;
+	heightWindow = 1080;
 	mouseX = 0;
 	mouseY = 0;
 	scrollX = 0;
@@ -237,11 +240,11 @@ void GameState::updateGameLoop()
 	{
 		if (weaponList[i].type == MELLE)
 		{
-			weaponList[i].melle.update(renderer,player.f_rect, player.center());
+			weaponList[i].melle.update(renderer,player.f_rect, player.center(), scrollX, scrollY);
 		}
 		else {
 
-			weaponList[i].gun.update(renderer,bulletList,lastShotTime, player.f_rect, player.center());
+			weaponList[i].gun.update(renderer,bulletList,lastShotTime, player.f_rect, player.center(), scrollX, scrollY);
 		}
 
 	}
@@ -267,66 +270,51 @@ void GameState::renderGameLoop()
 	// xóa render cũ đi
 	SDL_RenderClear(renderer);
 	m.render(renderer, scrollX, scrollY);
-	//for (int i = 0; i < m.getWall().size(); i++)
-	//{
-	//	m.getWall()[i].r.x += scrollX;
-	//	m.getWall()[i].r.y += scrollY;
-	//	m.getWall()[i].vertices[0] = { m.getWall()[i].r.x , m.getWall()[i].r.y };
-	//	m.getWall()[i].vertices[1] = { m.getWall()[i].r.x + m.getWall()[i].r.w, m.getWall()[i].r.y };
-	//	m.getWall()[i].vertices[2] = { m.getWall()[i].r.x + m.getWall()[i].r.w, m.getWall()[i].r.y + m.getWall()[i].r.h };
-	//	m.getWall()[i].vertices[3] = { m.getWall()[i].r.x , m.getWall()[i].r.y + m.getWall()[i].r.h};
-	//}
+
 	// tạo render danh sách đạn
 	for (int i = 0; i < bulletList.size(); i++)
 	{
-		bulletList[i].f_rect.x += scrollX;
-		bulletList[i].f_rect.y += scrollY;
-		bulletList[i].render(renderer);
+		bulletList[i].render(renderer, scrollX, scrollY);
 	}
 
 	// tạo render người chơi
-	player.f_rect.x += scrollX;
-	player.f_rect.y += scrollY;
-	player.render(renderer);
+	//player.f_rect.x -= scrollX;
+	//player.f_rect.y -= scrollY;
+	//cout << player.f_rect.x << "\t" << player.f_rect.y << endl;
+	player.render(renderer, scrollX, scrollY);
 	
 	// tạo render vũ khí
 	if (weaponList[curWeapon].type == GUN)
 	{
-		weaponList[curWeapon].gun.f_rect.x += scrollX;
-		weaponList[curWeapon].gun.f_rect.y += scrollY;
+		weaponList[curWeapon].gun.f_rect.x -= scrollX;
+		weaponList[curWeapon].gun.f_rect.y -= scrollY;
 		weaponList[curWeapon].gun.render(renderer, player.f_rect);
 	}
 	else
 	{
-		weaponList[curWeapon].melle.f_rect.x += scrollX;
-		weaponList[curWeapon].melle.f_rect.y += scrollY;
+		weaponList[curWeapon].melle.f_rect.x -= scrollX;
+		weaponList[curWeapon].melle.f_rect.y -= scrollY;
 		weaponList[curWeapon].melle.render(renderer, player.f_rect, player.center());
 	}
 	
 	// tạo render quái
 	for (int i = 0; i < m.enemyList.size(); i++)
 	{
-		m.enemyList[i].f_rect.x += scrollX;
-		m.enemyList[i].f_rect.y += scrollY;
-		m.enemyList[i].render(renderer);
+		m.enemyList[i].render(renderer, scrollX, scrollY);
 	}
 
 	// render item dropped
 	
 	for (int i = 0; i < coins.size(); i++)
 	{
-		coins[i].f_rect.x += scrollX;
-		coins[i].f_rect.y += scrollY;
-		coins[i].render(renderer, frameCoin);
+		coins[i].render(renderer, frameCoin, scrollX, scrollY);
 	}
 	
 
 
 	for (int i = 0; i < bulletsDropped.size(); i++)
 	{
-		bulletsDropped[i].f_rect.x += scrollX;
-		bulletsDropped[i].f_rect.y += scrollY;
-		bulletsDropped[i].render(renderer);
+		bulletsDropped[i].render(renderer, scrollX, scrollY);
 	}
 
 	// vẽ render lên màn hình
@@ -366,7 +354,6 @@ void GameState::collisionGameLoop()
 	for (int i = 0; i < x - 1; i++)
 		for (int j = i + 1; j < m.enemyList.size(); j++)
 			CircleCollisionDetect(m.enemyList[i].center(), m.enemyList[i].getRadius(), m.enemyList[i].f_rect, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect);
-			//collisionEnemyWithEnemy(enemyList[i],enemyList[j]);
 		
 	// va chạm giữa đạn và quái
 	for (int i = 0; i < bulletList.size(); i++)
@@ -390,29 +377,12 @@ void GameState::collisionGameLoop()
 	{
 		for (int j = 0; j < m.enemyList.size(); j++)
 		{
-			//SDL_FRect x, y;
-			//x = weaponList[curWeapon].melle.getRect();
-
-			//y = enemyList[j].f_rect;
-
 			if (m.enemyList[j].getHP() <= 0)
 				m.enemyList[j].setActive(0);
-
-			//if (collisionTwoRect(x, y))
-			//{
-			//	enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
-			//}
 			if (CirclePolygonCollisionDetectPolygonStatic(weaponList[curWeapon].melle.vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect))
 			{
 				m.enemyList[j].setHP(m.enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
 			}
-		}
-	}
-	if (weaponList[curWeapon].type == GUN)
-	{
-		for (int j = 0; j < m.enemyList.size(); j++)
-		{
-			CirclePolygonCollisionDetectPolygonStatic(weaponList[curWeapon].gun.vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect);
 		}
 	}
 	// Va chạm của người chơi
@@ -448,18 +418,17 @@ void GameState::collisionGameLoop()
 		CirclePolygonCollisionDetectPolygonStatic(player.vertices, m.enemyList[i].center(), m.enemyList[i].getRadius(), m.enemyList[i].f_rect);
 	}
 	// Va chạm người chơi và tường
-	//for (int i = 0; i < m.getWall().size(); i++)
-	//{
-	//	PolygonCollisionDetectOneSatic(m.getWall()[i].vertices, player.vertices, player.f_rect);
-	//}
-	//cout << m.getWall()[0].vertices[0].x << "\t" << m.getWall()[0].vertices[0].y << endl << endl;
-	//for (int i = 0; i < m.getWall().size(); i++)
-	//{
-	//	for (int j = 0; j < m.enemyList.size(); j++)
-	//	{
-	//		CirclePolygonCollisionDetectPolygonStatic(m.getWall()[i].vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect);
-	//	}
-	//}
+	for (int i = 0; i < m.getWall().size(); i++)
+	{
+		PolygonCollisionDetectOneSatic(m.getWall()[i].vertices, player.vertices, player.f_rect);
+	}
+	for (int i = 0; i < m.getWall().size(); i++)
+	{
+		for (int j = 0; j < m.enemyList.size(); j++)
+		{
+			CirclePolygonCollisionDetectPolygonStatic(m.getWall()[i].vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect);
+		}
+	}
 }
 
 
@@ -1291,23 +1260,23 @@ void GameState::freeAll()
 
 void GameState::FolowCam()
 {
-	scrollX = -player.f_rect.x + 1920 / 2;
-	scrollY = -player.f_rect.y + 1080 / 2;
-	if (scrollX > player.f_rect.x + 1920 / 2)
+	scrollX = player.f_rect.x - 800;
+	scrollY = player.f_rect.y - 500;
+
+	if (scrollX < 0)
 	{
 		scrollX = 0;
 	}
-	if (scrollY > player.f_rect.y + 1080 / 2)
+	if (scrollX > LEVEL_WIDTH/2 - 960)
+	{
+		scrollX = LEVEL_WIDTH/2 - 960;
+	}
+	if (scrollY < 0)
 	{
 		scrollY = 0;
 	}
-	if (scrollX < -32 * 64)
+	if (scrollY > LEVEL_HEIGHT/2 - 64)
 	{
-		scrollX = -32 * 64;
+		scrollY = LEVEL_HEIGHT/2 - 64;
 	}
-	if (scrollY < -32 * 64 + 1080 / 2)
-	{
-		scrollY = -32 * 64 + 1080 / 2;
-	}
-
 }

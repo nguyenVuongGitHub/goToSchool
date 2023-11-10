@@ -85,19 +85,18 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
         return;
     }
 
-    Special x;
     for (int i = 0; i < 32; i++) {
         for (int j = 0; j < 32; j++) {
             inputFile >> tilemap[i][j];
             //cout << tilemap[i][j] << " ";
-            if (isWall(tilemap[i][j]))
-            {
-                x.x = i;
-                x.y = j;
-                x.vertices = {};
-                x.r = { (float)j * 64, (float)i * 64, 64 ,64 };
-                wall.push_back(x);
-            }
+            //if (isWall(tilemap[i][j]))
+            //{
+            //    x.x = i;
+            //    x.y = j;
+            //    x.vertices = {};
+            //    x.r = { (float)j * 64, (float)i * 64, 64 ,64 };
+            //    wall.push_back(x);
+            //}
             if (tilemap[i][j] == 15)
             {
                 Enemy e;
@@ -106,18 +105,50 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
             }
         }
     }
+    
+    Special x1;
+    x1.r = { -64,0,64,31 * 64 };
+    x1.vertices.push_back({ x1.r.x, x1.r.y });
+    x1.vertices.push_back({ x1.r.x + x1.r.w, x1.r.y });
+    x1.vertices.push_back({ x1.r.x + x1.r.w, x1.r.y + x1.r.h});
+    x1.vertices.push_back({ x1.r.x, x1.r.h + x1.r.y });
+    wall.push_back(x1);
+    x1.r = { 31*64, 0,64, 64*31 };
+    x1.vertices[0] = { x1.r.x, x1.r.y };
+    x1.vertices[1] = { x1.r.x + x1.r.w, x1.r.y };
+    x1.vertices[2] = { x1.r.x + x1.r.w, x1.r.y + x1.r.h };
+    x1.vertices[3] = { x1.r.x, x1.r.h + x1.r.y };
+    wall.push_back(x1);
+    x1.r = { 0,64*32,31*64,64 };
+    x1.vertices[0] = { x1.r.x, x1.r.y };
+    x1.vertices[1] = { x1.r.x + x1.r.w, x1.r.y };
+    x1.vertices[2] = { x1.r.x + x1.r.w, x1.r.y + x1.r.h };
+    x1.vertices[3] = { x1.r.x, x1.r.h + x1.r.y };
+    wall.push_back(x1);
+    x1.r = { 0,-64,64*31,64 };
+    x1.vertices[0] = { x1.r.x, x1.r.y };
+    x1.vertices[1] = { x1.r.x + x1.r.w, x1.r.y };
+    x1.vertices[2] = { x1.r.x + x1.r.w, x1.r.y + x1.r.h };
+    x1.vertices[3] = { x1.r.x, x1.r.h + x1.r.y };
+    wall.push_back(x1);
+    x1.r = { 0, 5 * 64, 64 * 7, 64 * 7.5 };
+    x1.vertices[0] = { x1.r.x, x1.r.y };
+    x1.vertices[1] = { x1.r.x + x1.r.w, x1.r.y };
+    x1.vertices[2] = { x1.r.x + x1.r.w, x1.r.y + x1.r.h };
+    x1.vertices[3] = { x1.r.x, x1.r.h + x1.r.y };
+    wall.push_back(x1);
     inputFile.close();
 }
 
 void Map::initWall()
 {
-    for (int i = 0; i < wall.size(); i++)
-    {
-        wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x, tile[wall[i].x][wall[i].y].y });
-        wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x + tile[wall[i].x][wall[i].y].w, tile[wall[i].x][wall[i].y].y });
-        wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x + tile[wall[i].x][wall[i].y].w, tile[wall[i].x][wall[i].y].y + tile[wall[i].x][wall[i].y].h });
-        wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x, tile[wall[i].x][wall[i].y].y + tile[wall[i].x][wall[i].y].h });
-    }
+    //for (int i = 0; i < wall.size(); i++)
+    //{
+    //    wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x, tile[wall[i].x][wall[i].y].y });
+    //    wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x + tile[wall[i].x][wall[i].y].w, tile[wall[i].x][wall[i].y].y });
+    //    wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x + tile[wall[i].x][wall[i].y].w, tile[wall[i].x][wall[i].y].y + tile[wall[i].x][wall[i].y].h });
+    //    wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x, tile[wall[i].x][wall[i].y].y + tile[wall[i].x][wall[i].y].h });
+    //}
 }
 
 void Map::loadMap(SDL_Renderer* renderer) {
@@ -133,170 +164,171 @@ void Map::render(SDL_Renderer* map_renderer, float scrollX, float scrollY)
 {
     for (int x = 0; x < 32; x++) {
         for (int y = 0; y < 32; y++) {
-            tile[x][y].x += scrollX;
-            tile[x][y].y += scrollY;
+            SDL_FRect tmp = { tile[x][y].x - scrollX, tile[x][y].y - scrollY, tile[x][y].w, tile[x][y].h };
+            //tile[x][y].x -= scrollX;
+            //tile[x][y].y -= scrollY;
             switch (tilemap[x][y]) {
             case 1:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[1], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[1], &tmp);
                 break;
             case 2:
-              SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[2], &tile[x][y]);
+              SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[2], &tmp);
                 break;
             case 3:
-              SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[3], &tile[x][y]);
+              SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[3], &tmp);
                 break;
             case 4:
-              SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[4], &tile[x][y]);
+              SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[4], &tmp);
                 break;
             case 5:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[5], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[5], &tmp);
                 break;
             case 6:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[6], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[6], &tmp);
                 break;
             case 7:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[7], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[7], &tmp);
                 break;
             case 8:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[8], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[8], &tmp);
                 break;
             case 9:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[9], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[9], &tmp);
                 break;
             case 10:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[10], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[10], &tmp);
                 break;
             case 11:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[11], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[11], &tmp);
                 break;
             case 12:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[12], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[12], &tmp);
                 break;
             case 13:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[13], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[13], &tmp);
                 break;
             case 14:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[14], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[14], &tmp);
                 break;
             case 15:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[15], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[15], &tmp);
                 break;
             case 16:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[16], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[16], &tmp);
                 break;
             case 17:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[17], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[17], &tmp);
                 break;
             case 18:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[18], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[18], &tmp);
                 break;
             case 19:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[19], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[19], &tmp);
                 break;
             case 20:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[20], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[20], &tmp);
                 break;
             case 21:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[21], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[21], &tmp);
                 break;
             case 22:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[22], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[22], &tmp);
                 break;
             case 23:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[23], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[23], &tmp);
                 break;
             case 24:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[24], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[24], &tmp);
                 break;
             case 25:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[25], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[25], &tmp);
                 break;
             case 26:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[26], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[26], &tmp);
                 break;
             case 27:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[27], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[27], &tmp);
                 break;
             case 28:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[28], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[28], &tmp);
                 break;
             case 29:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[29], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[29], &tmp);
                 break;
             case 30:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[30], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[30], &tmp);
                 break;
             case 31:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[31], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[31], &tmp);
                 break;
             case 32:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[32], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[32], &tmp);
                 break;
             case 33:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[33], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[33], &tmp);
                 break;
             case 34:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[34], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[34], &tmp);
                 break;
             case 35:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[35], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[35], &tmp);
                 break;
             case 36:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[36], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[36], &tmp);
                 break;
             case 37:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[37], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[37], &tmp);
                 break;
             case 38:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[38], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[38], &tmp);
                 break;
             case 39:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[39], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[39], &tmp);
                 break;
             case 40:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[40], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[40], &tmp);
                 break;
             case 41:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[41], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[41], &tmp);
                 break;
             case 42:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[42], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[42], &tmp);
                 break;
             case 43:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[43], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[43], &tmp);
                 break;
             case 44:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[44], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[44], &tmp);
                 break;
             case 45:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[45], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[45], &tmp);
                 break;
             case 46:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[46], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[46], &tmp);
                 break;
             case 47:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[47], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[47], &tmp);
                 break;
             case 48:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[48], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[48], &tmp);
                 break;
             case 49:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[49], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[49], &tmp);
                 break;
             case 50:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[50], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[50], &tmp);
                 break;
             case 51:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[51], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[51], &tmp);
                 break;
             case 52:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[52], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[52], &tmp);
                 break;
             case 53:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[53], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[53], &tmp);
                 break;
             case 54:
-               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[54], &tile[x][y]);
+               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[54], &tmp);
                 break;
             }
         }
