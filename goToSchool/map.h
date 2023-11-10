@@ -13,6 +13,7 @@ struct Special
     // Số ô x y
     int x, y;
     vector<FlatVector> vertices;
+    SDL_FRect r;
 };
 
 
@@ -42,6 +43,6 @@ public:
     void loadMap(SDL_Renderer* renderer);
     void initWall();
 
-    void render(SDL_Renderer* renderer);
+    void render(SDL_Renderer* renderer, float scrollX, float scrollY);
 };
 #endif

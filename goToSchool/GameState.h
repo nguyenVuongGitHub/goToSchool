@@ -38,6 +38,9 @@ private:
 	bool isGameRunning;
 	bool isMenuRunning;
 
+	float scrollX;
+	float scrollY;
+
 	/**
 	* numberframe
 	*/
@@ -92,6 +95,7 @@ private:
 	void cleanRenderMenu();
 	void collisionMenu();
 
+	void FolowCam();
 
 	/**
 	* Xử lý va chạm sử dụng định lý SAT và AABB
@@ -105,6 +109,7 @@ private:
 	bool CirclePolygonCollisionDetect(vector<FlatVector> vertices, SDL_FRect& r1, FlatVector centerCircle, float radius, SDL_FRect& r2);
 	bool CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> vertices, FlatVector centerCircle, float radius, SDL_FRect& r2);
 	FlatVector FindArithmeticMean(vector<FlatVector> vertices);
+
 
 public:
 	GameState();

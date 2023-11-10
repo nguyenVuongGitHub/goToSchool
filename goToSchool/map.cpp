@@ -95,6 +95,7 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
                 x.x = i;
                 x.y = j;
                 x.vertices = {};
+                x.r = { (float)j * 64, (float)i * 64, 64 ,64 };
                 wall.push_back(x);
             }
             if (tilemap[i][j] == 15)
@@ -128,10 +129,12 @@ void Map::loadMap(SDL_Renderer* renderer) {
     initWall();
 }
 
-void Map::render(SDL_Renderer* map_renderer)
+void Map::render(SDL_Renderer* map_renderer, float scrollX, float scrollY)
 {
     for (int x = 0; x < 32; x++) {
         for (int y = 0; y < 32; y++) {
+            tile[x][y].x += scrollX;
+            tile[x][y].y += scrollY;
             switch (tilemap[x][y]) {
             case 1:
                SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[1], &tile[x][y]);

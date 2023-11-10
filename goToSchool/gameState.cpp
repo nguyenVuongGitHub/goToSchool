@@ -27,6 +27,8 @@ void GameState::initData()
 	widthWindow = 1080;
 	mouseX = 0;
 	mouseY = 0;
+	scrollX = 0;
+	scrollY = 0;
 	isGameRunning = 1;
 	isMenuRunning = 1;
 	window = SDL_CreateWindow("game test", 0, 0, widthWindow, heightWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
@@ -261,37 +263,71 @@ void GameState::updateGameLoop()
 
 void GameState::renderGameLoop()
 {
+	FolowCam();
 	// xóa render cũ đi
 	SDL_RenderClear(renderer);
-	m.render(renderer);
-
+	m.render(renderer, scrollX, scrollY);
+	//for (int i = 0; i < m.getWall().size(); i++)
+	//{
+	//	m.getWall()[i].r.x += scrollX;
+	//	m.getWall()[i].r.y += scrollY;
+	//	m.getWall()[i].vertices[0] = { m.getWall()[i].r.x , m.getWall()[i].r.y };
+	//	m.getWall()[i].vertices[1] = { m.getWall()[i].r.x + m.getWall()[i].r.w, m.getWall()[i].r.y };
+	//	m.getWall()[i].vertices[2] = { m.getWall()[i].r.x + m.getWall()[i].r.w, m.getWall()[i].r.y + m.getWall()[i].r.h };
+	//	m.getWall()[i].vertices[3] = { m.getWall()[i].r.x , m.getWall()[i].r.y + m.getWall()[i].r.h};
+	//}
 	// tạo render danh sách đạn
 	for (int i = 0; i < bulletList.size(); i++)
+	{
+		bulletList[i].f_rect.x += scrollX;
+		bulletList[i].f_rect.y += scrollY;
 		bulletList[i].render(renderer);
+	}
 
 	// tạo render người chơi
+	player.f_rect.x += scrollX;
+	player.f_rect.y += scrollY;
 	player.render(renderer);
 	
 	// tạo render vũ khí
-	if(weaponList[curWeapon].type == GUN)
+	if (weaponList[curWeapon].type == GUN)
+	{
+		weaponList[curWeapon].gun.f_rect.x += scrollX;
+		weaponList[curWeapon].gun.f_rect.y += scrollY;
 		weaponList[curWeapon].gun.render(renderer, player.f_rect);
-	else weaponList[curWeapon].melle.render(renderer, player.f_rect, player.center());
+	}
+	else
+	{
+		weaponList[curWeapon].melle.f_rect.x += scrollX;
+		weaponList[curWeapon].melle.f_rect.y += scrollY;
+		weaponList[curWeapon].melle.render(renderer, player.f_rect, player.center());
+	}
 	
 	// tạo render quái
 	for (int i = 0; i < m.enemyList.size(); i++)
+	{
+		m.enemyList[i].f_rect.x += scrollX;
+		m.enemyList[i].f_rect.y += scrollY;
 		m.enemyList[i].render(renderer);
+	}
 
 	// render item dropped
 	
 	for (int i = 0; i < coins.size(); i++)
 	{
+		coins[i].f_rect.x += scrollX;
+		coins[i].f_rect.y += scrollY;
 		coins[i].render(renderer, frameCoin);
 	}
 	
 
 
 	for (int i = 0; i < bulletsDropped.size(); i++)
+	{
+		bulletsDropped[i].f_rect.x += scrollX;
+		bulletsDropped[i].f_rect.y += scrollY;
 		bulletsDropped[i].render(renderer);
+	}
 
 	// vẽ render lên màn hình
 	SDL_RenderPresent(renderer);
@@ -412,18 +448,18 @@ void GameState::collisionGameLoop()
 		CirclePolygonCollisionDetectPolygonStatic(player.vertices, m.enemyList[i].center(), m.enemyList[i].getRadius(), m.enemyList[i].f_rect);
 	}
 	// Va chạm người chơi và tường
-	for (int i = 0; i < m.getWall().size(); i++)
-	{
-		PolygonCollisionDetectOneSatic(m.getWall()[i].vertices, player.vertices, player.f_rect);
-	}
+	//for (int i = 0; i < m.getWall().size(); i++)
+	//{
+	//	PolygonCollisionDetectOneSatic(m.getWall()[i].vertices, player.vertices, player.f_rect);
+	//}
 	//cout << m.getWall()[0].vertices[0].x << "\t" << m.getWall()[0].vertices[0].y << endl << endl;
-	for (int i = 0; i < m.getWall().size(); i++)
-	{
-		for (int j = 0; j < m.enemyList.size(); j++)
-		{
-			CirclePolygonCollisionDetectPolygonStatic(m.getWall()[i].vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect);
-		}
-	}
+	//for (int i = 0; i < m.getWall().size(); i++)
+	//{
+	//	for (int j = 0; j < m.enemyList.size(); j++)
+	//	{
+	//		CirclePolygonCollisionDetectPolygonStatic(m.getWall()[i].vertices, m.enemyList[j].center(), m.enemyList[j].getRadius(), m.enemyList[j].f_rect);
+	//	}
+	//}
 }
 
 
@@ -1251,4 +1287,27 @@ void GameState::freeAll()
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+}
+
+void GameState::FolowCam()
+{
+	scrollX = -player.f_rect.x + 1920 / 2;
+	scrollY = -player.f_rect.y + 1080 / 2;
+	if (scrollX > player.f_rect.x + 1920 / 2)
+	{
+		scrollX = 0;
+	}
+	if (scrollY > player.f_rect.y + 1080 / 2)
+	{
+		scrollY = 0;
+	}
+	if (scrollX < -32 * 64)
+	{
+		scrollX = -32 * 64;
+	}
+	if (scrollY < -32 * 64 + 1080 / 2)
+	{
+		scrollY = -32 * 64 + 1080 / 2;
+	}
+
 }
