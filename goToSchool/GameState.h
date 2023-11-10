@@ -120,8 +120,8 @@ private:
 public:
 	GameState();
 	void initData();
-	//bool playerCollisionDetect(Enemy &p, Enemy &obj);
-	//bool getHoldMouse();
+	bool playerCollisionDetect(Enemy &p, Enemy &obj);
+	bool getHoldMouse();
 	void menuMain();
 	void freeAll();
 	
