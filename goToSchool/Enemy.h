@@ -23,7 +23,7 @@ public:
 	~Enemy();
 	float getRadius() const { return radius; }
 	void init(int i, int j, SDL_Renderer* renderer, string path);
-	void render(SDL_Renderer* renderer, float scrollX, float scrollY);
+	void render(SDL_Renderer* renderer, float scrollX, float scrollY, int curFrame);
 	void freeRender(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped, vector<Enemy>& enemyList, int i);
 	void update(Player& player);
 };

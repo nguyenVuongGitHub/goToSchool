@@ -45,6 +45,7 @@ private:
 	* numberframe
 	*/
 	float frameCoin;
+	float frameSlime;
 	/**
 	* Thông tin người chơi và vũ khí
 	* 
@@ -88,12 +89,21 @@ private:
 	Text t_shop;
 	Text t_exit;
 
+
 	void initMenu();
 	void processInputMenu(SDL_Event& e);
 	void updateMenu();
 	void renderMenu();
 	void cleanRenderMenu();
 	void collisionMenu();
+
+	EveryObject shop;
+
+	void initShop();
+	void processShop();
+	void updateShop();
+	void renderShop();
+	void collisionShop();
 
 	void FolowCam();
 

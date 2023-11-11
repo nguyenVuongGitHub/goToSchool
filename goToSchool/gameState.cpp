@@ -20,6 +20,7 @@ GameState::GameState() :
 	experience(0),
 	lever(0),
 	frameCoin(0),
+	frameSlime(0),
 	hadInit(0)
 {
 }
@@ -212,6 +213,11 @@ void GameState::updateGameLoop()
 	// ============= update frame clip =============
 	frameCoin += 0.259784;
 	if (frameCoin >= 7.0) frameCoin = 0;
+	frameSlime += 0.259784;
+	if (frameSlime >= 6.0)
+	{
+		frameSlime = 0;
+	}
 	
 	//  ============= update player ==============
 	if (weaponList[curWeapon].type == GUN)
@@ -300,7 +306,7 @@ void GameState::renderGameLoop()
 	// tạo render quái
 	for (int i = 0; i < m.enemyList.size(); i++)
 	{
-		m.enemyList[i].render(renderer, scrollX, scrollY);
+		m.enemyList[i].render(renderer, scrollX, scrollY, frameSlime);
 	}
 
 	// render item dropped

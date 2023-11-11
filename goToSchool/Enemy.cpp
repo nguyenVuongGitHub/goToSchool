@@ -16,7 +16,7 @@ Enemy::~Enemy()
 void Enemy::init(int i, int j,SDL_Renderer* renderer,string path)
 {
 	Character::init(renderer, path);
-	f_rect = { (float)i * 64,(float)j * 64,30,30 };
+	f_rect = { (float)i * 64,(float)j * 64,32,32 };
 	hp = 30;
 	speed = 3;
 	active = 1;
@@ -107,10 +107,11 @@ int Enemy::dropChance()
 	return rand() % 31;
 }
 
-void Enemy::render(SDL_Renderer* renderer, float scrollX, float scrollY)
+void Enemy::render(SDL_Renderer* renderer, float scrollX, float scrollY, int curFrame)
 {
+	srcRect = { curFrame * 32, 0, 32, 32 };
 	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
-	SDL_RenderCopyExF(renderer, texture, NULL, &tmp, angle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyExF(renderer, texture, &srcRect, &tmp, angle, NULL, SDL_FLIP_NONE);
 }
 
 void Enemy::freeRender(SDL_Renderer* renderer, vector<coin>& coins,vector<BulletDropped> &bulletsDropped, vector<Enemy>& enemyList, int i)

@@ -100,20 +100,20 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
             if (tilemap[i][j] == 15)
             {
                 Enemy e;
-                e.init(j,i,renderer,"img/ball.png");
+                e.init(j,i,renderer,"img/slime.png");
                 enemyList.push_back(e);
             }
         }
     }
     
     Special x1;
-    x1.r = { -64,0,64,31 * 64 };
+    x1.r = { -64,0,64,32 * 64 };
     x1.vertices.push_back({ x1.r.x, x1.r.y });
     x1.vertices.push_back({ x1.r.x + x1.r.w, x1.r.y });
     x1.vertices.push_back({ x1.r.x + x1.r.w, x1.r.y + x1.r.h});
     x1.vertices.push_back({ x1.r.x, x1.r.h + x1.r.y });
     wall.push_back(x1);
-    x1.r = { 31*64, 0,64, 64*31 };
+    x1.r = { 31*64, 0,64, 64*32 };
     x1.vertices[0] = { x1.r.x, x1.r.y };
     x1.vertices[1] = { x1.r.x + x1.r.w, x1.r.y };
     x1.vertices[2] = { x1.r.x + x1.r.w, x1.r.y + x1.r.h };
