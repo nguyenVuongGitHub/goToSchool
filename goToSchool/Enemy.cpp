@@ -4,6 +4,8 @@ Enemy::Enemy()
 {
 	type = 0;
 	radius = 0;
+	distance = 0;
+	countState = 0;
 }
 
 Enemy::~Enemy()
@@ -13,17 +15,19 @@ Enemy::~Enemy()
 	SDL_FreeSurface(surface);*/
 }
 
-void Enemy::init(int i, int j,SDL_Renderer* renderer,string path)
+void Enemy::init(SDL_Renderer* renderer,string path)
 {
 	Character::init(renderer, path);
-	f_rect = { (float)i * 64,(float)j * 64,30,30 };
+	f_rect = {  10, 10,30,30 };
 	hp = 30;
-	speed = 3;
+	speed = 2;
 	active = 1;
 	radius = 15;
-
+	distance = 2;
+	countState = 0;
+	angle = 10;
 	// 1080 and 1920 is width and height of window
-	//spawn(1080,1920);
+	spawn(1080,1920);
 
 	//center = { f_rect.x + f_rect.w / 2, f_rect.y + f_rect.h / 2 };
 	vertices.push_back({ f_rect.x, f_rect.y });
@@ -34,8 +38,9 @@ void Enemy::init(int i, int j,SDL_Renderer* renderer,string path)
 void Enemy::update(Player& player)
 {
 	
-	setTargetToPlayer(player);
-	move();
+	//setAImove(player);
+	//setTargetToPlayer(player);
+	//move();
 }
 
 void Enemy::move()
@@ -52,12 +57,12 @@ void Enemy::move()
 	}
 }
 
-void Enemy::spawn(int heightWindow, int widthWindow)
+void Enemy::spawn(int widthWindow, int heightWindow )
 {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> disX(-heightWindow, 2 * heightWindow);
-	std::uniform_real_distribution<float> disY(-widthWindow, 2 * widthWindow);
+	std::uniform_real_distribution<float> disX(300, 700);
+	std::uniform_real_distribution<float> disY(300, 700);
 
 	float x = disX(gen);
 	float y = disY(gen);
@@ -70,6 +75,31 @@ void Enemy::setTargetToPlayer(Player &player)
 	dx = player.f_rect.x - f_rect.x;
 	dy = player.f_rect.y - f_rect.y;
 	angle = atan2(dy,dx);
+	
+}
+
+void Enemy::setAImove(Player &player)
+{
+	if (sqrt(pow(player.getRect().x, 2) - pow(f_rect.x, 2)) >= 500)
+	{
+		setTargetToPlayer(player);
+	}
+	if (active && distance > 0)
+	{
+		f_rect.x += cos(angle) * speed;
+		f_rect.y += sin(angle) * speed;
+		distance--;
+	}
+	if (distance <= 0)
+	{
+		countState++;
+	}
+	if (countState >= 100)
+	{
+		angle = rand() % 360;
+		distance = 2;
+		countState = 0;
+	}
 }
 
 void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped)
@@ -88,6 +118,7 @@ void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<Bulle
 			coin.init(renderer, "img//coin.png");
 			coin.f_rect = { f_rect.x+f_rect.w/2 , f_rect.y + f_rect.h/2 ,64, 64}; // lấy vị trí là trung tâm của quái để phát ra
 			coin.setAngle(i*17 + (f_rect.y + f_rect.x)*11 + 2004); // góc đặt đại
+			//qtree->insert(&coin);
 			coins.push_back(coin);
 		}
 	//}
@@ -97,6 +128,7 @@ void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<Bulle
 		bd.init(renderer, "img//T_556mm.png");
 		bd.f_rect = { f_rect.x + f_rect.w / 2 , f_rect.y + f_rect.h / 2 ,15 , 15 }; // lấy vị trí là trung tâm của quái để phát ra
 		bd.setType(AK);
+		//qtree->insert(&bd);
 		bulletsDropped.push_back(bd);
 	}
 		

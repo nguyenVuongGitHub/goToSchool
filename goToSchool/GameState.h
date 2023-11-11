@@ -11,6 +11,7 @@
 #include "map.h"
 #include "coin.h"
 #include "BulletDropped.h"
+#include "QuadTree.h"
 using namespace std;
 enum typeWeapon
 {
@@ -37,7 +38,7 @@ private:
 	int mouseY;
 	bool isGameRunning;
 	bool isMenuRunning;
-
+	//Camera camera;
 	/**
 	* numberframe
 	*/
@@ -52,13 +53,28 @@ private:
 	WeaponList weaponList[9];
 	vector<Bullet> bulletList;
 	Uint32 lastShotTime;
-
+	vector<Enemy> enemyList;
 	long long money;
 	long long experience;
 	int lever;
 
 	vector<coin> coins;
 	vector<BulletDropped> bulletsDropped;
+	/*chèn map*/
+	Map m;
+	/*quad tree*/
+	Rectangle boundary;
+	int capacity;
+	QuadTree *qtree;
+	vector<Object*> newObjects; // lưu tất cả các object để tiện cho việc cập nhật lại vị trí
+	vector<Object*> foundObjects;
+	// danh sách các biến trong menu
+	EveryObject background;
+	Text t_title;
+	Text t_play;
+	Text t_shop;
+	Text t_exit;
+
 	/**
 	* xử lý của game loop
 	*/
@@ -71,19 +87,9 @@ private:
 	void cleanRenderGameLoop();
 	void collisionGameLoop();
 
-
-	/*chèn map*/
-	Map m;
 	/* xử lý của menu
-	* 
+	*
 	*/
-
-	// danh sách các biến trong menu
-	EveryObject background;
-	Text t_title;
-	Text t_play;
-	Text t_shop;
-	Text t_exit;
 
 	void initMenu();
 	void processInputMenu(SDL_Event& e);
@@ -105,6 +111,10 @@ private:
 	bool CirclePolygonCollisionDetect(vector<FlatVector> vertices, SDL_FRect& r1, FlatVector centerCircle, float radius, SDL_FRect& r2);
 	bool CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> vertices, FlatVector centerCircle, float radius, SDL_FRect& r2);
 	FlatVector FindArithmeticMean(vector<FlatVector> vertices);
+
+	SDL_FRect r[11];
+	SDL_Surface* s;
+	SDL_Texture* t;
 
 public:
 	GameState();

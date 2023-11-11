@@ -4,6 +4,7 @@
 
 #include "weapon.h"
 #include "bullet.h"
+#include "QuadTree.h"
 class Gun : public Weapon
 {
 	short type;

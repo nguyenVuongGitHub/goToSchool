@@ -20,7 +20,9 @@ public:
 	~Player();
 	friend class Weapon;
 
-
+	bool getMoveKey(int i) {
+		return moveKey[i];
+	}
 	void init(SDL_Renderer* renderer, string pathImg);
 	void update(Gun& weapon);
 	void update(Melle& weapon);

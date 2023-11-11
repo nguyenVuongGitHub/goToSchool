@@ -31,7 +31,9 @@ void Gun::attack(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32 &las
 		newBullet.setActive(true);
 
 		newBullet.init(renderer, type);
-		
+		//
+		// (&newBullet);
+		//objects.push_back(&newBullet);
 		bulletList.push_back(newBullet);
 		//cout << bulletList.size() << endl;
 		lastShotTime = curentTime;

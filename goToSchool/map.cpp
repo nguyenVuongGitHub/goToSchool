@@ -19,7 +19,6 @@ void Map::loadTileTexture(SDL_Renderer* map_renderer, string filePath) {
     }
 
     SDL_FreeSurface(tile_map_surface);
-
 }
 
 void Map::setmap() {
@@ -36,13 +35,6 @@ void Map::setmap() {
 }
 
 void Map::loadTileSet() {
-    
-    //int tam1, tam2, tam3, tam4;
-    //tam1 = tilemap[0][0];
-    //tam2 = tilemap[0][1];
-    //tam3 = tilemap[0][2];
-    //tam4 = tilemap[0][3];
-    //int* p = &tilemap[0][0];
     int tmp = 1;
     for (int i = 0; i < 6; i++) {
         for (int j = 0; j < 9; j++) {
@@ -53,23 +45,12 @@ void Map::loadTileSet() {
             tmp++;
 
         }
-        //cout << "i = " << i << " p = " << p << "    *p =" << *p << endl;
     }
-    /*tilemap[0][0] = tam1;
-    tilemap[0][1] = tam2;
-    tilemap[0][2] = tam3;
-    tilemap[0][3] = tam4;*/
-
-    //cout << "sau cung : tilemap: " << tilemap[0][0] << "\n"; //512
-    //cout << "sau cung : tilemap: " << tilemap[0][1] << "\n"; //320
-    //cout << "sau cung : tilemap: " << tilemap[0][2] << "\n"; //64
-    //cout << "sau cung : tilemap: " << tilemap[0][3] << "\n"; //64
-
 }
 
 bool Map::isWall(int tilemap)
 {
-    vector<int> choose = {7,8,9,16,18,25,26,27};
+    vector<int> choose = {7,8,9,16,18,25,26,27,36};
     if (find(choose.begin(), choose.end(), tilemap) != choose.end())
     {
         return true;
@@ -85,30 +66,31 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
         return;
     }
 
-    Special x;
     for (int i = 0; i < 32; i++) {
         for (int j = 0; j < 32; j++) {
             inputFile >> tilemap[i][j];
             //cout << tilemap[i][j] << " ";
             if (isWall(tilemap[i][j]))
             {
+                Barrier x;
                 x.x = i;
                 x.y = j;
                 x.vertices = {};
+
                 wall.push_back(x);
             }
-            if (tilemap[i][j] == 15)
+            /*if (tilemap[i][j] == 15)
             {
                 Enemy e;
-                e.init(j,i,renderer,"img/ball.png");
+                e.init(renderer,"img/ball.png");
                 enemyList.push_back(e);
-            }
+            }*/
         }
     }
     inputFile.close();
 }
 
-void Map::initWall()
+void Map::initWall(QuadTree* qtree)
 {
     for (int i = 0; i < wall.size(); i++)
     {
@@ -116,23 +98,50 @@ void Map::initWall()
         wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x + tile[wall[i].x][wall[i].y].w, tile[wall[i].x][wall[i].y].y });
         wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x + tile[wall[i].x][wall[i].y].w, tile[wall[i].x][wall[i].y].y + tile[wall[i].x][wall[i].y].h });
         wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x, tile[wall[i].x][wall[i].y].y + tile[wall[i].x][wall[i].y].h });
+        
+   
     }
 }
 
-void Map::loadMap(SDL_Renderer* renderer) {
+void Map::loadMap(SDL_Renderer* renderer, QuadTree* qtree) {
     InsertDataIntoTilemap(renderer, "map/final.txt");
     
     loadTileTexture(renderer, "map/map_final.png");
     loadTileSet();
     setmap();
-    initWall();
+    initWall(qtree);
 }
 
-void Map::render(SDL_Renderer* map_renderer)
+void Map::render(SDL_Renderer* map_renderer, Player& player)
 {
+    //// Adjust the camera position based on the player's position
+    //camera.x = player.getRect().x*2 - (camera.w / 2);
+    //camera.y = player.getRect().y*2 - (camera.h/2 ) ;
+    //
+    //// Ensure the camera stays within the bounds of the map
+    //if (camera.x < 0) {
+    //    camera.x = 0;
+    //}
+    //if (camera.y < 0) {
+    //    camera.y = 0;
+    //}
+    //if (camera.x > 2048 - camera.w) {
+    //    camera.x = 2048 - camera.w;
+    //}
+    //if (camera.y > 2048 - camera.h) {
+    //    camera.y = 2048 - camera.h;
+
+
     for (int x = 0; x < 32; x++) {
         for (int y = 0; y < 32; y++) {
-            switch (tilemap[x][y]) {
+            int i = tilemap[x][y];
+            // Calculate the adjusted rendering position for each tile
+          /*  int renderX = (tile[x][y].x - camera.x);
+            int renderY = (tile[x][y].y - camera.y);
+            SDL_FRect newRect = { renderX, renderY, tile[x][y].w, tile[x][y].h };*/
+            SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[i], &tile[x][y]);
+            /*switch (tilemap[x][y]) {
+            
             case 1:
                SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[1], &tile[x][y]);
                 break;
@@ -295,7 +304,7 @@ void Map::render(SDL_Renderer* map_renderer)
             case 54:
                SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[54], &tile[x][y]);
                 break;
-            }
+            }*/
         }
     }
 }

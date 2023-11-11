@@ -26,6 +26,7 @@ public:
 	virtual void attack() {
 
 	}
+	double getSpeed() { return speed; }
 	bool getIsAttack() { return isAttack; };
 	void setIsAttack(bool x) { this->isAttack = x; };
 	short getHP() { return hp; };

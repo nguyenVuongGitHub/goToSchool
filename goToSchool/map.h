@@ -7,9 +7,10 @@
 #include <vector>
 #include "FlatVector.h"
 #include "Enemy.h"
-
-struct Special
+#include "Player.h"
+class Barrier : public Object
 {
+public:
     // Số ô x y
     int x, y;
     vector<FlatVector> vertices;
@@ -22,26 +23,28 @@ private:
     SDL_FRect tile[32][32]; // Thông số vị trí các ô
     SDL_Rect select_tile[55]; // Lấy dữ liệu từ hình ảnh nguồn để render
     int tilemap[32][32]; // Dữ liệu map
-    vector<Special> wall;
+    vector<Barrier> wall;
 public:
-    vector<Enemy> enemyList;
+    
     Map(){
-
         tile_texture = NULL;
     }
     ~Map();
-    vector<Special> getWall()
+    vector<Barrier> getWall()
     {
         return wall;
     }
+    int getTilemap(int i, int j) { return tilemap[i][j]; }
+    SDL_Texture* getTexture() { return tile_texture; }
+    SDL_FRect getTile(int i, int j) { return tile[i][j]; }
+    SDL_Rect getSelectTile(int i) { return select_tile[i]; }
     void loadTileTexture(SDL_Renderer* renderer, string filePath);
     void setmap();
     void loadTileSet();
     void InsertDataIntoTilemap(SDL_Renderer* renderer, string filePath);
     bool isWall(int tilemap);
-    void loadMap(SDL_Renderer* renderer);
-    void initWall();
-
-    void render(SDL_Renderer* renderer);
+    void loadMap(SDL_Renderer* renderer, QuadTree* qtree);
+    void initWall(QuadTree* qtree);
+    void render(SDL_Renderer* renderer, Player& player);
 };
 #endif

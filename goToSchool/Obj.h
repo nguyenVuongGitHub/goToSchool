@@ -35,16 +35,16 @@ public:
 		surface = NULL;
 		f_rect = { 0,0,0,0 };
 	}
-	~Object() = default;
+	 ~Object() = default;
 	virtual void init(SDL_Renderer* renderer, string pathImg) {
 
 	}
 	virtual void render(SDL_Renderer* renderer) {
 
 	}
-	//SDL_FRect getRect() {
-	//	return f_rect;
-	//}
+	SDL_FRect getRect() {
+		return f_rect;
+	}
 	//void setRect(SDL_FRect f_rect) {
 	//	this->f_rect = f_rect;
 	//}
