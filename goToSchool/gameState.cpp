@@ -1,7 +1,7 @@
 ﻿#include "GameState.h"
 
-const int LEVEL_WIDTH = 2048;
-const int LEVEL_HEIGHT = 2048;
+const int LEVEL_WIDTH = 2560;
+const int LEVEL_HEIGHT = 2560;
 
 GameState::GameState() :
 
@@ -1266,23 +1266,23 @@ void GameState::freeAll()
 
 void GameState::FolowCam()
 {
-	scrollX = player.f_rect.x - 800;
-	scrollY = player.f_rect.y - 500;
+	scrollX = player.f_rect.x - 1920/2;
+	scrollY = player.f_rect.y - 1080/2;
 
 	if (scrollX < 0)
 	{
 		scrollX = 0;
 	}
-	if (scrollX > LEVEL_WIDTH/2 - 960)
+	if (scrollX > LEVEL_WIDTH - 960)
 	{
-		scrollX = LEVEL_WIDTH/2 - 960;
+		scrollX = LEVEL_WIDTH - 960;
 	}
 	if (scrollY < 0)
 	{
 		scrollY = 0;
 	}
-	if (scrollY > LEVEL_HEIGHT/2 - 64)
+	if (scrollY > LEVEL_HEIGHT - 1080/2)
 	{
-		scrollY = LEVEL_HEIGHT/2 - 64;
+		scrollY = LEVEL_HEIGHT - 1080/2;
 	}
 }

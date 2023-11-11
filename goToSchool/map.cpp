@@ -25,8 +25,8 @@ void Map::loadTileTexture(SDL_Renderer* map_renderer, string filePath) {
 void Map::setmap() {
 
 
-    for (int x = 0; x < 32; x++) {
-        for (int y = 0; y < 32; y++) {
+    for (int x = 0; x < 40; x++) {
+        for (int y = 0; y < 40; y++) {
             tile[x][y].x = y * 64;
             tile[x][y].y = x * 64;
             tile[x][y].w = 64;
@@ -85,8 +85,8 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
         return;
     }
 
-    for (int i = 0; i < 32; i++) {
-        for (int j = 0; j < 32; j++) {
+    for (int i = 0; i < 40; i++) {
+        for (int j = 0; j < 40; j++) {
             inputFile >> tilemap[i][j];
             //cout << tilemap[i][j] << " ";
             //if (isWall(tilemap[i][j]))
@@ -107,36 +107,36 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
     }
     
     Special x1;
-    x1.r = { -64,0,64,32 * 64 };
+    x1.r = { -64,0,64,40 * 64 };
     x1.vertices.push_back({ x1.r.x, x1.r.y });
     x1.vertices.push_back({ x1.r.x + x1.r.w, x1.r.y });
     x1.vertices.push_back({ x1.r.x + x1.r.w, x1.r.y + x1.r.h});
     x1.vertices.push_back({ x1.r.x, x1.r.h + x1.r.y });
     wall.push_back(x1);
-    x1.r = { 31*64, 0,64, 64*32 };
+    x1.r = { 40*64, 0,64, 64*40 };
     x1.vertices[0] = { x1.r.x, x1.r.y };
     x1.vertices[1] = { x1.r.x + x1.r.w, x1.r.y };
     x1.vertices[2] = { x1.r.x + x1.r.w, x1.r.y + x1.r.h };
     x1.vertices[3] = { x1.r.x, x1.r.h + x1.r.y };
     wall.push_back(x1);
-    x1.r = { 0,64*32,31*64,64 };
+    x1.r = { 0,64*40,39*64,64 };
     x1.vertices[0] = { x1.r.x, x1.r.y };
     x1.vertices[1] = { x1.r.x + x1.r.w, x1.r.y };
     x1.vertices[2] = { x1.r.x + x1.r.w, x1.r.y + x1.r.h };
     x1.vertices[3] = { x1.r.x, x1.r.h + x1.r.y };
     wall.push_back(x1);
-    x1.r = { 0,-64,64*31,64 };
+    x1.r = { 0,-64,64*39,64 };
     x1.vertices[0] = { x1.r.x, x1.r.y };
     x1.vertices[1] = { x1.r.x + x1.r.w, x1.r.y };
     x1.vertices[2] = { x1.r.x + x1.r.w, x1.r.y + x1.r.h };
     x1.vertices[3] = { x1.r.x, x1.r.h + x1.r.y };
     wall.push_back(x1);
-    x1.r = { 0, 5 * 64, 64 * 7, 64 * 7.5 };
-    x1.vertices[0] = { x1.r.x, x1.r.y };
-    x1.vertices[1] = { x1.r.x + x1.r.w, x1.r.y };
-    x1.vertices[2] = { x1.r.x + x1.r.w, x1.r.y + x1.r.h };
-    x1.vertices[3] = { x1.r.x, x1.r.h + x1.r.y };
-    wall.push_back(x1);
+    //x1.r = { 0, 5 * 64, 64 * 7, 64 * 7.5 };
+    //x1.vertices[0] = { x1.r.x, x1.r.y };
+    //x1.vertices[1] = { x1.r.x + x1.r.w, x1.r.y };
+    //x1.vertices[2] = { x1.r.x + x1.r.w, x1.r.y + x1.r.h };
+    //x1.vertices[3] = { x1.r.x, x1.r.h + x1.r.y };
+    //wall.push_back(x1);
     inputFile.close();
 }
 
@@ -162,8 +162,8 @@ void Map::loadMap(SDL_Renderer* renderer) {
 
 void Map::render(SDL_Renderer* map_renderer, float scrollX, float scrollY)
 {
-    for (int x = 0; x < 32; x++) {
-        for (int y = 0; y < 32; y++) {
+    for (int x = 0; x < 40; x++) {
+        for (int y = 0; y < 40; y++) {
             SDL_FRect tmp = { tile[x][y].x - scrollX, tile[x][y].y - scrollY, tile[x][y].w, tile[x][y].h };
             //tile[x][y].x -= scrollX;
             //tile[x][y].y -= scrollY;
