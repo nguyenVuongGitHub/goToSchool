@@ -86,7 +86,8 @@ void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<Bulle
 		for (int i = 0; i <= 5; i++)
 		{
 			coin.init(renderer, "img//coin.png");
-			coin.f_rect = { f_rect.x+f_rect.w/2 , f_rect.y + f_rect.h/2 ,64, 64}; // lấy vị trí là trung tâm của quái để phát ra
+			coin.f_rect.x = f_rect.x + f_rect.w / 2 ;
+			coin.f_rect.y = f_rect.y + f_rect.h / 2 ; // lấy vị trí là trung tâm của quái để phát ra
 			coin.setAngle(i*17 + (f_rect.y + f_rect.x)*11 + 2004); // góc đặt đại
 			coins.push_back(coin);
 		}

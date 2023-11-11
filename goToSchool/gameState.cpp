@@ -445,8 +445,8 @@ void GameState::initMenu()
 {
 	background.init(renderer, "img/background.jpg");
 	background.f_rect = { 0,0,1920,1080};
-
-	t_title.init(renderer, "GO TO SCHOOL",92, widthWindow/2 + 100, 179);
+	//cout << t_title.getRect().w << endl ;
+	t_title.init(renderer, "GO TO SCHOOL", 92, widthWindow / 2 - (674 / 2), 179);
 	t_play.init(renderer, "PLAY", 52,881, 369);
 	t_shop.init(renderer, "SHOP", 52,881, 559);
 	t_exit.init(renderer, "EXIT", 52,881, 749);

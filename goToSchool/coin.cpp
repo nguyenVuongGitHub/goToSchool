@@ -5,7 +5,7 @@
 void coin::init(SDL_Renderer* renderer, string pathImg)
 {
 	ItemDropped::init(renderer, pathImg);
-	f_rect = { 0, 0, 15, 15 };
+	f_rect = { 0, 0, 30, 30 };
 }
 
 void coin::update(const SDL_FRect& rectPlayer)
