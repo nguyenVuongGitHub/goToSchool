@@ -93,7 +93,7 @@ void GameState::initGame()
 		weaponList[2].gun = x2;
 		weaponList[3].gun = x3;
 
-		player.init(renderer, "img/tamGiac.png");
+		player.init(renderer, "img/player.png");
 
 		m.loadMap(renderer);
 		hadInit = true;
@@ -131,31 +131,6 @@ void GameState::processInputGameLoop(SDL_Event &e)
 		if (e.key.keysym.sym == SDLK_ESCAPE)
 			isGameRunning = 0;
 
-		// kiểm tra nút đã được bấm xuống chưa 
-		if (e.type == SDL_KEYDOWN)
-		{
-			// nếu rồi thì kiểm tra nút đó là nút nào
-			// sau đó sẽ đặt hướng di chuyển của người chơi
-
-			if (e.key.keysym.sym == SDLK_a)
-				player.setMoveKey(LEFT);
-
-			else if (e.key.keysym.sym == SDLK_d)
-				player.setMoveKey(RIGHT);
-
-			else if (e.key.keysym.sym == SDLK_w)
-				player.setMoveKey(UP);
-
-			else if (e.key.keysym.sym == SDLK_s)
-				player.setMoveKey(DOWN);
-
-			else if (e.key.keysym.sym == SDLK_LSHIFT)
-				player.setMoveKey(SLOW);
-
-			else if (e.key.keysym.sym == SDLK_SPACE)
-				player.setMoveKey(FAST);
-		}
-		// kiểm tra nút đã được thả ra chưa
 		if (e.type == SDL_KEYUP)
 		{
 			// nếu rồi thì kiểm tra nút đó là nút nào
@@ -179,6 +154,31 @@ void GameState::processInputGameLoop(SDL_Event &e)
 			else if (e.key.keysym.sym == SDLK_SPACE)
 				player.desetMoveKey(FAST);
 		}
+		// kiểm tra nút đã được bấm xuống chưa 
+		if (e.type == SDL_KEYDOWN)
+		{
+			// nếu rồi thì kiểm tra nút đó là nút nào
+			// sau đó sẽ đặt hướng di chuyển của người chơi
+
+			if (e.key.keysym.sym == SDLK_a)
+				player.setMoveKey(LEFT);
+			
+			else if (e.key.keysym.sym == SDLK_d)
+				player.setMoveKey(RIGHT);
+
+			else if (e.key.keysym.sym == SDLK_w)
+				player.setMoveKey(UP);
+
+			else if (e.key.keysym.sym == SDLK_s)
+				player.setMoveKey(DOWN);
+
+			else if (e.key.keysym.sym == SDLK_LSHIFT)
+				player.setMoveKey(SLOW);
+
+			else if (e.key.keysym.sym == SDLK_SPACE)
+				player.setMoveKey(FAST);
+		}
+		// kiểm tra nút đã được thả ra chưa
 		//bắt sự kiện giữ chuột và sẽ đặt người chơi vào trạng thái tấn công
 		// SDL_BUTTON_LMASK là chuột trái
 		if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LMASK)
@@ -219,6 +219,21 @@ void GameState::updateGameLoop()
 		frameSlime = 0;
 	}
 	
+	player.framAni.x += 0.259784;
+	if (player.framAni.x >= 6.0)
+	{
+		player.framAni.x = 0;
+	}
+
+	if (player.isMove)
+	{
+		player.framAni.y = 1;
+	}
+	else
+	{
+		player.framAni.y = 0;
+	}
+
 	//  ============= update player ==============
 	if (weaponList[curWeapon].type == GUN)
 	{
