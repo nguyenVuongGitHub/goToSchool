@@ -294,7 +294,7 @@ void GameState::renderGameLoop()
 	{
 		weaponList[curWeapon].gun.f_rect.x -= scrollX;
 		weaponList[curWeapon].gun.f_rect.y -= scrollY;
-		weaponList[curWeapon].gun.render(renderer, player.f_rect);
+		weaponList[curWeapon].gun.render(renderer, player.f_rect, scrollX);
 	}
 	else
 	{

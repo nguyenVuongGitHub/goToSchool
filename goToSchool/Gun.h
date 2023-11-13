@@ -19,7 +19,7 @@ public:
 	void setTotalBullets(long long totalBullets) { this->totalBullets = totalBullets; }
 
 	void init(SDL_Renderer* renderer, string pathImg) override;
-	void render(SDL_Renderer* renderer, const SDL_FRect& rectPlayer);
+	void render(SDL_Renderer* renderer, const SDL_FRect& rectPlayer, const float&scrollX);
 	void update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& lastShotTime, const SDL_FRect& rectPlayer, const FlatVector& centerPlayer, float scrollX, float scrollY);
 };
 

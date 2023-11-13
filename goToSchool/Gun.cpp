@@ -70,12 +70,12 @@ void Gun::init(SDL_Renderer* renderer, string pathImg)
 	vertices.push_back({ f_rect.x, f_rect.y + f_rect.h});
 }
 
-void Gun::render(SDL_Renderer* renderer, const SDL_FRect &rectPlayer)
+void Gun::render(SDL_Renderer* renderer, const SDL_FRect &rectPlayer ,const float& scrollX)
 {
 	int curXMouse, curYMouse;
 	SDL_GetMouseState(&curXMouse, &curYMouse);
 	point = { 0,0 };
-	if (curXMouse < rectPlayer.x)
+	if (curXMouse + scrollX < rectPlayer.x)
 		SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, &point, SDL_FLIP_VERTICAL);
 	else 
 		SDL_RenderCopyExF(renderer, texture, NULL, &f_rect, angle, &point, SDL_FLIP_NONE);

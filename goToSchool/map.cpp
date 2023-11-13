@@ -69,7 +69,7 @@ void Map::loadTileSet() {
 
 bool Map::isWall(int tilemap)
 {
-    vector<int> choose = {7,8,9,16,18,25,26,27};
+    vector<int> choose = {7};
     if (find(choose.begin(), choose.end(), tilemap) != choose.end())
     {
         return true;
@@ -85,18 +85,19 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
         return;
     }
 
+    Special x;
     for (int i = 0; i < 40; i++) {
         for (int j = 0; j < 40; j++) {
             inputFile >> tilemap[i][j];
             //cout << tilemap[i][j] << " ";
-            //if (isWall(tilemap[i][j]))
-            //{
-            //    x.x = i;
-            //    x.y = j;
-            //    x.vertices = {};
-            //    x.r = { (float)j * 64, (float)i * 64, 64 ,64 };
-            //    wall.push_back(x);
-            //}
+            if (tilemap[i][j] == 7)
+            {
+                x.x = i;
+                x.y = j;
+                x.vertices = {};
+                x.r = { (float)j * 64, (float)i * 64, 64 * 10 ,64 * 10 };
+                wall.push_back(x);
+            }
             if (tilemap[i][j] == 15)
             {
                 Enemy e;
@@ -131,24 +132,18 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
     x1.vertices[2] = { x1.r.x + x1.r.w, x1.r.y + x1.r.h };
     x1.vertices[3] = { x1.r.x, x1.r.h + x1.r.y };
     wall.push_back(x1);
-    //x1.r = { 0, 5 * 64, 64 * 7, 64 * 7.5 };
-    //x1.vertices[0] = { x1.r.x, x1.r.y };
-    //x1.vertices[1] = { x1.r.x + x1.r.w, x1.r.y };
-    //x1.vertices[2] = { x1.r.x + x1.r.w, x1.r.y + x1.r.h };
-    //x1.vertices[3] = { x1.r.x, x1.r.h + x1.r.y };
-    //wall.push_back(x1);
     inputFile.close();
 }
 
 void Map::initWall()
 {
-    //for (int i = 0; i < wall.size(); i++)
-    //{
-    //    wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x, tile[wall[i].x][wall[i].y].y });
-    //    wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x + tile[wall[i].x][wall[i].y].w, tile[wall[i].x][wall[i].y].y });
-    //    wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x + tile[wall[i].x][wall[i].y].w, tile[wall[i].x][wall[i].y].y + tile[wall[i].x][wall[i].y].h });
-    //    wall[i].vertices.push_back({ tile[wall[i].x][wall[i].y].x, tile[wall[i].x][wall[i].y].y + tile[wall[i].x][wall[i].y].h });
-    //}
+    for (int i = 0; i < wall.size(); i++)
+    {
+        wall[i].vertices.push_back({ wall[i].r.x, wall[i].r.y });
+        wall[i].vertices.push_back({ wall[i].r.x + wall[i].r.w, wall[i].r.y });
+        wall[i].vertices.push_back({ wall[i].r.x + wall[i].r.w, wall[i].r.y + wall[i].r.h });
+        wall[i].vertices.push_back({ wall[i].r.x, wall[i].r.y + wall[i].r.h });
+    }
 }
 
 void Map::loadMap(SDL_Renderer* renderer) {
