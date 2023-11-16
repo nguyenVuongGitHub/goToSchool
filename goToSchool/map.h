@@ -25,7 +25,7 @@ private:
     int tilemap[32][32]; // Dữ liệu map
     vector<Special> wall;
 public:
-    vector<Enemy> enemyList;
+    //vector<Enemy> enemyList;
     Map(){
 
         tile_texture = NULL;

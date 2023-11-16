@@ -31,7 +31,7 @@ Text::~Text()
 	TTF_CloseFont(font);
 }
 
-void Text::init(SDL_Renderer* renderer, string text,int fontSize,int x, int y, SDL_Color color)
+void Text::init(SDL_Renderer* renderer, string text, int fontSize, int x, int y, string fontstr, SDL_Color color)
 {
 	this->text = text;
 	this->font = font;
@@ -40,7 +40,7 @@ void Text::init(SDL_Renderer* renderer, string text,int fontSize,int x, int y, S
 	this->color = color;
 	this->fontSize = fontSize;
 
-	font = TTF_OpenFont(pathFontMain.c_str(), fontSize);
+	font = TTF_OpenFont(fontstr.c_str(), fontSize);
 	surface = TTF_RenderText_Solid(font, text.c_str(), color);
 	rect.w = surface->w;
 	rect.h = surface->h;

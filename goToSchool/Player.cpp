@@ -21,6 +21,7 @@ void Player::init(SDL_Renderer* renderer, string pathImg)
 	crossSpeed = (speed * sqrt(2)) / 2;
 	hp = 100;
 	active = true;
+	touchable = true;
 	vertices.push_back({ f_rect.x, f_rect.y });
 	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y });
 	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y + f_rect.h });

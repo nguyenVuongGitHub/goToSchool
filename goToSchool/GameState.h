@@ -37,15 +37,34 @@ private:
 	int mouseY;
 	bool isGameRunning;
 	bool isMenuRunning;
-
+	int countLoop;
 	float scrollX;
 	float scrollY;
+
+	/*
+		infomation player
+	*/
+	long long money;
+	Text moneyText;
+	SDL_FRect hp;
+	SDL_Rect hp_frame;
+	SDL_Texture* t;
+	coin coinImg;
+	Text numberbulletTextUSP;
+	Text numberbulletTextAK;
+	Text numberbulletTextMP5;
+	void initInfomation();
+	void updateInfomation();
+	void renderInfomation();
+	
+	//Text 
 
 	/**
 	* numberframe
 	*/
 	float frameCoin;
 	float frameSlime;
+	float frameSke;
 	/**
 	* Thông tin người chơi và vũ khí
 	* 
@@ -56,13 +75,11 @@ private:
 	WeaponList weaponList[9];
 	vector<Bullet> bulletList;
 	Uint32 lastShotTime;
-
-	long long money;
-	long long experience;
-	int lever;
+	vector<Enemy> enemyList;
 
 	vector<coin> coins;
 	vector<BulletDropped> bulletsDropped;
+	vector<BulletEnemy> bulletEnemyList;
 	/**
 	* xử lý của game loop
 	*/
@@ -107,6 +124,8 @@ private:
 
 	void FolowCam();
 
+	int turnGame;
+	void updateTurnGame();
 	/**
 	* Xử lý va chạm sử dụng định lý SAT và AABB
 	*/

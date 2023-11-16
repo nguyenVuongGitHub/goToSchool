@@ -10,6 +10,7 @@
 
 class Bullet : public Object
 {
+protected:
 	short type;
 	bool active;
 	double angle;

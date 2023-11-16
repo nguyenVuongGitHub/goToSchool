@@ -22,7 +22,6 @@ void Character::init(SDL_Renderer* renderer, string pathImg)
 {
 	surface = IMG_Load(pathImg.c_str());
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
-	f_rect = { 0,0,0,0 };
 }
 
 

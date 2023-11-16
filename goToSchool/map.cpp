@@ -97,12 +97,12 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
             //    x.r = { (float)j * 64, (float)i * 64, 64 ,64 };
             //    wall.push_back(x);
             //}
-            if (tilemap[i][j] == 15)
-            {
-                Enemy e;
-                e.init(j,i,renderer,"img/slime.png");
-                enemyList.push_back(e);
-            }
+            //if (tilemap[i][j] == 15)
+            //{
+                //Enemy e;
+                //e.init(j,i,renderer,"img/slime.png");
+                //enemyList.push_back(e);
+            //}
         }
     }
     

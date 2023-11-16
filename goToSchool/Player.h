@@ -7,8 +7,10 @@
 #include "weapon.h"
 #include "Gun.h"
 #include "Melle.h"
+#include "Text.h"
 class Player : public Character
 {
+	bool touchable;
 	bool moveKey[6];
 	void move() override;
 
@@ -20,6 +22,8 @@ public:
 	~Player();
 	friend class Weapon;
 
+	bool getTouchable() { return touchable; }
+	void setTouchable(bool x) { touchable = x; }
 
 	void init(SDL_Renderer* renderer, string pathImg);
 	void update(Gun& weapon);

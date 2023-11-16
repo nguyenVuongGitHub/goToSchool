@@ -46,7 +46,6 @@ void Bullet::render(SDL_Renderer* renderer, float scrollX, float scrollY)
 {
 	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
 	SDL_RenderCopyExF(renderer, texture, NULL, &tmp, angle, NULL, SDL_FLIP_NONE);
-	//cout << "ccc";
 }
 void Bullet::move()
 {

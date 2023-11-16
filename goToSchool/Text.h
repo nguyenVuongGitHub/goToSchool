@@ -32,7 +32,7 @@ public:
 	Text();
 	Text(string text, TTF_Font* font);
 	~Text();
-	void init(SDL_Renderer* renderer, string text, int fontSize, int x, int y, SDL_Color color = {255,255,255,255});
+	void init(SDL_Renderer* renderer, string text, int fontSize, int x, int y, string fontstr = "font/Anothershabby_trial.ttf", SDL_Color color = { 255,255,255,255 });
 	void setText(string text);
 	void setFont(TTF_Font* font);
 	void setColor(SDL_Color color);
