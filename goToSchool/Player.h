@@ -21,6 +21,9 @@ public:
 	Player();
 	~Player();
 	friend class Weapon;
+	SDL_RendererFlip flip;
+	FlatVector framAni;
+	bool isMove;
 
 	bool getTouchable() { return touchable; }
 	void setTouchable(bool x) { touchable = x; }

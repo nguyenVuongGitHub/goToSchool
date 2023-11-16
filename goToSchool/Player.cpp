@@ -15,7 +15,9 @@ Player::~Player()
 }
 void Player::init(SDL_Renderer* renderer, string pathImg)
 {
+	isMove = false;
 	Character::init(renderer, pathImg);
+	framAni = { 0,0 };
 	f_rect = { 1000,1000,32,64 };
 	speed = 5;
 	crossSpeed = (speed * sqrt(2)) / 2;
@@ -61,10 +63,12 @@ void Player::init(SDL_Renderer* renderer, string pathImg)
 void Player::setMoveKey(int x)
 {
 	moveKey[x] = true;
+	isMove = true;
 }
 void Player::desetMoveKey(int x)
 {
 	moveKey[x] = false;
+	isMove = false;
 }
 void Player::update(Gun& weapon)
 {
@@ -175,7 +179,23 @@ void Player::attack(Melle& weapon)
 
 void Player::render(SDL_Renderer* renderer, float scrollX, float scrollY)
 {
+	srcRect.x = (int)framAni.x * 32;
+	srcRect.y = (int)framAni.y * 64;
+	srcRect.w = 32;
+	srcRect.h = 64;
+	int cursorX, cursorY;
+	SDL_GetMouseState(&cursorX, &cursorY);
+	cursorX += scrollX;
+	cursorY += scrollY;
+	if (cursorX < f_rect.x + f_rect.w / 2)
+	{
+		flip = SDL_FLIP_HORIZONTAL;
+	}
+	else
+	{
+		flip = SDL_FLIP_NONE;
+	}
 	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
-	SDL_RenderCopyExF(renderer, texture, NULL, &tmp, angle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyExF(renderer, texture, &srcRect, &tmp, angle, NULL, flip);
 	
 }

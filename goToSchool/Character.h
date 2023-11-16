@@ -16,6 +16,7 @@ protected:
 	double dx, dy;
 	bool active;
 public:
+
 	Character();
 	~Character();
 	void init(SDL_Renderer* renderer, string pathImg) override;

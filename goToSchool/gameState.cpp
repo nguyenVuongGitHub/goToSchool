@@ -1,7 +1,7 @@
 ﻿#include "GameState.h"
 
-const int LEVEL_WIDTH = 2048;
-const int LEVEL_HEIGHT = 2048;
+const int LEVEL_WIDTH = 1600;
+const int LEVEL_HEIGHT = 2020;
 
 GameState::GameState() :
 
@@ -140,7 +140,7 @@ void GameState::initGame()
 		weaponList[2].gun = x2;
 		weaponList[3].gun = x3;
 
-		player.init(renderer, "img/tamGiac.png");
+		player.init(renderer, "img/player.png");
 
 		m.loadMap(renderer);
 		hadInit = true;
@@ -178,31 +178,6 @@ void GameState::processInputGameLoop(SDL_Event &e)
 		if (e.key.keysym.sym == SDLK_ESCAPE)
 			isGameRunning = 0;
 
-		// kiểm tra nút đã được bấm xuống chưa 
-		if (e.type == SDL_KEYDOWN)
-		{
-			// nếu rồi thì kiểm tra nút đó là nút nào
-			// sau đó sẽ đặt hướng di chuyển của người chơi
-
-			if (e.key.keysym.sym == SDLK_a)
-				player.setMoveKey(LEFT);
-
-			else if (e.key.keysym.sym == SDLK_d)
-				player.setMoveKey(RIGHT);
-
-			else if (e.key.keysym.sym == SDLK_w)
-				player.setMoveKey(UP);
-
-			else if (e.key.keysym.sym == SDLK_s)
-				player.setMoveKey(DOWN);
-
-			else if (e.key.keysym.sym == SDLK_LSHIFT)
-				player.setMoveKey(SLOW);
-
-			else if (e.key.keysym.sym == SDLK_SPACE)
-				player.setMoveKey(FAST);
-		}
-		// kiểm tra nút đã được thả ra chưa
 		if (e.type == SDL_KEYUP)
 		{
 			// nếu rồi thì kiểm tra nút đó là nút nào
@@ -226,6 +201,31 @@ void GameState::processInputGameLoop(SDL_Event &e)
 			else if (e.key.keysym.sym == SDLK_SPACE)
 				player.desetMoveKey(FAST);
 		}
+		// kiểm tra nút đã được bấm xuống chưa 
+		if (e.type == SDL_KEYDOWN)
+		{
+			// nếu rồi thì kiểm tra nút đó là nút nào
+			// sau đó sẽ đặt hướng di chuyển của người chơi
+
+			if (e.key.keysym.sym == SDLK_a)
+				player.setMoveKey(LEFT);
+			
+			else if (e.key.keysym.sym == SDLK_d)
+				player.setMoveKey(RIGHT);
+
+			else if (e.key.keysym.sym == SDLK_w)
+				player.setMoveKey(UP);
+
+			else if (e.key.keysym.sym == SDLK_s)
+				player.setMoveKey(DOWN);
+
+			else if (e.key.keysym.sym == SDLK_LSHIFT)
+				player.setMoveKey(SLOW);
+
+			else if (e.key.keysym.sym == SDLK_SPACE)
+				player.setMoveKey(FAST);
+		}
+		// kiểm tra nút đã được thả ra chưa
 		//bắt sự kiện giữ chuột và sẽ đặt người chơi vào trạng thái tấn công
 		// SDL_BUTTON_LMASK là chuột trái
 		if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LMASK)
@@ -275,6 +275,21 @@ void GameState::updateGameLoop()
 	frameSlime += 0.259784;
 	if (frameSlime >= 6.0) frameSlime = 0;
 	
+	player.framAni.x += 0.259784;
+	if (player.framAni.x >= 6.0)
+	{
+		player.framAni.x = 0;
+	}
+
+	if (player.isMove)
+	{
+		player.framAni.y = 1;
+	}
+	else
+	{
+		player.framAni.y = 0;
+	}
+
 	frameSke += 0.259784;
 	if (frameSke >= 4.0) frameSke = 0;
 	//  ============= update player ==============
@@ -357,7 +372,7 @@ void GameState::renderGameLoop()
 	{
 		weaponList[curWeapon].gun.f_rect.x -= scrollX;
 		weaponList[curWeapon].gun.f_rect.y -= scrollY;
-		weaponList[curWeapon].gun.render(renderer, player.f_rect);
+		weaponList[curWeapon].gun.render(renderer, player.f_rect, scrollX);
 	}
 	else
 	{
@@ -1377,24 +1392,24 @@ void GameState::freeAll()
 
 void GameState::FolowCam()
 {
-	scrollX = player.f_rect.x - 800;
-	scrollY = player.f_rect.y - 500;
+	scrollX = player.f_rect.x - 1920/2;
+	scrollY = player.f_rect.y - 1080/2;
 
 	if (scrollX < 0)
 	{
 		scrollX = 0;
 	}
-	if (scrollX > LEVEL_WIDTH/2 - 960)
+	if (scrollX > LEVEL_WIDTH - 1920/2)
 	{
-		scrollX = LEVEL_WIDTH/2 - 960;
+		scrollX = LEVEL_WIDTH - 1920/2;
 	}
 	if (scrollY < 0)
 	{
 		scrollY = 0;
 	}
-	if (scrollY > LEVEL_HEIGHT/2 - 64)
+	if (scrollY > LEVEL_HEIGHT - 1080 / 2)
 	{
-		scrollY = LEVEL_HEIGHT/2 - 64;
+		scrollY = LEVEL_HEIGHT - 1080 / 2;
 	}
 }
 

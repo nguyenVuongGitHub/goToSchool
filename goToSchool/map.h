@@ -20,9 +20,9 @@ struct Special
 class Map {
 private:
     SDL_Texture* tile_texture;
-    SDL_FRect tile[32][32]; // Thông số vị trí các ô
+    SDL_FRect tile[40][40]; // Thông số vị trí các ô
     SDL_Rect select_tile[55]; // Lấy dữ liệu từ hình ảnh nguồn để render
-    int tilemap[32][32]; // Dữ liệu map
+    int tilemap[40][40]; // Dữ liệu map
     vector<Special> wall;
 public:
     //vector<Enemy> enemyList;
