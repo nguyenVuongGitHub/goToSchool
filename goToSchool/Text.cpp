@@ -26,9 +26,9 @@ Text::Text(string text, TTF_Font* font)
 
 Text::~Text()
 {
-	SDL_FreeSurface(surface);
+	/*SDL_FreeSurface(surface);
 	SDL_DestroyTexture(texture);
-	TTF_CloseFont(font);
+	TTF_CloseFont(font);*/
 }
 
 void Text::init(SDL_Renderer* renderer, string text, int fontSize, int x, int y, string fontstr, SDL_Color color)

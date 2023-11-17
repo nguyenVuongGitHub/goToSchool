@@ -114,7 +114,7 @@ private:
 	void cleanRenderMenu();
 	void collisionMenu();
 
-	EveryObject shop;
+	EveryObject backgroundShop;
 
 	void initShop();
 	void processShop();
@@ -139,7 +139,7 @@ private:
 	bool CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> vertices, FlatVector centerCircle, float radius, SDL_FRect& r2);
 	FlatVector FindArithmeticMean(vector<FlatVector> vertices);
 
-
+	void playAgain();
 public:
 	GameState();
 	void initData();

@@ -9,9 +9,6 @@ Player::Player()
 
 Player::~Player()
 {
-	//Character::~Character();
-	//SDL_DestroyTexture(texture);
-	//SDL_FreeSurface(surface);
 }
 void Player::init(SDL_Renderer* renderer, string pathImg)
 {
@@ -31,35 +28,6 @@ void Player::init(SDL_Renderer* renderer, string pathImg)
 
 }
 
-//void Player::init(SDL_Renderer *renderer)
-//{
-//	// Các tài nguyên cần thiết
-//	s = IMG_Load("img/tamGiac.png");
-//	t = SDL_CreateTextureFromSurface(renderer, s);
-//	/*weapon[0].type = USP;
-//	weapon[1].type = AK_47;
-//	weapon[2].type = MP5;*/
-//
-//	t = SDL_CreateTextureFromSurface(renderer, s);
-//	r = { 250,440,60,60 };
-//	speed = 5;
-//	crossSpeed = (speed * sqrt(2)) / 2;
-//	// Thông số cơ bản
-//	angle = 0;
-//	memset(moveKey, 0, sizeof(moveKey));
-//	
-//	//Các tọa độ
-//	center = { (r.x + r.w) / 2, (r.y + r.h) / 2 };
-//	vertices.push_back({ r.x, r.y });
-//	vertices.push_back({ r.x + r.w, r.y });
-//	vertices.push_back({ r.x + r.w, r.y + r.h });
-//	vertices.push_back({ r.x, r.y + r.h });
-//
-//	transformVertices.push_back({ r.x, r.y });
-//	transformVertices.push_back({ r.x + r.w, r.y });
-//	transformVertices.push_back({ r.x + r.w, r.y + r.h });
-//	transformVertices.push_back({ r.x, r.y + r.h });
-//}
 void Player::setMoveKey(int x)
 {
 	moveKey[x] = true;
@@ -77,7 +45,6 @@ void Player::update(Gun& weapon)
 }
 void Player::update(Melle& weapon)
 {
-	attack(weapon);
 	move();
 }
 void Player::move()
@@ -138,20 +105,12 @@ void Player::move()
 	{
 		f_rect.x += speed;
 	}
-	// Update center point
-	//center = { (r.x + r.w) / 2, (r.y + r.h) / 2 };
-
 	 //Update vertices
 	vertices[0] = { f_rect.x, f_rect.y };
 	vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
 	vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h };
 	vertices[3] = { f_rect.x, f_rect.y + f_rect.h };
 
-	//for (int i = 0; i < vertices.size(); i++)
-	//{
-	//	cout << vertices[i].x << "\t" << vertices[i].y << endl;
-	//}
-	//cout << endl;
 }
 
 void Player::attack(Gun &weapon)
@@ -164,17 +123,6 @@ void Player::attack(Gun &weapon)
 	else {
 		weapon.setIsAttack(false);
 	}
-}
-
-void Player::attack(Melle& weapon)
-{
-	//if (isAttack)
-	//{
-	//	weapon.setIsAttack(true);
-	//}
-	//else if (!isAttack && ((int)weapon.getAngle() % 90 == 0)) {
-	//	weapon.setIsAttack(false);
-	//}
 }
 
 void Player::render(SDL_Renderer* renderer, float scrollX, float scrollY)
@@ -198,4 +146,16 @@ void Player::render(SDL_Renderer* renderer, float scrollX, float scrollY)
 	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
 	SDL_RenderCopyExF(renderer, texture, &srcRect, &tmp, angle, NULL, flip);
 	
+}
+
+void Player::reset()
+{
+	desetMoveKey(LEFT);
+	desetMoveKey(UP);
+	desetMoveKey(DOWN);
+	desetMoveKey(RIGHT);
+	desetMoveKey(FAST);
+	desetMoveKey(SLOW);
+	isMove = true;
+	vertices.clear();
 }

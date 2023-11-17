@@ -108,3 +108,8 @@ void Gun::update(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32& las
 	if (isAttack)
 		attack(renderer,bulletList,lastShotTime,rectPlayer, scrollX, scrollY);
 }
+
+void Gun::reset()
+{
+	vertices.clear();
+}

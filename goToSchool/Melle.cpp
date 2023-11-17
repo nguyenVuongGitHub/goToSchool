@@ -2,23 +2,12 @@
 
 void Melle::attack(int curXMouse , float centerPlayer)
 {
-	// 90 và -270 là góc phía dưới tính từ -90
-	//
-	//	       -90
-	// -speed      +speed			
-	//		 -270,90
-	//
-	//if((int)angle % 90 == 0 )
-	//if ( isAttack && curXMouse < centerPlayer)
-	//{
-	//	angle -= speed;
-	//}
-	//else if ( isAttack && curXMouse > centerPlayer)
-	//{
-	//	angle += speed;
-	//}
-}
 
+}
+void Melle::reset()
+{
+	vertices.clear();
+}
 void Melle::init(SDL_Renderer* renderer, string pathImg)
 {
 	surface = IMG_Load(pathImg.c_str());

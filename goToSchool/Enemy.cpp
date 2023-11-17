@@ -204,7 +204,7 @@ void Enemy::attack(SDL_Renderer* renderer, Player& player, vector<BulletEnemy> &
 {
 	Uint32 curentTime = SDL_GetTicks();
 	Uint32 timeShot = curentTime - lastShotTime;
-	if (timeShot >= 500 && distanceToPlayer(player.f_rect.x, player.f_rect.y) <= 400 && type == 1)
+	if (timeShot >= 1500 && distanceToPlayer(player.f_rect.x, player.f_rect.y) <= 400 && type == 1)
 	{
 		BulletEnemy b;
 		b.init(renderer,player);

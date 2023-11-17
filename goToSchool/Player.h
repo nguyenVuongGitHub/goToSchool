@@ -15,8 +15,6 @@ class Player : public Character
 	void move() override;
 
 	void attack(Gun& weapon);
-	void attack(Melle& weapon);
-
 public:
 	Player();
 	~Player();
@@ -36,6 +34,7 @@ public:
 	void desetMoveKey(int x); // set move là false
 	void render(SDL_Renderer* renderer, float scrollX, float scrollY);
 
+	void reset();
 
 };
 

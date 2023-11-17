@@ -40,7 +40,9 @@ public:
 	float getRadius() const { return radius; }
 	void init(SDL_Renderer* renderer, short type);
 	void setPos(float x, float y);
+	//render slime
 	void render0(SDL_Renderer* renderer, float scrollX, float scrollY, int curFrame);
+	//render skeleton
 	void render1(SDL_Renderer* renderer, float scrollX, float scrollY, int curFrame);
 	void freeRender(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped, vector<Enemy>& enemyList, int i);
 	void update(SDL_Renderer* renderer, Player& player,vector<BulletEnemy>& bulletEnemyList);

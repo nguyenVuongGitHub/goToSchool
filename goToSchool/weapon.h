@@ -36,6 +36,7 @@ public:
 
 	virtual void init(SDL_Renderer* renderer, string pathImg) 
 	{}
+	virtual void reset() {};
 	//void render(SDL_Renderer* renderer, Player& p);
 	//friend class Player;
 	//long long getTotalBullet();
