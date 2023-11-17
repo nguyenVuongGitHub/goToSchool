@@ -21,6 +21,7 @@ class Enemy : public Character
 	void itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped);
 	int dropChance();
 	void attack(SDL_Renderer* renderer, Player& player, vector<BulletEnemy>& bulletEnemyList);
+	SDL_RendererFlip flip;
 public:
 	Enemy();
 	~Enemy();

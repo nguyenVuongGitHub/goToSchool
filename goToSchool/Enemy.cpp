@@ -19,6 +19,7 @@ void Enemy::init(SDL_Renderer* renderer, short type)
 	string path;
 	if (type == 0)
 	{
+		flip = SDL_FLIP_NONE;
 		path = "img/slime.png";
 		f_rect = {64,64,32,32 };
 		hp = 30;
@@ -30,6 +31,7 @@ void Enemy::init(SDL_Renderer* renderer, short type)
 	}
 	else if (type == 1)
 	{
+		flip = SDL_FLIP_NONE;
 		path = "img/ske.png";
 		f_rect = { 64,64,32,32 };
 		hp = 30;
@@ -74,6 +76,14 @@ void Enemy::move(Player& player)
 	{
 		f_rect.x += cos(angle) * speed;
 		f_rect.y += sin(angle) * speed;
+		if (f_rect.x > player.f_rect.x + player.f_rect.w / 2)
+		{
+			flip = SDL_FLIP_HORIZONTAL;
+		}
+		else
+		{
+			flip = SDL_FLIP_NONE;
+		}
 		vertices[0] = { f_rect.x, f_rect.y };
 		vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
 		vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h };
@@ -85,6 +95,14 @@ void Enemy::move(Player& player)
 		{
 			f_rect.x += cos(angle) * speed;
 			f_rect.y += sin(angle) * speed;
+		}
+		if (f_rect.x > player.f_rect.x + player.f_rect.w / 2)
+		{
+			flip = SDL_FLIP_HORIZONTAL;
+		}
+		else
+		{
+			flip = SDL_FLIP_NONE;
 		}
 		vertices[0] = { f_rect.x, f_rect.y };
 		vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
@@ -220,14 +238,14 @@ void Enemy::render1(SDL_Renderer* renderer, float scrollX, float scrollY, int cu
 {
 	srcRect = { curFrame * 32, 0, 32, 32 };
 	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
-	SDL_RenderCopyExF(renderer, texture, &srcRect, &tmp, angle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyExF(renderer, texture, &srcRect, &tmp, angle, NULL, flip);
 }
 
 void Enemy::render0(SDL_Renderer* renderer, float scrollX, float scrollY, int curFrame)
 {
 	srcRect = { curFrame * 32, 0, 32, 32 };
 	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
-	SDL_RenderCopyExF(renderer, texture, &srcRect, &tmp, angle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyExF(renderer, texture, &srcRect, &tmp, angle, NULL, flip);
 }
 
 void Enemy::freeRender(SDL_Renderer* renderer, vector<coin>& coins,vector<BulletDropped> &bulletsDropped, vector<Enemy>& enemyList, int i)
