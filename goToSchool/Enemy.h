@@ -35,11 +35,13 @@ public:
 	short getType() {
 		return type;
 	}
-	void spawnAtLake();
-	void spawnAtGround();
-	void spawnAtGround2();
-	void spawnAtGround3();
-	void spawnAtGround4();
+	void spawnAt0();
+	void spawnAt1();
+	void spawnAt2();
+	void spawnAt3();
+	void spawnAt4(float xPlayer, float yPlayer);
+	void spawnAt5();
+	void spawnAt6();
 	void setDamage(int damage) { this->damage = damage; }
 	int getDamage() { return damage; }
 	float getRadius() const { return radius; }

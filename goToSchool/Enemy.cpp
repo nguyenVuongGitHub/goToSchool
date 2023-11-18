@@ -127,12 +127,12 @@ void Enemy::move(Player& player)
 	}
 }
 
-void Enemy::spawnAtLake()
+void Enemy::spawnAt0()
 {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> disX(1164,1559);
-	std::uniform_real_distribution<float> disY(1230,1658);
+	std::uniform_real_distribution<float> disX(640,1888);
+	std::uniform_real_distribution<float> disY(0,5);
 
 	float x = disX(gen);
 	float y = disY(gen);
@@ -141,12 +141,12 @@ void Enemy::spawnAtLake()
 	f_rect.y = y;
 }
 
-void Enemy::spawnAtGround()
+void Enemy::spawnAt1()
 {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> disX(0, 1025);
-	std::uniform_real_distribution<float> disY(0, 5);
+	std::uniform_real_distribution<float> disX(2525, 2528);
+	std::uniform_real_distribution<float> disY(641, 2044);
 
 	float x = disX(gen);
 	float y = disY(gen);
@@ -155,12 +155,26 @@ void Enemy::spawnAtGround()
 	f_rect.y = y;
 }
 
-void Enemy::spawnAtGround2()
+void Enemy::spawnAt2()
+{
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(642, 2140);
+	std::uniform_real_distribution<float> disY(2493, 2496);
+
+	float x = disX(gen);
+	float y = disY(gen);
+
+	f_rect.x = x;
+	f_rect.y = y;
+}
+
+void Enemy::spawnAt3()
 {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> disX(0, 5);
-	std::uniform_real_distribution<float> disY(824, 1544);
+	std::uniform_real_distribution<float> disY(640, 1856);
 
 	float x = disX(gen);
 	float y = disY(gen);
@@ -169,12 +183,12 @@ void Enemy::spawnAtGround2()
 	f_rect.y = y;
 }
 
-void Enemy::spawnAtGround3()
+void Enemy::spawnAt4(float xPlayer, float yPlayer)
 {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> disX(1950, 1952);
-	std::uniform_real_distribution<float> disY(682, 1977);
+	std::uniform_real_distribution<float> disX(xPlayer-500, xPlayer+500);
+	std::uniform_real_distribution<float> disY(yPlayer-500,yPlayer+500);
 
 	float x = disX(gen);
 	float y = disY(gen);
@@ -183,12 +197,25 @@ void Enemy::spawnAtGround3()
 	f_rect.y = y;
 }
 
-void Enemy::spawnAtGround4()
+void Enemy::spawnAt5()
 {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> disX(595, 1952);
-	std::uniform_real_distribution<float> disY(1983, 1984);
+	std::uniform_real_distribution<float> disX(688,1888);
+	std::uniform_real_distribution<float> disY(2493, 2496);
+
+	float x = disX(gen);
+	float y = disY(gen);
+
+	f_rect.x = x;
+	f_rect.y = y;
+}
+void Enemy::spawnAt6()
+{
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(0, 2140);
+	std::uniform_real_distribution<float> disY(641, 2044);
 
 	float x = disX(gen);
 	float y = disY(gen);

@@ -585,12 +585,15 @@ void GameState::playAgain()
 		coins.clear();
 		bulletsDropped.clear();
 
+		m.clear();
+
 		player.reset();
 		weaponList[0].melle.reset();
 		weaponList[1].gun.reset();
 		weaponList[2].gun.reset();
 		weaponList[3].gun.reset();
 
+		//cout << enemyList.size() << endl;
 		isGameRunning = true;
 		hadInit = false;
 	}
@@ -629,7 +632,7 @@ void GameState::FolowCam()
 
 void GameState::updateTurnGame()
 {
-	cout << enemyList.size() << endl;
+
 	if (enemyList.size() <= 0)
 	{
 		turnGame = rand() % 10;
@@ -640,28 +643,36 @@ void GameState::updateTurnGame()
 			if (type % 2 == 0)
 				type = 0;
 			else type = 1;
-			short spawnAt = rand() % 4;
+			short spawnAt = rand() % 6;
 			Enemy e;
 			e.init(renderer, type);
 			if (spawnAt == 0)
 			{
-				e.spawnAtLake();
+				e.spawnAt0();
 			}
 			else if (spawnAt == 1)
 			{
-				e.spawnAtGround();
+				e.spawnAt1();
 			}
 			else if (spawnAt == 2)
 			{
-				e.spawnAtGround2();
+				e.spawnAt2();
 			}
 			else if (spawnAt == 3)
 			{
-				e.spawnAtGround3();
+				e.spawnAt3();
 			}
 			else if (spawnAt == 4)
 			{
-				e.spawnAtGround4();
+				e.spawnAt4(player.f_rect.x,player.f_rect.y);
+			}
+			else if (spawnAt == 5)
+			{
+				e.spawnAt5();
+			}
+			else if (spawnAt == 6)
+			{
+				e.spawnAt6();
 			}
 			enemyList.push_back(e);
 		}

@@ -146,6 +146,11 @@ void Map::initWall()
     }
 }
 
+void Map::clear()
+{
+    wall.clear();
+}
+
 void Map::loadMap(SDL_Renderer* renderer) {
     InsertDataIntoTilemap(renderer, "map/final.txt");
     

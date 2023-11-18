@@ -42,7 +42,7 @@ public:
     bool isWall(int tilemap);
     void loadMap(SDL_Renderer* renderer);
     void initWall();
-
+    void clear();
     void render(SDL_Renderer* renderer, float scrollX, float scrollY);
 };
 #endif
