@@ -5,6 +5,9 @@ Enemy::Enemy()
 	type = 0;
 	radius = 0;
 	lastShotTime = 0;
+	distanceAI = 0;
+	countAI = 0;
+	damage = 0;
 }
 
 Enemy::~Enemy()
@@ -40,7 +43,9 @@ void Enemy::init(SDL_Renderer* renderer, short type)
 		this->type = type;
 	}
 	Character::init(renderer, path);
-
+	distanceAI = 50;
+	countAI = 0;
+	angle = rand() % 360;
 	// 1080 and 1920 is width and height of window
 	//spawn();
 
@@ -57,9 +62,20 @@ void Enemy::setPos(float x, float y)
 }
 void Enemy::update(SDL_Renderer* renderer, Player& player, vector<BulletEnemy> &bulletEnemyList)
 {
-	
-	setTargetToPlayer(player);
-	move(player);
+	if (seePlayer(player.f_rect.x,player.f_rect.y))
+	{
+		setTargetToPlayer(player);
+		move(player);
+	}
+	else {
+		setAI();
+		if (distanceAI > 0)
+		{
+			move(player);
+			distanceAI--;
+		}
+
+	}
 	attack(renderer,player,bulletEnemyList);
 }
 
@@ -168,6 +184,30 @@ void Enemy::setTargetToPlayer(Player &player)
 	dx = player.f_rect.x - f_rect.x;
 	dy = player.f_rect.y - f_rect.y;
 	angle = atan2(dy,dx);
+}
+
+bool Enemy::seePlayer(float x,float y)
+{
+	return distanceToPlayer(x, y) <= 650;
+}
+
+void Enemy::setAI()
+{
+	if (countAI >= (rand() % 50))
+	{
+		angle = rand() % 360;
+		countAI = 0;
+		distanceAI = 50;
+	}
+
+	if (distanceAI <= 0)
+	{
+		countAI++;
+	}
+	else {
+		return;
+	}
+	
 }
 
 void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped)

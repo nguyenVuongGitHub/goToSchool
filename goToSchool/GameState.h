@@ -124,7 +124,9 @@ private:
 
 	void FolowCam();
 
+	int numberEnemyOnTurnGame[10];
 	int turnGame;
+	int countEnemy; // đếm số quái đã bị tiêu diệt để check numberEnemyOnTurnGame
 	void updateTurnGame();
 	/**
 	* Xử lý va chạm sử dụng định lý SAT và AABB

@@ -24,10 +24,15 @@ GameState::GameState() :
 	turnGame(0),
 	frameSke(0),
 	scrollX(0),
-	scrollY(0)
+	scrollY(0),
+	countEnemy(0)
 {
 	hp = { 0,0,0,0 };
 	hp_frame = { 0,0,0,0 };
+	for (int i = 0; i < 10; i++)
+	{
+		numberEnemyOnTurnGame[i] = 0;
+	}
 	t = NULL;
 }
 
@@ -143,7 +148,10 @@ void GameState::initGame()
 		weaponList[3].gun = x3;
 
 		player.init(renderer, "img/player.png");
-
+		for (int i = 0; i < 10; i++)
+		{
+			numberEnemyOnTurnGame[i] = rand() % 30;
+		}
 		m.loadMap(renderer);
 		hadInit = true;
 	}
@@ -621,114 +629,41 @@ void GameState::FolowCam()
 
 void GameState::updateTurnGame()
 {
+	cout << enemyList.size() << endl;
 	if (enemyList.size() <= 0)
 	{
-		turnGame = rand() % 5;
-		//turnGame = 0;
-		if (turnGame == 0)
+		turnGame = rand() % 10;
+		int x = numberEnemyOnTurnGame[turnGame];
+		for (int i = 0; i < x; i++)
 		{
-			for (int i = 0; i < 10; i++)
+			short type = rand()%100;
+			if (type % 2 == 0)
+				type = 0;
+			else type = 1;
+			short spawnAt = rand() % 4;
+			Enemy e;
+			e.init(renderer, type);
+			if (spawnAt == 0)
 			{
-				Enemy e;
-				e.init(renderer, 0);
 				e.spawnAtLake();
-				enemyList.push_back(e);
 			}
-			for (int i = 0; i < 4; i++)
+			else if (spawnAt == 1)
 			{
-				Enemy e;
-				e.init(renderer, 1);
-				e.spawnAtGround2();
-				enemyList.push_back(e);
-			}
-			for (int i = 0; i < 4; i++)
-			{
-				Enemy e;
-				e.init(renderer, 1);
-				e.spawnAtGround4();
-				enemyList.push_back(e);
-			}
-		}
-		else if (turnGame == 1)
-		{
-			for (int i = 0; i < 9; i++)
-			{
-				Enemy e;
-				e.init(renderer, 1);
-				e.spawnAtGround3();
-				enemyList.push_back(e);
-			}
-			for (int i = 0; i < 2; i++)
-			{
-				Enemy e;
-				e.init(renderer, 1);
-				e.spawnAtGround4();
-				enemyList.push_back(e);
-			}
-			for (int i = 0; i < 4; i++)
-			{
-				Enemy e;
-				e.init(renderer, 1);
 				e.spawnAtGround();
-				enemyList.push_back(e);
 			}
-		}
-		else if (turnGame == 2)
-		{
-			for (int i = 0; i < 5; i++)
+			else if (spawnAt == 2)
 			{
-				Enemy e;
-				e.init(renderer, 1);
 				e.spawnAtGround2();
-				enemyList.push_back(e);
 			}
-			for (int i = 0; i < 5; i++)
+			else if (spawnAt == 3)
 			{
-				Enemy e;
-				e.init(renderer, 1);
 				e.spawnAtGround3();
-				enemyList.push_back(e);
 			}
-		}
-		else if (turnGame == 3)
-		{
-			for (int i = 0; i < 5; i++)
+			else if (spawnAt == 4)
 			{
-				Enemy e;
-				e.init(renderer, 1);
-				e.spawnAtGround();
-				enemyList.push_back(e);
-			}
-			for (int i = 0; i < 5; i++)
-			{
-				Enemy e;
-				e.init(renderer, 1);
 				e.spawnAtGround4();
-				enemyList.push_back(e);
 			}
-			for (int i = 0; i < 5; i++)
-			{
-				Enemy e;
-				e.init(renderer, 1);
-				e.spawnAtGround2();
-				enemyList.push_back(e);
-			}
-			for (int i = 0; i < 5; i++)
-			{
-				Enemy e;
-				e.init(renderer, 1);
-				e.spawnAtGround3();
-				enemyList.push_back(e);
-			}
-		}
-		else if (turnGame == 4)
-		{
-
-		}
-		else if (turnGame == 5)
-		{
-			// boss
-
+			enemyList.push_back(e);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-//#pragma once
+﻿//#pragma once
 
 #ifndef ENEMY_H
 #define ENEMY_H
@@ -14,10 +14,14 @@ class Enemy : public Character
 	short type; // 0 - slime  1 - skeleton 2 - boss
 	float radius;
 	int damage;
+	int distanceAI; // số bước đi khi là AI
+	int countAI; // đếm để dừng lại khi là AI
 	Uint32 lastShotTime;
 	float distanceToPlayer(float xPlayer, float yPlayer);
 	void move(Player& player);
 	void setTargetToPlayer(Player& player);
+	bool seePlayer(float x, float y);
+	void setAI();
 	void itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped);
 	int dropChance();
 	void attack(SDL_Renderer* renderer, Player& player, vector<BulletEnemy>& bulletEnemyList);
