@@ -300,7 +300,7 @@ void GameState::updateGameLoop()
 		player.framAni.y = 0;
 	}
 
-	frameSke += 0.059784;
+	frameSke += 0.159784;
 	if (frameSke >= 4.0) frameSke = 0;
 	//  ============= update player ==============
 	if (weaponList[curWeapon].type == GUN)

@@ -16,7 +16,7 @@ void BulletEnemy::init(SDL_Renderer* renderer, Player& player)
 	active = 1;
 	f_rect = { 0,0,15,15 };
 	speed = 5;
-	distance = 500;
+	distance = 410;
 	vertices.push_back({ f_rect.x, f_rect.y });
 	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y });
 	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y + f_rect.h });

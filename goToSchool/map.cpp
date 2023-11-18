@@ -87,17 +87,17 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
 
     Special x;
     for (int i = 0; i < 40; i++) {
-        for (int j = 0; j < 40; j++) {
+        for (int j = 0; j < 40; j++) { 
             inputFile >> tilemap[i][j];
             //cout << tilemap[i][j] << " ";
-            //if (isWall(tilemap[i][j]))
-            //{
-            //    x.x = i;
-            //    x.y = j;
-            //    x.vertices = {};
-            //    x.r = { (float)j * 64, (float)i * 64, 64 ,64 };
-            //    wall.push_back(x);
-            //}
+            if (tilemap[i][j] == 7)
+            {
+                x.x = i;
+                x.y = j;
+                x.vertices = {};
+                x.r = { (float)j * 64, (float)i * 64, 64 * 10,64 * 10};
+                wall.push_back(x);
+            }
             //if (tilemap[i][j] == 15)
             //{
                 //Enemy e;
