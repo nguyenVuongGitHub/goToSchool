@@ -305,14 +305,14 @@ void Enemy::render1(SDL_Renderer* renderer, float scrollX, float scrollY, int cu
 {
 	srcRect = { curFrame * 32, 0, 32, 32 };
 	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
-	SDL_RenderCopyExF(renderer, texture, &srcRect, &tmp, angle, NULL, flip);
+	SDL_RenderCopyExF(renderer, texture, &srcRect, &tmp, 0, NULL, flip);
 }
 
 void Enemy::render0(SDL_Renderer* renderer, float scrollX, float scrollY, int curFrame)
 {
 	srcRect = { curFrame * 32, 0, 32, 32 };
 	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
-	SDL_RenderCopyExF(renderer, texture, &srcRect, &tmp, angle, NULL, flip);
+	SDL_RenderCopyExF(renderer, texture, &srcRect, &tmp, 0, NULL, flip);
 }
 
 void Enemy::freeRender(SDL_Renderer* renderer, vector<coin>& coins,vector<BulletDropped> &bulletsDropped, vector<Enemy>& enemyList, int i)
