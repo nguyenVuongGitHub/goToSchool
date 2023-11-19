@@ -25,10 +25,20 @@ GameState::GameState() :
 	frameSke(0),
 	scrollX(0),
 	scrollY(0),
-	countEnemy(0)
+	countEnemy(0),
+	numberEnemyDes(0),
+	countdownTime(0),
+	currentTime(0),
+	elapsedTime(0),
+	remainingTime(0),
+	startTime(0),
+	totalTime(0),
+	isEndGameRunning(0)
 {
 	hp = { 0,0,0,0 };
 	hp_frame = { 0,0,0,0 };
+
+
 	for (int i = 0; i < 10; i++)
 	{
 		numberEnemyOnTurnGame[i] = 0;
@@ -70,8 +80,15 @@ void GameState::menuMain()
 
 		renderMenu();
 
-		cleanRenderMenu();
 	}
+}
+
+void GameState::resetTime()
+{
+	totalTime += countdownTime - remainingTime;
+	startTime = SDL_GetTicks();
+	remainingTime = 0;
+	elapsedTime = 0;
 }
 
 void GameState::initInfomation()
@@ -88,13 +105,15 @@ void GameState::initInfomation()
 	numberbulletTextUSP.init(renderer, " X " + to_string(weaponList[1].gun.getTotalBullets()), 30, 60, 153, "font/Minecraft.ttf");
 	numberbulletTextAK.init(renderer, " X " + to_string(weaponList[2].gun.getTotalBullets()), 30, 60, 183, "font/Minecraft.ttf");
 	numberbulletTextMP5.init(renderer, " X " + to_string(weaponList[3].gun.getTotalBullets()), 30, 60, 213, "font/Minecraft.ttf");
-	
+	countdownTimeText.init(renderer, to_string((int)(remainingTime / 1000.0)) + " s", 30, widthWindow / 2 - 15, 100, "font/Minecraft.ttf");
+	numberEnemyText.init(renderer, "Enemy Remaining: " + to_string(enemyList.size()), 30, widthWindow - 340, 0, "font/Minecraft.ttf");
+
 }
 
 void GameState::updateInfomation()
 {
 	
-	hp.w = (float)player.getHP() / 100 * 180;
+	hp.w = (float)player.getHP() / 100 * 181;
 	
 	moneyText.init(renderer, to_string(money), 45, 60, 113, "font/Minecraft.ttf");
 	moneyText.setText(to_string(money));
@@ -105,6 +124,24 @@ void GameState::updateInfomation()
 	numberbulletTextUSP.setText(" X " + to_string(weaponList[1].gun.getTotalBullets()));
 	numberbulletTextAK.setText(" X " + to_string(weaponList[2].gun.getTotalBullets()));
 	numberbulletTextMP5.setText(" X " + to_string(weaponList[3].gun.getTotalBullets()));
+	numberEnemyText.init(renderer, "Enemy Remaining: " + to_string(enemyList.size()), 30, widthWindow - 340, 0, "font/Minecraft.ttf");
+
+	if ((int)(remainingTime / 1000.0) <= 15)
+	{
+		if ((int)(remainingTime / 1000.0) % 2 == 0)
+		{
+			countdownTimeText.init(renderer, to_string((int)(remainingTime / 1000.0)) + " s", 30, widthWindow / 2 - 15, 100, "font/Minecraft.ttf", { 255,0,0,0 });
+		}
+		else {
+			countdownTimeText.init(renderer, to_string((int)(remainingTime / 1000.0)) + " s", 30, widthWindow / 2 - 15, 100, "font/Minecraft.ttf");
+		}
+	}
+	else
+	{
+		countdownTimeText.init(renderer, to_string((int)(remainingTime / 1000.0)) + " s", 30, widthWindow / 2 - 15, 100, "font/Minecraft.ttf");
+	}
+
+
 }
 
 void GameState::renderInfomation()
@@ -117,6 +154,8 @@ void GameState::renderInfomation()
 	numberbulletTextUSP.render(renderer);
 	numberbulletTextAK.render(renderer);
 	numberbulletTextMP5.render(renderer);
+	countdownTimeText.render(renderer);
+	numberEnemyText.render(renderer);
 }
 
 
@@ -151,16 +190,20 @@ void GameState::initGame()
 		for (int i = 0; i < 10; i++)
 		{
 			numberEnemyOnTurnGame[i] = rand() % 30;
+			numberEnemyOnTurnGame[i] += 10;
 		}
 		m.loadMap(renderer);
 		hadInit = true;
+		// Bắt đầu thời gian
+		startTime = SDL_GetTicks();
+		countdownTime = 60000;
 	}
 }
 void GameState::runGameLoop()
 {
+	label:
 	playAgain();
 	initGame();
-
 	SDL_Event e;
 	while (isGameRunning)
 	{
@@ -174,6 +217,13 @@ void GameState::runGameLoop()
 		
 		cleanRenderGameLoop();
 	}
+	runEndGame();
+	if (isGameRunning)
+	{
+		isGameRunning = false;
+		goto label;
+	}
+
 }
 void GameState::processInputGameLoop(SDL_Event &e)
 {
@@ -300,7 +350,7 @@ void GameState::updateGameLoop()
 		player.framAni.y = 0;
 	}
 
-	frameSke += 0.159784;
+	frameSke += 0.059784;
 	if (frameSke >= 4.0) frameSke = 0;
 	//  ============= update player ==============
 	if (weaponList[curWeapon].type == GUN)
@@ -311,15 +361,7 @@ void GameState::updateGameLoop()
 		player.update(weaponList[curWeapon].melle);
 	}
 	
-	// ============== spawn enemy ===============
-	
-	/*if (enemyList.size() < 10)
-	{
-		Enemy e;
-		e.init(renderer,"img/slime.png",0);
-		enemyList.push_back(e);
-	}*/
-	//cout << "X: " << player.f_rect.x << " Y: " << player.f_rect.y << endl;
+	/*cout << "X: " << player.f_rect.x << " Y: " << player.f_rect.y << endl;*/
 	// ============== update enemy ==============
 	for (int i = 0; i < enemyList.size(); i++)
 		enemyList[i].update(renderer,player,bulletEnemyList);
@@ -354,6 +396,19 @@ void GameState::updateGameLoop()
 	// ============== update danh sách đạn ==============
 	for (int i = 0; i < bulletList.size(); i++)
 		bulletList[i].update();
+
+	// Lấy thời gian hiện tại
+	currentTime = SDL_GetTicks();
+
+	// Tính thời gian trôi qua từ lúc bắt đầu
+	elapsedTime = currentTime - startTime;
+
+	
+	// Tính thời gian còn lại
+	remainingTime = countdownTime > elapsedTime ? countdownTime - elapsedTime : 0;
+
+
+
 }
 
 void GameState::renderGameLoop()
@@ -376,7 +431,7 @@ void GameState::renderGameLoop()
 	// tạo render người chơi
 
 	player.render(renderer, scrollX, scrollY);
-	
+
 	// tạo render vũ khí
 	if (weaponList[curWeapon].type == GUN)
 	{
@@ -390,7 +445,7 @@ void GameState::renderGameLoop()
 		weaponList[curWeapon].melle.f_rect.y -= scrollY;
 		weaponList[curWeapon].melle.render(renderer, player.f_rect, player.center());
 	}
-	
+
 	// tạo render quái
 	for (int i = 0; i < enemyList.size(); i++)
 	{
@@ -401,9 +456,15 @@ void GameState::renderGameLoop()
 		else if (enemyList[i].getType() == 1)
 		{
 			enemyList[i].render1(renderer, scrollX, scrollY, frameSke);
-
 		}
-		
+		else if (enemyList[i].getType() == 2)
+		{
+			enemyList[i].render0(renderer, scrollX, scrollY, frameSlime);
+		}
+		else if (enemyList[i].getType() == 3)
+		{
+			enemyList[i].render1(renderer, scrollX, scrollY, frameSke);
+		}
 	}
 
 	// render item dropped
@@ -476,7 +537,10 @@ void GameState::collisionGameLoop()
 		{
 			// nếu máu quái <= 0 thì xét active về lại false
 			if (enemyList[j].getHP() <= 0)
+			{
+				numberEnemyDes++;
 				enemyList[j].setActive(0);
+			}
 			
 			// kiểm tra va chạm giữa đạn và quái
 			if (PolygonCollisionDetect(bulletList[i].vertices, bulletList[i].f_rect, enemyList[j].vertices, enemyList[j].f_rect))
@@ -489,16 +553,21 @@ void GameState::collisionGameLoop()
 	// va chạm giữa vũ khí và quái
 	if (weaponList[curWeapon].type == MELLE)
 	{
+
 		for (int j = 0; j < enemyList.size(); j++)
-		{
+		{                                                
 			if (enemyList[j].getHP() <= 0)
+			{
 				enemyList[j].setActive(0);
+				numberEnemyDes++;
+			}
 			if (CirclePolygonCollisionDetectPolygonStatic(weaponList[curWeapon].melle.vertices, enemyList[j].center(), enemyList[j].getRadius(), enemyList[j].f_rect))
 			{
 				enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].melle.getDamage());
 			}
 		}
 	}
+
 	// Va chạm của người chơi
 	// Va chạm giữa người và tiền
 	for (int i = 0; i < coins.size(); i++)
@@ -540,6 +609,8 @@ void GameState::collisionGameLoop()
 			if (player.getHP() <= 0)
 			{
 				isGameRunning = false;
+				totalTime += countdownTime - remainingTime;
+				break;
 			}
 		}
 	}
@@ -592,7 +663,9 @@ void GameState::playAgain()
 		weaponList[1].gun.reset();
 		weaponList[2].gun.reset();
 		weaponList[3].gun.reset();
-
+		money = 0;
+		resetTime();
+		totalTime = 0;
 		//cout << enemyList.size() << endl;
 		isGameRunning = true;
 		hadInit = false;
@@ -632,49 +705,118 @@ void GameState::FolowCam()
 
 void GameState::updateTurnGame()
 {
-
-	if (enemyList.size() <= 0)
+	if (enemyList.size() <= 0 || remainingTime <= 0)
 	{
 		turnGame = rand() % 10;
-		int x = numberEnemyOnTurnGame[turnGame];
-		for (int i = 0; i < x; i++)
+		resetTime();
+		int numberEnemy = numberEnemyOnTurnGame[turnGame];
+		short spawnAt;
+		for (int i = 0; i < numberEnemy; i++)
 		{
 			short type = rand()%100;
+			spawnAt = rand() % 8;
 			if (type % 2 == 0)
 				type = 0;
 			else type = 1;
-			short spawnAt = rand() % 6;
 			Enemy e;
 			e.init(renderer, type);
 			if (spawnAt == 0)
-			{
 				e.spawnAt0();
-			}
 			else if (spawnAt == 1)
-			{
 				e.spawnAt1();
-			}
 			else if (spawnAt == 2)
-			{
 				e.spawnAt2();
-			}
 			else if (spawnAt == 3)
-			{
 				e.spawnAt3();
-			}
 			else if (spawnAt == 4)
-			{
-				e.spawnAt4(player.f_rect.x,player.f_rect.y);
-			}
+				e.spawnAt4();
 			else if (spawnAt == 5)
-			{
 				e.spawnAt5();
-			}
 			else if (spawnAt == 6)
-			{
 				e.spawnAt6();
-			}
+			else if (spawnAt == 7)
+				e.spawnAt7();
 			enemyList.push_back(e);
 		}
+		// khởi tạo boss
+		if (turnGame == 5)
+		{
+			Enemy boss;
+			boss.init(renderer, 2);
+			spawnAt = rand() % 8;
+			if (spawnAt == 0)
+				boss.spawnAt0();
+			else if (spawnAt == 1)
+				boss.spawnAt1();
+			else if (spawnAt == 2)
+				boss.spawnAt2();
+			else if (spawnAt == 3)
+				boss.spawnAt3();
+			else if (spawnAt == 4)
+				boss.spawnAt4();
+			else if (spawnAt == 5)
+				boss.spawnAt0();
+			else if (spawnAt == 6)
+				boss.spawnAt1();
+			else if (spawnAt == 7)
+				boss.spawnAt7();
+			enemyList.push_back(boss);
+		}	
+		else if (turnGame == 1)
+		{
+			Enemy boss;
+			boss.init(renderer, 3);
+			spawnAt = rand() % 8;
+			if (spawnAt == 0)
+				boss.spawnAt0();
+			else if (spawnAt == 1)
+				boss.spawnAt1();
+			else if (spawnAt == 2)
+				boss.spawnAt2();
+			else if (spawnAt == 3)
+				boss.spawnAt3();
+			else if (spawnAt == 4)
+				boss.spawnAt4();
+			else if (spawnAt == 5)
+				boss.spawnAt0();
+			else if (spawnAt == 6)
+				boss.spawnAt1();
+			else if (spawnAt == 7)
+				boss.spawnAt7();
+			enemyList.push_back(boss);
+		}
+		else if (turnGame == 3)
+		{
+			
+			for (int i = 0; i < 2; i++)
+			{
+				Enemy e;
+				spawnAt = rand() % 8;
+				short type = rand() % 10;
+				
+				if (type % 2 == 0) type = 2;
+				else type = 3;
+
+				e.init(renderer, type);
+				if (spawnAt == 0)
+					e.spawnAt0();
+				else if (spawnAt == 1)
+					e.spawnAt1();
+				else if (spawnAt == 2)
+					e.spawnAt2();
+				else if (spawnAt == 3)
+					e.spawnAt3();
+				else if (spawnAt == 4)
+					e.spawnAt4();
+				else if (spawnAt == 5)
+					e.spawnAt5();
+				else if (spawnAt == 6)
+					e.spawnAt6();
+				else if (spawnAt == 7)
+					e.spawnAt7();
+				enemyList.push_back(e);
+			}
+		}
+
 	}
 }

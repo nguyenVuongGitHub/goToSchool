@@ -12,9 +12,6 @@ Enemy::Enemy()
 
 Enemy::~Enemy()
 {
-	//Character::~Character();
-	/*SDL_DestroyTexture(texture);
-	SDL_FreeSurface(surface);*/
 }
 
 void Enemy::init(SDL_Renderer* renderer, short type)
@@ -22,36 +19,48 @@ void Enemy::init(SDL_Renderer* renderer, short type)
 	string path;
 	if (type == 0)
 	{
-		flip = SDL_FLIP_NONE;
 		path = "img/slime.png";
 		f_rect = {64,64,32,32 };
 		hp = 30;
-		speed = 2;
-		active = 1;
+		speed = 3;
 		radius = 15;
 		damage = 2;
-		this->type = type;
 	}
 	else if (type == 1)
 	{
-		flip = SDL_FLIP_NONE;
 		path = "img/ske.png";
 		f_rect = { 64,64,32,32 };
 		hp = 30;
 		speed = 3;
-		active = 1;
 		radius = 15;
-		damage = 5;
-		this->type = type;
+		damage = 4;
+	}
+	else if (type == 2)
+	{
+		path = "img/slime.png";
+		f_rect = { 64,64,96,96};
+		hp = 50;
+		speed = 2;
+		radius = 45;
+		damage = 7;
+	}
+	else if (type == 3)
+	{
+		path = "img/ske.png";
+		f_rect = { 64,64,96,96 };
+		hp = 90;
+		speed = 3;
+		radius = 45;
+		damage = 12;
 	}
 	Character::init(renderer, path);
+	flip = SDL_FLIP_NONE;
 	distanceAI = 50;
 	countAI = 0;
 	angle = rand() % 360;
-	// 1080 and 1920 is width and height of window
-	//spawn();
+	active = 1;
+	this->type = type;
 
-	//center = { f_rect.x + f_rect.w / 2, f_rect.y + f_rect.h / 2 };
 	vertices.push_back({ f_rect.x, f_rect.y });
 	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y });
 	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y + f_rect.h });
@@ -78,7 +87,8 @@ void Enemy::update(SDL_Renderer* renderer, Player& player, vector<BulletEnemy> &
 		}
 
 	}
-	attack(renderer,player,bulletEnemyList);
+	if(type == 1 || type == 3)
+		attack(renderer,player,bulletEnemyList);
 }
 
 float Enemy::distanceToPlayer(float xPlayer, float yPlayer)
@@ -88,7 +98,7 @@ float Enemy::distanceToPlayer(float xPlayer, float yPlayer)
 
 void Enemy::move(Player& player)
 {
-	if (active && type == 0)
+	if (active && type == 0 )
 	{
 		f_rect.x += cos(angle) * speed;
 		f_rect.y += sin(angle) * speed;
@@ -125,6 +135,44 @@ void Enemy::move(Player& player)
 		vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h };
 		vertices[3] = { f_rect.x, f_rect.y + f_rect.h };
 	}
+
+	if (active &&  type == 2)
+	{
+		f_rect.x += cos(angle) * speed;
+		f_rect.y += sin(angle) * speed;
+		if (f_rect.x > player.f_rect.x + player.f_rect.w / 2)
+		{
+			flip = SDL_FLIP_HORIZONTAL;
+		}
+		else
+		{
+			flip = SDL_FLIP_NONE;
+		}
+		vertices[0] = { f_rect.x, f_rect.y };
+		vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
+		vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h };
+		vertices[3] = { f_rect.x, f_rect.y + f_rect.h };
+	}
+	if (active && type == 3)
+	{
+		if (distanceToPlayer(player.f_rect.x, player.f_rect.y) >= 400)
+		{
+			f_rect.x += cos(angle) * speed;
+			f_rect.y += sin(angle) * speed;
+		}
+		if (f_rect.x > player.f_rect.x + player.f_rect.w / 2)
+		{
+			flip = SDL_FLIP_HORIZONTAL;
+		}
+		else
+		{
+			flip = SDL_FLIP_NONE;
+		}
+		vertices[0] = { f_rect.x, f_rect.y };
+		vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
+		vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h };
+		vertices[3] = { f_rect.x, f_rect.y + f_rect.h };
+	}
 }
 
 void Enemy::spawnAt0()
@@ -132,7 +180,7 @@ void Enemy::spawnAt0()
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> disX(640,1888);
-	std::uniform_real_distribution<float> disY(0,5);
+	std::uniform_real_distribution<float> disY(5,10);
 
 	float x = disX(gen);
 	float y = disY(gen);
@@ -145,8 +193,8 @@ void Enemy::spawnAt1()
 {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> disX(2525, 2528);
-	std::uniform_real_distribution<float> disY(641, 2044);
+	std::uniform_real_distribution<float> disX(2333, 2510);
+	std::uniform_real_distribution<float> disY(645, 2000);
 
 	float x = disX(gen);
 	float y = disY(gen);
@@ -159,8 +207,8 @@ void Enemy::spawnAt2()
 {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> disX(642, 2140);
-	std::uniform_real_distribution<float> disY(2493, 2496);
+	std::uniform_real_distribution<float> disX(690, 2040);
+	std::uniform_real_distribution<float> disY(2424, 2426);
 
 	float x = disX(gen);
 	float y = disY(gen);
@@ -173,7 +221,7 @@ void Enemy::spawnAt3()
 {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> disX(0, 5);
+	std::uniform_real_distribution<float> disX(5, 10);
 	std::uniform_real_distribution<float> disY(640, 1856);
 
 	float x = disX(gen);
@@ -183,12 +231,12 @@ void Enemy::spawnAt3()
 	f_rect.y = y;
 }
 
-void Enemy::spawnAt4(float xPlayer, float yPlayer)
+void Enemy::spawnAt4()
 {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> disX(xPlayer-500, xPlayer+500);
-	std::uniform_real_distribution<float> disY(yPlayer-500,yPlayer+500);
+	std::uniform_real_distribution<float> disX(800, 1400);
+	std::uniform_real_distribution<float> disY(700, 1400);
 
 	float x = disX(gen);
 	float y = disY(gen);
@@ -201,8 +249,8 @@ void Enemy::spawnAt5()
 {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> disX(688,1888);
-	std::uniform_real_distribution<float> disY(2493, 2496);
+	std::uniform_real_distribution<float> disX(1919,2314);
+	std::uniform_real_distribution<float> disY(720, 1185);
 
 	float x = disX(gen);
 	float y = disY(gen);
@@ -214,8 +262,22 @@ void Enemy::spawnAt6()
 {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> disX(0, 2140);
-	std::uniform_real_distribution<float> disY(641, 2044);
+	std::uniform_real_distribution<float> disX(681, 2108);
+	std::uniform_real_distribution<float> disY(1914, 2369);
+
+	float x = disX(gen);
+	float y = disY(gen);
+
+	f_rect.x = x;
+	f_rect.y = y;
+}
+
+void Enemy::spawnAt7()
+{
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(281, 906);
+	std::uniform_real_distribution<float> disY(1140, 1725);
 
 	float x = disX(gen);
 	float y = disY(gen);
@@ -289,12 +351,17 @@ void Enemy::attack(SDL_Renderer* renderer, Player& player, vector<BulletEnemy> &
 {
 	Uint32 curentTime = SDL_GetTicks();
 	Uint32 timeShot = curentTime - lastShotTime;
-	if (timeShot >= 1500 && distanceToPlayer(player.f_rect.x, player.f_rect.y) <= 400 && type == 1)
+	if (timeShot >= 1500 && distanceToPlayer(player.f_rect.x, player.f_rect.y) <= 400)
 	{
 		BulletEnemy b;
 		b.init(renderer,player);
-		b.f_rect.x = f_rect.x;
-		b.f_rect.y = f_rect.y;
+		b.f_rect.x = f_rect.x + f_rect.w / 2;
+		b.f_rect.y = f_rect.y + f_rect.h / 2;
+		if (type == 3)
+		{
+			b.f_rect.w = 45;
+			b.f_rect.h = 45;
+		}
 		b.setDamage(damage);
 		bulletEnemyList.push_back(b);
 		lastShotTime = curentTime;

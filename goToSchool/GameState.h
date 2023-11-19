@@ -40,7 +40,14 @@ private:
 	int countLoop;
 	float scrollX;
 	float scrollY;
-
+	Uint32 startTime;
+	Uint32 countdownTime;
+	Uint32 remainingTime;
+	Uint32 currentTime;
+	Uint32 elapsedTime;
+	Text countdownTimeText;
+	Text numberEnemyText;
+	void resetTime();
 	/*
 		infomation player
 	*/
@@ -57,7 +64,7 @@ private:
 	void updateInfomation();
 	void renderInfomation();
 	
-	//Text 
+	
 
 	/**
 	* numberframe
@@ -98,12 +105,28 @@ private:
 	/* xử lý của menu
 	* 
 	*/
+	// end game
+	bool isEndGameRunning;
+	EveryObject backgroundEndGame;
+	Text titleEndGame;
+	Text numberEnemyDestroyed;
+	int numberEnemyDes;
+	Uint32 totalTime;
+	Text totalTimeText;
+	Text playAgainText;
+	Text returnMenu;
+	void runEndGame();
+	void initEndGame();
+	void processInputEndGame(SDL_Event& e);
+	void updateEndGame();
+	void renderEndGame();
+	void collisionEndGame();
 
 	// danh sách các biến trong menu
 	EveryObject background;
 	Text t_title;
 	Text t_play;
-	Text t_shop;
+	Text t_ranking;
 	Text t_exit;
 
 
@@ -111,7 +134,6 @@ private:
 	void processInputMenu(SDL_Event& e);
 	void updateMenu();
 	void renderMenu();
-	void cleanRenderMenu();
 	void collisionMenu();
 
 	EveryObject backgroundShop;

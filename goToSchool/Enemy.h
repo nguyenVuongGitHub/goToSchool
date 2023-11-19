@@ -39,9 +39,10 @@ public:
 	void spawnAt1();
 	void spawnAt2();
 	void spawnAt3();
-	void spawnAt4(float xPlayer, float yPlayer);
+	void spawnAt4();
 	void spawnAt5();
 	void spawnAt6();
+	void spawnAt7();
 	void setDamage(int damage) { this->damage = damage; }
 	int getDamage() { return damage; }
 	float getRadius() const { return radius; }

@@ -14,9 +14,6 @@ Character::Character()
 }
 Character::~Character()
 {
-	/*SDL_DestroyTexture(texture);
-	SDL_FreeSurface(surface);*/
-	//cout << "Doi tuong da bi Huy\n";
 }
 void Character::init(SDL_Renderer* renderer, string pathImg)
 {
