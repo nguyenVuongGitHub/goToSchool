@@ -37,12 +37,6 @@ void Map::setmap() {
 
 void Map::loadTileSet() {
     
-    //int tam1, tam2, tam3, tam4;
-    //tam1 = tilemap[0][0];
-    //tam2 = tilemap[0][1];
-    //tam3 = tilemap[0][2];
-    //tam4 = tilemap[0][3];
-    //int* p = &tilemap[0][0];
     int tmp = 1;
     for (int i = 0; i < 6; i++) {
         for (int j = 0; j < 9; j++) {
@@ -53,8 +47,7 @@ void Map::loadTileSet() {
             tmp++;
 
         }
-        //cout << "i = " << i << " p = " << p << "    *p =" << *p << endl;
-    }
+   }
     /*tilemap[0][0] = tam1;
     tilemap[0][1] = tam2;
     tilemap[0][2] = tam3;
@@ -165,8 +158,6 @@ void Map::render(SDL_Renderer* map_renderer, float scrollX, float scrollY)
     for (int x = 0; x < 40; x++) {
         for (int y = 0; y < 40; y++) {
             SDL_FRect tmp = { tile[x][y].x - scrollX, tile[x][y].y - scrollY, tile[x][y].w, tile[x][y].h };
-            //tile[x][y].x -= scrollX;
-            //tile[x][y].y -= scrollY;
             switch (tilemap[x][y]) {
             case 1:
                SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[1], &tmp);
