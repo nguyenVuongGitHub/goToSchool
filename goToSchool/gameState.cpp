@@ -33,7 +33,6 @@ GameState::GameState() :
 	currentTime(0),
 	elapsedTime(0),
 	remainingTime(0),
-	remainingShopTime(0),
 	startTime(0),
 	totalTime(0),
 	isEndGameRunning(0),

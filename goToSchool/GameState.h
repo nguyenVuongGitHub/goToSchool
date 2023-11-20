@@ -45,7 +45,6 @@ private:
 	Uint32 countdownTime;
 	Uint32 countdownShopTime;
 	Uint32 remainingTime;
-	Uint32 remainingShopTime;
 	Uint32 currentTime;
 	Uint32 elapsedTime;
 	Text countdownTimeText;
