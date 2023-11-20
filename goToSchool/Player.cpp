@@ -12,6 +12,7 @@ Player::~Player()
 }
 void Player::init(SDL_Renderer* renderer, string pathImg)
 {
+	name =  "";
 	isMove = false;
 	Character::init(renderer, pathImg);
 	framAni = { 0,0 };

@@ -93,6 +93,11 @@ private:
 	vector<coin> coins;
 	vector<BulletDropped> bulletsDropped;
 	vector<BulletEnemy> bulletEnemyList;
+
+
+	bool isType;
+	void enterName();
+
 	/**
 	* xử lý của game loop
 	*/

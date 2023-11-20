@@ -13,9 +13,9 @@ class Player : public Character
 	bool touchable;
 	bool moveKey[6];
 	void move() override;
-
 	void attack(Gun& weapon);
 public:
+	string name;
 	Player();
 	~Player();
 	friend class Weapon;

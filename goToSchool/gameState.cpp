@@ -36,7 +36,8 @@ GameState::GameState() :
 	startTime(0),
 	totalTime(0),
 	isEndGameRunning(0),
-	frameMagazine(0)
+	frameMagazine(0),
+	isType(1)
 {
 	hp = { 0,0,0,0 };
 	hp_frame = { 0,0,0,0 };
@@ -217,6 +218,7 @@ void GameState::initGame()
 }
 void GameState::runGameLoop()
 {
+	enterName();
 	label:
 	playAgain();
 	initGame();
@@ -690,6 +692,7 @@ void GameState::playAgain()
 		//cout << enemyList.size() << endl;
 		isGameRunning = true;
 		hadInit = false;
+		isShopRunning = false;
 	}
 }
 
@@ -843,4 +846,37 @@ void GameState::updateTurnGame()
 		}
 
 	}
+}
+
+void GameState::enterName()
+{
+	SDL_Event e;
+	Text nameText;
+	SDL_StartTextInput();
+	while (isType)
+	{
+		nameText.init(renderer, "Name: " + player.name, 50, 1920 / 2 - 300, 1080 / 2, "font/Minecraft.ttf");
+		while (SDL_PollEvent(&e))
+		{
+			if (e.type == SDL_TEXTINPUT)
+			{
+				player.name.append(e.text.text);
+			}
+			if (e.key.keysym.sym == SDLK_BACKSPACE && !player.name.empty())
+			{
+				player.name.pop_back();
+			}
+			if (e.key.keysym.sym == SDLK_RETURN)
+			{
+				isType = false;
+			}
+		SDL_RenderClear(renderer);
+
+		background.render(renderer);
+		nameText.render(renderer);
+
+		SDL_RenderPresent(renderer);
+		}
+	}
+	SDL_StopTextInput();
 }
