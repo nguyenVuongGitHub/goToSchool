@@ -28,9 +28,12 @@ GameState::GameState() :
 	countEnemy(0),
 	numberEnemyDes(0),
 	countdownTime(0),
+	countdownShopTime(0),
+	isShopRunning(0),
 	currentTime(0),
 	elapsedTime(0),
 	remainingTime(0),
+	remainingShopTime(0),
 	startTime(0),
 	totalTime(0),
 	isEndGameRunning(0),
@@ -63,6 +66,7 @@ void GameState::initData()
 	IMG_Init(IMG_INIT_JPG);
 	TTF_Init();	
 	initInfomation();
+	initShop();
 }
 
 void GameState::menuMain()
@@ -209,6 +213,7 @@ void GameState::initGame()
 		// Bắt đầu thời gian
 		startTime = SDL_GetTicks();
 		countdownTime = 60000;
+		countdownShopTime = 15000;
 	}
 }
 void GameState::runGameLoop()
@@ -226,6 +231,9 @@ void GameState::runGameLoop()
 		collisionGameLoop();
 		
 		renderGameLoop();
+
+		// vẽ render lên màn hình
+		SDL_RenderPresent(renderer);
 		
 		cleanRenderGameLoop();
 	}
@@ -497,8 +505,7 @@ void GameState::renderGameLoop()
 	}
 
 	renderInfomation();
-	// vẽ render lên màn hình
-	SDL_RenderPresent(renderer);
+
 }
 
 void GameState::cleanRenderGameLoop()
@@ -724,6 +731,9 @@ void GameState::updateTurnGame()
 	{
 		turnGame = rand() % 10;
 		resetTime();
+		runShop();
+		resetTime();
+		isShopRunning = true;
 		int numberEnemy = numberEnemyOnTurnGame[turnGame];
 		short spawnAt;
 		for (int i = 0; i < numberEnemy; i++)

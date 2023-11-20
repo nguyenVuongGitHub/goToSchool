@@ -37,12 +37,15 @@ private:
 	int mouseY;
 	bool isGameRunning;
 	bool isMenuRunning;
+	bool isShopRunning;
 	int countLoop;
 	float scrollX;
 	float scrollY;
 	Uint32 startTime;
 	Uint32 countdownTime;
+	Uint32 countdownShopTime;
 	Uint32 remainingTime;
+	Uint32 remainingShopTime;
 	Uint32 currentTime;
 	Uint32 elapsedTime;
 	Text countdownTimeText;
@@ -140,10 +143,21 @@ private:
 	void renderMenu();
 	void collisionMenu();
 
+
 	EveryObject backgroundShop;
+	EveryObject shopItem1;
+	EveryObject shopItem2;
+	EveryObject shopItem3;
+	EveryObject shopItem4;
+
+	bool isOnShopItem1;
+	bool isOnShopItem2;
+	bool isOnShopItem3;
+	bool isOnShopItem4;
 
 	void initShop();
-	void processShop();
+	void runShop();
+	void processShop(SDL_Event& e);
 	void updateShop();
 	void renderShop();
 	void collisionShop();
