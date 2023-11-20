@@ -57,6 +57,9 @@ private:
 	SDL_Rect hp_frame;
 	SDL_Texture* t;
 	coin coinImg;
+	BulletDropped bd1; // usp
+	BulletDropped bd2; // ak
+	BulletDropped bd3; // mp5
 	Text numberbulletTextUSP;
 	Text numberbulletTextAK;
 	Text numberbulletTextMP5;
@@ -70,6 +73,7 @@ private:
 	* numberframe
 	*/
 	float frameCoin;
+	float frameMagazine;
 	float frameSlime;
 	float frameSke;
 	/**

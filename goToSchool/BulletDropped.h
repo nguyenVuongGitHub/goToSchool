@@ -14,7 +14,7 @@ public:
 	void init(SDL_Renderer* renderer, string pathImg) override;
 	void update(const SDL_FRect& rectPlayer);
 	void move(const SDL_FRect& rectPlayer);
-
+	void render(SDL_Renderer* renderer, int curFrame, float scrollX, float scrollY);
 };
 
 #endif // !BulletDroped_H

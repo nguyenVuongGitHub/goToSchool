@@ -33,7 +33,8 @@ GameState::GameState() :
 	remainingTime(0),
 	startTime(0),
 	totalTime(0),
-	isEndGameRunning(0)
+	isEndGameRunning(0),
+	frameMagazine(0)
 {
 	hp = { 0,0,0,0 };
 	hp_frame = { 0,0,0,0 };
@@ -97,14 +98,22 @@ void GameState::initInfomation()
 	t = SDL_CreateTextureFromSurface(renderer, s);
 	money = 0;
 	coinImg.init(renderer,"img/coin.png");
-	coinImg.f_rect = { 0,100,60,60 };
+	coinImg.f_rect = { 0,113,32,32 };
 	moneyText.init(renderer,to_string(money), 45, 60, 113, "font/Minecraft.ttf");
+	
 	hp = { 10,10,(float)player.getHP() / 100 * 180,32 };
 	hp_frame = { 0,0,204,96 };
+	
+	bd1.init(renderer, "img/magazine3.png");
+	bd2.init(renderer, "img/magazine.png");
+	bd3.init(renderer, "img/magazine2.png");
+	bd1.f_rect = { 0,153,32,32 };
+	bd2.f_rect = { 0,193,32,32 };
+	bd3.f_rect = { 0,233,32,32 };
 
-	numberbulletTextUSP.init(renderer, " X " + to_string(weaponList[1].gun.getTotalBullets()), 30, 60, 153, "font/Minecraft.ttf");
-	numberbulletTextAK.init(renderer, " X " + to_string(weaponList[2].gun.getTotalBullets()), 30, 60, 183, "font/Minecraft.ttf");
-	numberbulletTextMP5.init(renderer, " X " + to_string(weaponList[3].gun.getTotalBullets()), 30, 60, 213, "font/Minecraft.ttf");
+	numberbulletTextUSP.init(renderer,to_string(weaponList[1].gun.getTotalBullets()), 30, 60, 153, "font/Minecraft.ttf");
+	numberbulletTextAK.init(renderer,to_string(weaponList[2].gun.getTotalBullets()), 30, 60, 193, "font/Minecraft.ttf");
+	numberbulletTextMP5.init(renderer,to_string(weaponList[3].gun.getTotalBullets()), 30, 60, 233, "font/Minecraft.ttf");
 	countdownTimeText.init(renderer, to_string((int)(remainingTime / 1000.0)) + " s", 30, widthWindow / 2 - 15, 100, "font/Minecraft.ttf");
 	numberEnemyText.init(renderer, "Enemy Remaining: " + to_string(enemyList.size()), 30, widthWindow - 340, 0, "font/Minecraft.ttf");
 
@@ -119,8 +128,8 @@ void GameState::updateInfomation()
 	moneyText.setText(to_string(money));
 
 	numberbulletTextUSP.init(renderer, " X " + to_string(weaponList[1].gun.getTotalBullets()), 30, 60, 153, "font/Minecraft.ttf");
-	numberbulletTextAK.init(renderer, " X " + to_string(weaponList[2].gun.getTotalBullets()), 30, 60, 183, "font/Minecraft.ttf");
-	numberbulletTextMP5.init(renderer, " X " + to_string(weaponList[3].gun.getTotalBullets()), 30, 60, 213, "font/Minecraft.ttf");
+	numberbulletTextAK.init(renderer, " X " + to_string(weaponList[2].gun.getTotalBullets()), 30, 60, 193, "font/Minecraft.ttf");
+	numberbulletTextMP5.init(renderer, " X " + to_string(weaponList[3].gun.getTotalBullets()), 30, 60, 233, "font/Minecraft.ttf");
 	numberbulletTextUSP.setText(" X " + to_string(weaponList[1].gun.getTotalBullets()));
 	numberbulletTextAK.setText(" X " + to_string(weaponList[2].gun.getTotalBullets()));
 	numberbulletTextMP5.setText(" X " + to_string(weaponList[3].gun.getTotalBullets()));
@@ -150,6 +159,9 @@ void GameState::renderInfomation()
 	SDL_RenderFillRectF(renderer, &hp);
 	SDL_RenderCopy(renderer, t, NULL, &hp_frame);
 	coinImg.render(renderer, frameCoin, 0, 0);
+	bd1.render(renderer, frameMagazine, 0, 0);
+	bd2.render(renderer, frameMagazine, 0, 0);
+	bd3.render(renderer, frameMagazine, 0, 0);
 	moneyText.render(renderer);
 	numberbulletTextUSP.render(renderer);
 	numberbulletTextAK.render(renderer);
@@ -331,6 +343,9 @@ void GameState::updateGameLoop()
 	// ============= update frame clip =============
 	frameCoin += 0.259784;
 	if (frameCoin >= 7.0) frameCoin = 0;
+	
+	frameMagazine += 0.259784;
+	if (frameMagazine >= 7.0) frameMagazine = 0;
 
 	frameSlime += 0.259784;
 	if (frameSlime >= 6.0) frameSlime = 0;
@@ -395,7 +410,7 @@ void GameState::updateGameLoop()
 	}
 	// ============== update danh sách đạn ==============
 	for (int i = 0; i < bulletList.size(); i++)
-		bulletList[i].update();
+		bulletList[i].update(player.f_rect.x,player.f_rect.w);
 
 	// Lấy thời gian hiện tại
 	currentTime = SDL_GetTicks();
@@ -478,7 +493,7 @@ void GameState::renderGameLoop()
 
 	for (int i = 0; i < bulletsDropped.size(); i++)
 	{
-		bulletsDropped[i].render(renderer, scrollX, scrollY);
+		bulletsDropped[i].render(renderer,frameMagazine,scrollX, scrollY);
 	}
 
 	renderInfomation();

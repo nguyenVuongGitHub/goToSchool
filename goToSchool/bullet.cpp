@@ -32,7 +32,7 @@ void Bullet::init(SDL_Renderer* renderer, short typeWeapon)
 		type = T_900mm;
 	}
 	surface = IMG_Load(pathImg.c_str());
-	
+	flip = SDL_FLIP_NONE;
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
 	//set trạng thái hoạt động lÀ TRUE
 	active = 1;
@@ -45,9 +45,9 @@ void Bullet::init(SDL_Renderer* renderer, short typeWeapon)
 void Bullet::render(SDL_Renderer* renderer, float scrollX, float scrollY)
 {
 	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
-	SDL_RenderCopyExF(renderer, texture, NULL, &tmp, angle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyExF(renderer, texture, NULL, &tmp, angleFlip, NULL, flip);
 }
-void Bullet::move()
+void Bullet::move(float x, float w)
 {
 	if (distance <= 0)
 	{
@@ -58,6 +58,14 @@ void Bullet::move()
 		
 		f_rect.x += cos(angle) * speed;
 		f_rect.y += sin(angle) * speed;
+		if (f_rect.x > x + w / 2)
+		{
+			flip = SDL_FLIP_HORIZONTAL;
+		}
+		else
+		{
+			flip = SDL_FLIP_NONE;
+		}
 		distance-=speed;
 		vertices[0] = { f_rect.x, f_rect.y };
 		vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
@@ -65,7 +73,7 @@ void Bullet::move()
 		vertices[3] = { f_rect.x, f_rect.y + f_rect.h };
 	}
 }
-void Bullet::update()
+void Bullet::update(float x, float w)
 {
-	move();
+	move(x,w);
 }

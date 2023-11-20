@@ -30,7 +30,6 @@ void coin::move(const SDL_FRect & rectPlayer)
 }
 void coin::render(SDL_Renderer* renderer, int curFrame, float scrollX, float scrollY)
 {
-	
 	srcRect.x = curFrame*64;
 	srcRect.y = 0;
 	srcRect.w = 64;

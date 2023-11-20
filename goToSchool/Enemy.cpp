@@ -73,13 +73,21 @@ void Enemy::setPos(float x, float y)
 }
 void Enemy::update(SDL_Renderer* renderer, Player& player, vector<BulletEnemy> &bulletEnemyList)
 {
+	// nếu nhìn thấy người chơi
 	if (seePlayer(player.f_rect.x,player.f_rect.y))
 	{
+		// cài đặt hướng di chuyển vào người chơi
 		setTargetToPlayer(player);
 		move(player);
 	}
-	else {
+	else { // ngược lại
+
+		// cài đặt hướng di chuyển tự do cho quái vật
 		setAI();
+
+		// distanceAT là khoảng cách di chuyển khi đang trong trạng thái AI
+		// nếu khoảng cách này lớn hơn 0 thì tiếp tục di chuyển
+		// ngược lại sẽ được tính góc di chuyển khác trong hàm setAI()
 		if (distanceAI > 0)
 		{
 			move(player);
@@ -87,6 +95,7 @@ void Enemy::update(SDL_Renderer* renderer, Player& player, vector<BulletEnemy> &
 		}
 
 	}
+	// khả năng tấn công của quái vật tùy theo loại quái vật có khả năng tấn công ( tấn công từ xa )
 	if(type == 1 || type == 3)
 		attack(renderer,player,bulletEnemyList);
 }
@@ -288,6 +297,7 @@ void Enemy::spawnAt7()
 
 void Enemy::setTargetToPlayer(Player &player)
 {
+	// tính toán góc cần di chuyển đến giữa người chơi và quái vật
 	dx = player.f_rect.x - f_rect.x;
 	dy = player.f_rect.y - f_rect.y;
 	angle = atan2(dy,dx);
@@ -300,6 +310,14 @@ bool Enemy::seePlayer(float x,float y)
 
 void Enemy::setAI()
 {
+	// countAI: biến đếm thời gian nghỉ của quái vật
+	// distanceAI : biến đếm khoảng cách di chuyển của quái vật
+
+
+	// ban đầu distanceAI lớn hơn 0 ==> countAI vẫn bằng 0 nên sẽ trực tiếp bỏ qua dòng if số 321
+
+	// kiểm tra ban đầu nếu countAI > một số random trong khoảng [0 - 50] 
+	// thì sẽ bắt đầu thay đổi góc di chuyển và cài đặt lại các thông số mặc định ban đầu
 	if (countAI >= (rand() % 50))
 	{
 		angle = rand() % 360;
@@ -307,11 +325,13 @@ void Enemy::setAI()
 		distanceAI = 50;
 	}
 
+	// nếu discanceAI <= 0 tức là quái vật đã đi hết quảng đường cần thiết thì nó sẽ bắt đầu đếm thời gian nghỉ của AI
 	if (distanceAI <= 0)
 	{
 		countAI++;
 	}
 	else {
+		// nếu như chưa đi hết quảng đường cần thiết ( lúc này countAI vẫn bằng 0 ) thì sẽ không làm gì hết và kết thúc hàm
 		return;
 	}
 	
@@ -334,9 +354,19 @@ void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<Bulle
 	if (x == 10)
 	{
 		BulletDropped bd;
-		bd.init(renderer, "img//T_556mm.png");
-		bd.f_rect = { f_rect.x + f_rect.w / 2 , f_rect.y + f_rect.h / 2 ,15 , 15 }; // lấy vị trí là trung tâm của quái để phát ra
+		bd.init(renderer, "img//magazine.png");
+		bd.f_rect.x = f_rect.x + f_rect.w / 2;
+		bd.f_rect.y = f_rect.y + f_rect.h / 2; // lấy vị trí là trung tâm của quái để phát ra
 		bd.setType(AK);
+		bulletsDropped.push_back(bd);
+	}
+	if (x == 11)
+	{
+		BulletDropped bd;
+		bd.init(renderer, "img//magazine2.png");
+		bd.f_rect.x = f_rect.x + f_rect.w / 2;
+		bd.f_rect.y = f_rect.y + f_rect.h / 2; // lấy vị trí là trung tâm của quái để phát ra
+		bd.setType(MP5);
 		bulletsDropped.push_back(bd);
 	}
 		
@@ -359,8 +389,8 @@ void Enemy::attack(SDL_Renderer* renderer, Player& player, vector<BulletEnemy> &
 		b.f_rect.y = f_rect.y + f_rect.h / 2;
 		if (type == 3)
 		{
-			b.f_rect.w = 45;
-			b.f_rect.h = 45;
+			b.f_rect.w = 144;
+			b.f_rect.h = 36;
 		}
 		b.setDamage(damage);
 		bulletEnemyList.push_back(b);

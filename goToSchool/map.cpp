@@ -45,19 +45,8 @@ void Map::loadTileSet() {
             select_tile[tmp].w = 64;
             select_tile[tmp].h = 64;
             tmp++;
-
         }
    }
-    /*tilemap[0][0] = tam1;
-    tilemap[0][1] = tam2;
-    tilemap[0][2] = tam3;
-    tilemap[0][3] = tam4;*/
-
-    //cout << "sau cung : tilemap: " << tilemap[0][0] << "\n"; //512
-    //cout << "sau cung : tilemap: " << tilemap[0][1] << "\n"; //320
-    //cout << "sau cung : tilemap: " << tilemap[0][2] << "\n"; //64
-    //cout << "sau cung : tilemap: " << tilemap[0][3] << "\n"; //64
-
 }
 
 bool Map::isWall(int tilemap)
@@ -82,7 +71,6 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
     for (int i = 0; i < 40; i++) {
         for (int j = 0; j < 40; j++) { 
             inputFile >> tilemap[i][j];
-            //cout << tilemap[i][j] << " ";
             if (tilemap[i][j] == 7)
             {
                 x.x = i;
@@ -91,12 +79,6 @@ void Map::InsertDataIntoTilemap(SDL_Renderer *renderer, string filePath) {
                 x.r = { (float)j * 64, (float)i * 64, 64 * 10,64 * 10};
                 wall.push_back(x);
             }
-            //if (tilemap[i][j] == 15)
-            //{
-                //Enemy e;
-                //e.init(j,i,renderer,"img/slime.png");
-                //enemyList.push_back(e);
-            //}
         }
     }
     
@@ -168,6 +150,7 @@ void Map::render(SDL_Renderer* map_renderer, float scrollX, float scrollY)
             case 3:
               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[3], &tmp);
                 break;
+//              ... còn nữa
             case 4:
               SDL_RenderCopyF(map_renderer, tile_texture, &select_tile[4], &tmp);
                 break;
