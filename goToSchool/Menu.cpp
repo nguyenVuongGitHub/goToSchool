@@ -1,4 +1,4 @@
-#include "GameState.h"
+﻿#include "GameState.h"
 
 void GameState::runEndGame()
 {
@@ -28,6 +28,11 @@ void GameState::initEndGame()
 	totalTimeText.init(renderer, "Total time : " + to_string( (int) ( (totalTime - countdownTime) / 1000.0) ) + " s", 52, 500, 559, "font/Minecraft.ttf");
 	playAgainText.init(renderer, "PLAY AGAIN", 52, 350, 700, "font/Minecraft.ttf");
 	returnMenu.init(renderer, "EXIT TO MENU", 52, 750, 700, "font/Minecraft.ttf");
+	int totalEnemiesDestroyed = numberEnemyDes;
+	int totalTimeInSeconds = static_cast<int>((totalTime - countdownTime) / 1000.0);
+	cout << player.name;
+	// Gọi hàm Write_File để ghi thông tin vào tệp tin
+	Write_File(totalEnemiesDestroyed, totalTimeInSeconds, player.name);
 }
 
 void GameState::processInputEndGame(SDL_Event& e)

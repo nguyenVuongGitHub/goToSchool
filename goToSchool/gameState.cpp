@@ -3,6 +3,65 @@
 const int LEVEL_WIDTH = 1600;
 const int LEVEL_HEIGHT = 2020;
 
+void GameState::bubbleSort(vector<vector<int>>& data) {
+	int n = data.size();
+	for (int i = 0; i < n - 1; ++i) {
+		for (int j = 0; j < n - i - 1; ++j) {
+			if (data[j][2] > data[j + 1][2]) { 
+				std::swap(data[j], data[j + 1]);
+			}
+		}
+	}
+}
+
+//Đọc ghi file ở đây nè
+void GameState::Write_File(int totalEnemiesDestroyed, int totalTimeInSeconds, string& playerName)
+{
+	ofstream outfile;
+	outfile.open("rank.txt", ios::app);
+	outfile << playerName << "; " << totalEnemiesDestroyed << " " << totalTimeInSeconds << endl;
+	outfile.close();
+}
+
+void GameState::Read_File()
+{
+	vector<vector<int>> playerList;
+
+	ifstream infile("rank.txt");
+
+	if (!infile.is_open())
+	{
+		std::cout << "Unable to open file." << std::endl;
+		return;
+	}
+
+	while (!infile.eof()) {
+		string playerName;
+		int enemiesDestroyed, totalTime;
+
+		infile >> playerName >> enemiesDestroyed >> totalTime;
+
+		vector<int> playerInfo = { enemiesDestroyed, totalTime };
+		playerList.push_back(playerInfo);
+	}
+
+	infile.close();
+
+	bubbleSort(playerList);
+
+	ofstream outfile("rank.txt", std::ios::trunc);
+	outfile.close();
+
+	outfile.open("rank.txt", std::ios::app);
+
+	for (const auto& player : playerList) {
+		outfile << "Player Name: " << player[0] << ", Number enemy destroyed: "
+			<< player[1] << ", Total time: " << player[2] << "s" << std::endl;
+	}
+
+	outfile.close();
+}
+
 GameState::GameState() :
 
 	mouseX(0),
@@ -870,13 +929,17 @@ void GameState::enterName()
 			{
 				isType = false;
 			}
-		SDL_RenderClear(renderer);
+			SDL_RenderClear(renderer);
 
-		background.render(renderer);
-		nameText.render(renderer);
+			background.render(renderer);
+			nameText.render(renderer);
 
-		SDL_RenderPresent(renderer);
+			SDL_RenderPresent(renderer);
 		}
 	}
 	SDL_StopTextInput();
+	cout << player.name;
 }
+
+
+

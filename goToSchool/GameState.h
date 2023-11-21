@@ -186,6 +186,15 @@ private:
 	FlatVector FindArithmeticMean(vector<FlatVector> vertices);
 
 	void playAgain();
+	/*
+	*Đọc xuất File
+	*/
+
+	void bubbleSort(vector<vector<int>>& data);
+	void Write_File(int totalEnemiesDestroyed, int totalTimeInSeconds, string& playerName);
+	void Read_File();
+
+
 public:
 	GameState();
 	void initData();
