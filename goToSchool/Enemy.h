@@ -9,6 +9,11 @@
 #include <random>
 #include <time.h>
 #include "BulletEnemy.h"
+
+#define DIE 0
+#define ATTACK 1
+#define MOVE 2
+
 class Enemy : public Character
 {
 	short type; // 0 - slime  1 - skeleton 2 - boss
@@ -17,6 +22,7 @@ class Enemy : public Character
 	int distanceAI; // số bước đi khi là AI
 	int countAI; // đếm để dừng lại khi là AI
 	Uint32 lastShotTime;
+	int activeBoss;
 	float distanceToPlayer(float xPlayer, float yPlayer);
 	void move(Player& player);
 	void setTargetToPlayer(Player& player);
@@ -25,6 +31,7 @@ class Enemy : public Character
 	void itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped);
 	int dropChance();
 	void attack(SDL_Renderer* renderer, Player& player, vector<BulletEnemy>& bulletEnemyList);
+	void attack2(SDL_Renderer* renderer, Player& player, vector<BulletEnemy>& bulletEnemyList); // for boss
 	SDL_RendererFlip flip;
 public:
 	Enemy();
@@ -52,7 +59,12 @@ public:
 	void render0(SDL_Renderer* renderer, float scrollX, float scrollY, int curFrame);
 	//render skeleton
 	void render1(SDL_Renderer* renderer, float scrollX, float scrollY, int curFrame);
-	void freeRender(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped, vector<Enemy>& enemyList, int i);
+	//render boss
+	void renderBoss(SDL_Renderer* renderer, float scrollX, float scrollY,FlatVector frameBoss);
+
+	int getActiveBoss() { return activeBoss; }
+	void setActiveBoss(int ac) { activeBoss = ac; }
+	void freeRender(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped, vector<Enemy>& enemyList, int i, FlatVector frameBoss);
 	void update(SDL_Renderer* renderer, Player& player,vector<BulletEnemy>& bulletEnemyList);
 };
 

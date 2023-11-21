@@ -34,7 +34,8 @@ GameState::GameState() :
 	startTime(0),
 	totalTime(0),
 	isEndGameRunning(0),
-	frameMagazine(0)
+	frameMagazine(0),
+	frameLaze(0)
 {
 	hp = { 0,0,0,0 };
 	hp_frame = { 0,0,0,0 };
@@ -206,6 +207,8 @@ void GameState::initGame()
 		}
 		m.loadMap(renderer);
 		hadInit = true;
+		frameBoss.x = 0;
+		frameBoss.y = 0;
 		// Bắt đầu thời gian
 		startTime = SDL_GetTicks();
 		countdownTime = 60000;
@@ -341,10 +344,13 @@ void GameState::updateGameLoop()
 	// ============= update turn game  =============
 	updateTurnGame();
 	// ============= update frame clip =============
+	frameLaze += 0.259784;
+	if (frameLaze >= 14.0) frameLaze = 0;
+
 	frameCoin += 0.259784;
 	if (frameCoin >= 7.0) frameCoin = 0;
 	
-	frameMagazine += 0.259784;
+	frameMagazine += 0.159784;
 	if (frameMagazine >= 7.0) frameMagazine = 0;
 
 	frameSlime += 0.259784;
@@ -364,6 +370,36 @@ void GameState::updateGameLoop()
 	{
 		player.framAni.y = 0;
 	}
+	
+	// had init
+	if (turnGame == 7)
+	{
+		frameBoss.x += 0.259784;
+		if (frameBoss.x >= 13)
+		{
+			frameBoss.x = 0;
+		}
+		for (auto enemy : enemyList)
+		{
+			if (enemy.getType() == 4)
+			{
+				if (enemy.getActiveBoss() == MOVE)
+				{
+					frameBoss.y = 0;
+				}
+				else if (enemy.getActiveBoss() == ATTACK)
+				{
+					frameBoss.y = 1;
+				}
+				else if (enemy.getActiveBoss() == DIE)
+				{
+					frameBoss.y = 2;
+				}
+			}
+		}
+		
+	}
+	
 
 	frameSke += 0.059784;
 	if (frameSke >= 4.0) frameSke = 0;
@@ -430,7 +466,7 @@ void GameState::renderGameLoop()
 {
 	FolowCam();
 	// xóa render cũ đi
-	SDL_RenderClear(renderer);
+	//SDL_RenderClear(renderer);
 	m.render(renderer, scrollX, scrollY);
 
 	// tạo render danh sách đạn
@@ -439,10 +475,7 @@ void GameState::renderGameLoop()
 		bulletList[i].render(renderer, scrollX, scrollY);
 	}
 
-	for (int i = 0; i < bulletEnemyList.size(); i++)
-	{
-		bulletEnemyList[i].render(renderer, scrollX, scrollY);
-	}
+	
 	// tạo render người chơi
 
 	player.render(renderer, scrollX, scrollY);
@@ -480,8 +513,15 @@ void GameState::renderGameLoop()
 		{
 			enemyList[i].render1(renderer, scrollX, scrollY, frameSke);
 		}
+		else if (enemyList[i].getType() == 4)
+		{
+			enemyList[i].renderBoss(renderer, scrollX, scrollY, frameBoss);
+		}
 	}
-
+	for (int i = 0; i < bulletEnemyList.size(); i++)
+	{
+		bulletEnemyList[i].render(renderer, scrollX, scrollY, frameLaze);
+	}
 	// render item dropped
 	
 	for (int i = 0; i < coins.size(); i++)
@@ -520,7 +560,9 @@ void GameState::cleanRenderGameLoop()
 	}
 	// xóa quái vật nếu như quái không còn hoạt động nữa
 	for (int i = 0; i < enemyList.size(); i++)
-		enemyList[i].freeRender(renderer,coins,bulletsDropped, enemyList,i);
+	{
+		enemyList[i].freeRender(renderer,coins,bulletsDropped, enemyList,i,frameBoss);
+	}
 
 
 	// xóa item nếu item không còn hoạt động nữa
@@ -681,7 +723,7 @@ void GameState::playAgain()
 		money = 0;
 		resetTime();
 		totalTime = 0;
-		//cout << enemyList.size() << endl;
+
 		isGameRunning = true;
 		hadInit = false;
 	}
@@ -722,11 +764,11 @@ void GameState::updateTurnGame()
 {
 	if (enemyList.size() <= 0 || remainingTime <= 0)
 	{
-		turnGame = rand() % 10;
+		turnGame = 7;
 		resetTime();
 		int numberEnemy = numberEnemyOnTurnGame[turnGame];
 		short spawnAt;
-		for (int i = 0; i < numberEnemy; i++)
+		/*for (int i = 0; i < numberEnemy; i++)
 		{
 			short type = rand()%100;
 			spawnAt = rand() % 8;
@@ -752,7 +794,7 @@ void GameState::updateTurnGame()
 			else if (spawnAt == 7)
 				e.spawnAt7();
 			enemyList.push_back(e);
-		}
+		}*/
 		// khởi tạo boss
 		if (turnGame == 5)
 		{
@@ -832,6 +874,30 @@ void GameState::updateTurnGame()
 				enemyList.push_back(e);
 			}
 		}
-
+		else if (turnGame == 7)
+		{
+			Enemy bossFinal;
+			bossFinal.init(renderer, 4);
+			/*spawnAt = rand() % 8;
+			if (spawnAt == 0)
+				bossFinal.spawnAt0();
+			else if (spawnAt == 1)
+				bossFinal.spawnAt1();
+			else if (spawnAt == 2)
+				bossFinal.spawnAt2();
+			else if (spawnAt == 3)
+				bossFinal.spawnAt3();
+			else if (spawnAt == 4)
+				bossFinal.spawnAt4();
+			else if (spawnAt == 5)
+				bossFinal.spawnAt0();
+			else if (spawnAt == 6)
+				bossFinal.spawnAt1();
+			else if (spawnAt == 7)
+				bossFinal.spawnAt7();*/
+			bossFinal.f_rect.x = 500;
+			bossFinal.f_rect.y = 1000;
+			enemyList.push_back(bossFinal);
+		}
 	}
 }

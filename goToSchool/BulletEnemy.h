@@ -9,9 +9,9 @@ class BulletEnemy :
     void setTargetToPlayer(Player& player);
 public:
     BulletEnemy() {}
-    void init(SDL_Renderer* renderer, Player& player);
+    void init(SDL_Renderer* renderer, Player& player, string path);
     void update(Player& player);
-    //void move();
+    void render(SDL_Renderer* renderer, float scrollX, float scrollY, int curFrame);
 };
 
 #endif // !BULLETENEMY_H

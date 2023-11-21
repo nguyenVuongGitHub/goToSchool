@@ -72,10 +72,12 @@ private:
 	/**
 	* numberframe
 	*/
+	FlatVector frameBoss;
 	float frameCoin;
 	float frameMagazine;
 	float frameSlime;
 	float frameSke;
+	float frameLaze;
 	/**
 	* Thông tin người chơi và vũ khí
 	* 
@@ -103,7 +105,7 @@ private:
 	void cleanRenderGameLoop();
 	void collisionGameLoop();
 
-
+	
 	/*chèn map*/
 	Map m;
 	/* xử lý của menu
