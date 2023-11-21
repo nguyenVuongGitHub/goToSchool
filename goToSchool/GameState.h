@@ -11,6 +11,7 @@
 #include "map.h"
 #include "coin.h"
 #include "BulletDropped.h"
+#include "audio.h"
 using namespace std;
 enum typeWeapon
 {

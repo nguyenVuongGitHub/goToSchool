@@ -126,11 +126,12 @@ void GameState::initData()
 	TTF_Init();	
 	initInfomation();
 	initShop();
+	initAudio();
+
 }
 
 void GameState::menuMain()
 {
-	
 	initMenu();
 	
 	SDL_Event e;
@@ -145,6 +146,7 @@ void GameState::menuMain()
 		renderMenu();
 
 	}
+
 }
 
 void GameState::resetTime()
@@ -238,6 +240,8 @@ void GameState::initGame()
 {
 	if (!hadInit)
 	{
+		backgroundMusic();
+
 		numberWeaponHad = 4;
 		curWeapon = 0;
 		Melle m1;
@@ -369,7 +373,10 @@ void GameState::processInputGameLoop(SDL_Event &e)
 		//bắt sự kiện giữ chuột và sẽ đặt người chơi vào trạng thái tấn công
 		// SDL_BUTTON_LMASK là chuột trái
 		if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LMASK)
+		{
 			player.setIsAttack(true);
+		}
+			
 
 		if (e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LMASK)
 			player.setIsAttack(false);
@@ -620,6 +627,7 @@ void GameState::collisionGameLoop()
 			// nếu máu quái <= 0 thì xét active về lại false
 			if (enemyList[j].getHP() <= 0)
 			{
+				enemydead();
 				numberEnemyDes++;
 				enemyList[j].setActive(0);
 			}
@@ -627,6 +635,7 @@ void GameState::collisionGameLoop()
 			// kiểm tra va chạm giữa đạn và quái
 			if (PolygonCollisionDetect(bulletList[i].vertices, bulletList[i].f_rect, enemyList[j].vertices, enemyList[j].f_rect))
 			{
+				//enemyhurt();
 				bulletList[i].setActive(0);
 				enemyList[j].setHP(enemyList[j].getHP() - weaponList[curWeapon].gun.getDamage());
 			}
@@ -661,6 +670,7 @@ void GameState::collisionGameLoop()
 		{
 			money++;
 			coins.erase(coins.begin() + i);
+			pickup();
 		}
 	}
 	// Va chạm người chơi và item
@@ -675,6 +685,7 @@ void GameState::collisionGameLoop()
 			x += 50;
 			weaponList[ bulletsDropped[i].getType() ].gun.setTotalBullets(x);
 			bulletsDropped.erase(bulletsDropped.begin() + i);
+			pickup();
 		}
 	}
 	// Va chạm người chơi và quái
@@ -687,11 +698,13 @@ void GameState::collisionGameLoop()
 				player.setTouchable(false);
 				int newHp = player.getHP() - enemyList[i].getDamage();
 				player.setHP(newHp);
+				dameSound();
 			}
 			if (player.getHP() <= 0)
 			{
 				isGameRunning = false;
 				totalTime += countdownTime - remainingTime;
+				dameSound();
 				break;
 			}
 		}
@@ -706,10 +719,12 @@ void GameState::collisionGameLoop()
 				player.setTouchable(false);
 				int newHp = player.getHP() - bulletEnemyList[i].getDamage();
 				player.setHP(newHp);
+				dameSound();
 			}
 			if (player.getHP() <= 0)
 			{
 				isGameRunning = false;
+				dameSound();	
 			}
 		}
 	}

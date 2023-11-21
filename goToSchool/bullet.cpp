@@ -1,4 +1,5 @@
 ﻿#include "bullet.h"
+#include "audio.h"
 
 Bullet::Bullet()
 {
@@ -19,16 +20,19 @@ void Bullet::init(SDL_Renderer* renderer, short typeWeapon)
 	if (typeWeapon == USP)
 	{
 		pathImg = "img/T_556mm.png";
+		shotSound1();
 		type = T_556mm;
 	}
 	if (typeWeapon == AK)
 	{
 		pathImg = "img/T_762mm.png";
+		shotSound2();
 		type = T_762mm;
 	}
 	if (typeWeapon == MP5)
 	{
 		pathImg = "img/T_900mm.png";
+		shotSound3();
 		type = T_900mm;
 	}
 	surface = IMG_Load(pathImg.c_str());

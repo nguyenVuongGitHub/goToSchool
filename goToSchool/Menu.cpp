@@ -20,7 +20,7 @@ void GameState::runEndGame()
 void GameState::initEndGame()
 {
 	isEndGameRunning = true;
-
+	endMusic();
 	backgroundEndGame.init(renderer, "img/background.jpg");
 	backgroundEndGame.f_rect = { 0,0,2910,1080 };
 	titleEndGame.init(renderer, "GAME OVER", 92, widthWindow / 2 - (674 / 2), 179,"font/Minecraft.ttf");
@@ -48,6 +48,7 @@ void GameState::processInputEndGame(SDL_Event& e)
 			}
 			else if (returnMenu.getCollision())
 			{
+				opMusic();
 				isEndGameRunning = false;
 				return;
 			}
@@ -79,7 +80,9 @@ void GameState::collisionEndGame()
 {
 	SDL_GetMouseState(&mouseX, &mouseY);
 	if (returnMenu.checkCollisonWithMouse(mouseX, mouseY))
+	{
 		returnMenu.setCollision(true);
+	}
 	else if (playAgainText.checkCollisonWithMouse(mouseX, mouseY))
 		playAgainText.setCollision(true);
 	else
@@ -91,6 +94,7 @@ void GameState::collisionEndGame()
 
 void GameState::initMenu()
 {
+	opMusic();
 	background.init(renderer, "img/background.jpg");
 	background.f_rect = { 0,0,1920,1080 };
 	t_title.init(renderer, "GO TO SCHOOL", 92, widthWindow / 2 - (674 / 2), 179);

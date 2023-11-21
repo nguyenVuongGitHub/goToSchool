@@ -6,6 +6,7 @@
 
 #include "Obj.h"
 
+
 class Bullet : public Object
 {
 protected:
