@@ -148,6 +148,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="pause.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="rank.cpp" />
     <ClCompile Include="Shop.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="weapon.cpp" />

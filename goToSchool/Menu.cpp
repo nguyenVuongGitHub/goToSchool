@@ -32,7 +32,8 @@ void GameState::initEndGame()
 	int totalTimeInSeconds = static_cast<int>((totalTime) / 1000.0);
 	cout << player.name;
 	// Gọi hàm Write_File để ghi thông tin vào tệp tin
-	Write_File(totalEnemiesDestroyed, totalTimeInSeconds, player.name);
+	Write_File(numberEnemyDes, (int)((totalTime) / 1000.0), player.name);
+
 }
 
 void GameState::processInputEndGame(SDL_Event& e)
@@ -117,7 +118,7 @@ void GameState::processInputMenu(SDL_Event& e)
 			}
 			else if (t_ranking.getCollision())
 			{
-				// do something
+				showRank();
 			}
 			else if (t_exit.getCollision())
 			{

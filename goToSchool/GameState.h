@@ -14,6 +14,14 @@
 #include "BulletDropped.h"
 #include "audio.h"
 using namespace std;
+
+struct InfoPlayer
+{
+	string name;
+	int numberEnemiesDestroyed;
+	int totalTime;
+};
+
 enum typeWeapon
 {
 	GUN,MELLE
@@ -220,10 +228,11 @@ private:
 	*Đọc xuất File
 	*/
 
-	void bubbleSort(vector<vector<int>>& data);
+	void insertSort(vector<InfoPlayer>& data);
 	void Write_File(int totalEnemiesDestroyed, int totalTimeInSeconds, string& playerName);
-	void Read_File();
+	vector<InfoPlayer> Read_File();
 
+	void showRank();
 
 public:
 	GameState();
