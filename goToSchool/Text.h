@@ -43,7 +43,7 @@ public:
 	void setPosition(int x, int y);
 	bool checkCollisonWithMouse(int mouseX, int mouseY);
 	SDL_Rect getRect();
-	void updateText(SDL_Renderer* renderer, SDL_Color color);
+	void updateText(SDL_Renderer* renderer, SDL_Color color, string newFont = "font/Anothershabby_trial.ttf");
 	void freeData();
 };
 #endif // !TEXT_H

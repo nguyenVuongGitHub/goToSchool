@@ -100,13 +100,13 @@ SDL_Rect Text::getRect()
 	return rect;
 }
 
-void Text::updateText(SDL_Renderer* renderer, SDL_Color color)
+void Text::updateText(SDL_Renderer* renderer, SDL_Color color, string newFont)
 {
 	if (isCollision)
 	{
 		setColor(color);
 		/*cout << color.r << " " << color.g << " " << color.b << endl;*/
-		font = TTF_OpenFont(pathFontMain.c_str(), fontSize);
+		font = TTF_OpenFont(newFont.c_str(), fontSize);
 		surface = TTF_RenderText_Solid(font, text.c_str(), this->color);
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
 
@@ -115,7 +115,7 @@ void Text::updateText(SDL_Renderer* renderer, SDL_Color color)
 	else {
 
 		setColor({255,255,255,255});
-		font = TTF_OpenFont(pathFontMain.c_str(), fontSize);
+		font = TTF_OpenFont(newFont.c_str(), fontSize);
 		surface = TTF_RenderText_Solid(font, text.c_str(), this->color);
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
 

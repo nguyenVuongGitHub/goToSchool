@@ -23,6 +23,7 @@ class Enemy : public Character
 	int countAI; // đếm để dừng lại khi là AI
 	Uint32 lastShotTime;
 	int activeBoss;
+	float frameLaze;
 	float distanceToPlayer(float xPlayer, float yPlayer);
 	void move(Player& player);
 	void setTargetToPlayer(Player& player);
@@ -50,6 +51,10 @@ public:
 	void spawnAt5();
 	void spawnAt6();
 	void spawnAt7();
+	void spawnBoss1();
+	void spawnBoss2();
+	void spawnBoss3();
+	void spawnBoss4();
 	void setDamage(int damage) { this->damage = damage; }
 	int getDamage() { return damage; }
 	float getRadius() const { return radius; }
@@ -66,6 +71,11 @@ public:
 	void setActiveBoss(int ac) { activeBoss = ac; }
 	void freeRender(SDL_Renderer* renderer, vector<coin>& coins, vector<BulletDropped>& bulletsDropped, vector<Enemy>& enemyList, int i, FlatVector frameBoss);
 	void update(SDL_Renderer* renderer, Player& player,vector<BulletEnemy>& bulletEnemyList);
+
+	// Hàm điều kiện để tìm kiếm dựa trên thuộc tính value
+	static bool findType(const Enemy& obj, int type) {
+		return obj.type == type;
+	}
 };
 
 #endif // !ENEMY_H

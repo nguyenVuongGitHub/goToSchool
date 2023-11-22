@@ -86,6 +86,7 @@ void GameState::collisionEndGame()
 
 void GameState::initMenu()
 {
+
 	background.init(renderer, "img/background.jpg");
 	background.f_rect = { 0,0,1920,1080 };
 	t_title.init(renderer, "GO TO SCHOOL", 92, widthWindow / 2 - (674 / 2), 179);

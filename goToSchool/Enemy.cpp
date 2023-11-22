@@ -60,8 +60,8 @@ void Enemy::init(SDL_Renderer* renderer, short type)
 		f_rect = { 64,64,500,500};
 		hp = 150;
 		speed = 4;
-		radius = 15*5;
-		damage = 0;
+		radius = 90;
+		damage = 15;
 	}
 	Character::init(renderer, path);
 	flip = SDL_FLIP_NONE;
@@ -96,32 +96,40 @@ void Enemy::update(SDL_Renderer* renderer, Player& player, vector<BulletEnemy> &
 		else {
 			activeBoss = MOVE;
 		}
-	}
-	// nếu nhìn thấy người chơi
-	if (seePlayer(player.f_rect.x,player.f_rect.y))
-	{
-		// cài đặt hướng di chuyển vào người chơi
 		setTargetToPlayer(player);
 		move(player);
 	}
-	else { // ngược lại
-
-		// cài đặt hướng di chuyển tự do cho quái vật
-		setAI();
-
-		// distanceAT là khoảng cách di chuyển khi đang trong trạng thái AI
-		// nếu khoảng cách này lớn hơn 0 thì tiếp tục di chuyển
-		// ngược lại sẽ được tính góc di chuyển khác trong hàm setAI()
-		if (distanceAI > 0)
+	else
+	{
+		// nếu nhìn thấy người chơi
+		if (seePlayer(player.f_rect.x, player.f_rect.y))
 		{
+			// cài đặt hướng di chuyển vào người chơi
+			setTargetToPlayer(player);
 			move(player);
-			distanceAI--;
 		}
+		else { // ngược lại
 
+			// cài đặt hướng di chuyển tự do cho quái vật
+			setAI();
+
+			// distanceAT là khoảng cách di chuyển khi đang trong trạng thái AI
+			// nếu khoảng cách này lớn hơn 0 thì tiếp tục di chuyển
+			// ngược lại sẽ được tính góc di chuyển khác trong hàm setAI()
+			if (distanceAI > 0)
+			{
+				move(player);
+				distanceAI--;
+			}
+
+		}
 	}
+
 	// khả năng tấn công của quái vật tùy theo loại quái vật có khả năng tấn công ( tấn công từ xa )
 	if (type == 1 || type == 3)
+	{
 		attack(renderer, player, bulletEnemyList);
+	}
 	else if (type == 4)
 		attack2(renderer, player, bulletEnemyList);
 }
@@ -210,7 +218,7 @@ void Enemy::move(Player& player)
 	}
 	if (active && type == 4)
 	{
-		if (distanceToPlayer(player.f_rect.x, player.f_rect.y) >= 600)
+		if (distanceToPlayer(player.f_rect.x, player.f_rect.y) >= 1000)
 		{
 			f_rect.x += cos(angle) * speed;
 			f_rect.y += sin(angle) * speed;
@@ -341,6 +349,61 @@ void Enemy::spawnAt7()
 	f_rect.y = y;
 }
 
+void Enemy::spawnBoss1()
+{
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(354, 784);
+	std::uniform_real_distribution<float> disY(946, 1521);
+
+	float x = disX(gen);
+	float y = disY(gen);
+
+	f_rect.x = x;
+	f_rect.y = y;
+}
+void Enemy::spawnBoss2()
+{
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(1014, 1529);
+	std::uniform_real_distribution<float> disY(184, 534);
+
+	float x = disX(gen);
+	float y = disY(gen);
+
+	f_rect.x = x;
+	f_rect.y = y;
+}
+void Enemy::spawnBoss3()
+{
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(1061, 1826);
+	std::uniform_real_distribution<float> disY(2094, 2304);
+
+	float x = disX(gen);
+	float y = disY(gen);
+
+	f_rect.x = x;
+	f_rect.y = y;
+}
+
+void Enemy::spawnBoss4()
+{
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(2017, 2242);
+	std::uniform_real_distribution<float> disY(895, 1860);
+
+	float x = disX(gen);
+	float y = disY(gen);
+
+	f_rect.x = x;
+	f_rect.y = y;
+}
+
+
 void Enemy::setTargetToPlayer(Player &player)
 {
 	// tính toán góc cần di chuyển đến giữa người chơi và quái vật
@@ -429,39 +492,27 @@ void Enemy::attack(SDL_Renderer* renderer, Player& player, vector<BulletEnemy> &
 	Uint32 timeShot = curentTime - lastShotTime;
 	if (timeShot >= 1500 && distanceToPlayer(player.f_rect.x, player.f_rect.y) <= 400)
 	{
-		isAttack = true;
 		BulletEnemy b;
-		b.init(renderer, player,"img/arrow.png");
-		b.f_rect.x = f_rect.x + f_rect.w / 2;
-		b.f_rect.y = f_rect.y + f_rect.h / 2;
-		if (type == 3)
-		{
-			b.f_rect.w = 144;
-			b.f_rect.h = 36;
-		}
 		b.setType(1);
+		b.init(renderer, player,"img/bulletThreat.png",f_rect.x,f_rect.y,type);
 		b.setDamage(damage);
 		bulletEnemyList.push_back(b);
 		lastShotTime = curentTime;
 	}
-	else isAttack = false;
 }
 
 void Enemy::attack2(SDL_Renderer* renderer, Player& player, vector<BulletEnemy>& bulletEnemyList)
 {
 	Uint32 curentTime = SDL_GetTicks();
 	Uint32 timeShot = curentTime - lastShotTime;
-	if (timeShot >= 4000 && distanceToPlayer(player.f_rect.x, player.f_rect.y) <= 600)
+	if (timeShot >= 2000 && distanceToPlayer(player.f_rect.x, player.f_rect.y) <= 1000)
 	{
 		isAttack = true;
 		BulletEnemy b;
-		b.init(renderer, player, "img/laser.png");
-		b.f_rect.x = f_rect.x;
-		b.f_rect.y = f_rect.y;
-		b.f_rect.w = 1500;
-		b.f_rect.h = 500;
 		b.setType(0);
 		b.setDamage(damage);
+		b.setFrameLaze(0);
+		b.init(renderer, player, "img/laze.png",f_rect.x, f_rect.y,type);
 		bulletEnemyList.push_back(b);
 		lastShotTime = curentTime;
 	}

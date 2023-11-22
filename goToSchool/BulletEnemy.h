@@ -7,11 +7,20 @@ class BulletEnemy :
     public Bullet
 {
     void setTargetToPlayer(Player& player);
+    float frameLaze;
+    float angleFlip;
 public:
-    BulletEnemy() {}
-    void init(SDL_Renderer* renderer, Player& player, string path);
-    void update(Player& player);
-    void render(SDL_Renderer* renderer, float scrollX, float scrollY, int curFrame);
+    BulletEnemy() { frameLaze = 0; angleFlip = 0; }
+    void setFrameLaze(int x) { frameLaze = x; }
+    float getFrameLaze() { return frameLaze; }
+    void setAngleflip(float x)
+    {
+        angleFlip = x;
+    }
+    float getAngleflip() { return angleFlip; }
+    void init(SDL_Renderer* renderer, Player& player, string path, float xEnemy, float yEnemy, int typeEnemy);
+    void update(Player& player, float xenemy, float yenemy);
+    void render(SDL_Renderer* renderer, float scrollX, float scrollY);
 };
 
 #endif // !BULLETENEMY_H
