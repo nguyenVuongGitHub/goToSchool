@@ -187,6 +187,6 @@ void GameState::runShop()
 			countShop++;
 		}
 	}
-	SDL_ShowCursor(SDL_DISABLE);
+	//SDL_ShowCursor(SDL_DISABLE);
 
 }

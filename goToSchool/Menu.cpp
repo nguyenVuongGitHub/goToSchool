@@ -31,6 +31,7 @@ void GameState::initEndGame()
 	int totalEnemiesDestroyed = numberEnemyDes;
 	int totalTimeInSeconds = static_cast<int>((totalTime) / 1000.0);
 	cout << player.name;
+	//cout << "check";
 	// Gọi hàm Write_File để ghi thông tin vào tệp tin
 	Write_File(numberEnemyDes, (int)((totalTime) / 1000.0), player.name);
 

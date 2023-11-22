@@ -7,10 +7,12 @@ void GameState::showRank()
 	vector<Text> pName(p.size());
 	vector<Text> pKills(p.size());
 	vector<Text> pTime(p.size());
+
 	for (int i = 0; i < p.size(); i++)
 	{
+
 		pRank[i].init(renderer, to_string(i+1), 50, 220, 130 + 80 * i, "font/Minecraft.ttf");
-		pName[i].init(renderer, p[i].name, 50, 600, 130 + 80 * i);
+		pName[i].init(renderer, p[i].name, 50, 600, 130 + 80 * i,"font/Minecraft.ttf");
 		pKills[i].init(renderer, to_string(p[i].numberEnemiesDestroyed), 50, 1060, 130 + 80 * i, "font/Minecraft.ttf");
 		pTime[i].init(renderer, to_string(p[i].totalTime), 50, 1500, 130 + 80 * i, "font/Minecraft.ttf");
 	}

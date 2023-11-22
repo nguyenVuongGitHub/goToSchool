@@ -21,7 +21,7 @@ void Gun::attack(SDL_Renderer* renderer, vector<Bullet>& bulletList, Uint32 &las
 
 		Bullet newBullet;
 		newBullet.f_rect = { rectPlayer.x + rectPlayer.w / 2,rectPlayer.y + rectPlayer.h / 2,15,15 };
-		newBullet.setDxDy(mouseX - f_rect.x - 30 + scrollX, mouseY - f_rect.y - 30 + scrollY);
+		newBullet.setDxDy(mouseX - f_rect.x + scrollX, mouseY - f_rect.y + scrollY);
 		newBullet.setAngle(atan2(newBullet.getDy(), newBullet.getDx()));
 		newBullet.setSpeed(speed);
 		//cout << speed << endl;

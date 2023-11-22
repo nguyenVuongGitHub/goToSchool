@@ -38,9 +38,9 @@ vector<InfoPlayer> GameState::Read_File()
 	if (!infile.is_open())
 	{
 		std::cout << "Unable to open file." << std::endl;
+		
 		return playerList;
 	}
-
 	string playerName;
 	int enemiesDestroyed, totalTime;
 
@@ -50,7 +50,7 @@ vector<InfoPlayer> GameState::Read_File()
 		infile >> enemiesDestroyed;
 		infile.ignore(1);
 		infile >> totalTime;
-
+		
 		//cout << "do" << endl;
 		playerList.push_back({ playerName, enemiesDestroyed, totalTime });
 	}
@@ -65,16 +65,25 @@ vector<InfoPlayer> GameState::Read_File()
 	//}
 	ofstream outFile;
 	outFile.open("rank.txt", ios::out);
-
-	for (int i = 0; i < 10; i++)
+	if (!playerList.empty())
 	{
-		outFile << playerList[i].name << ";" << playerList[i].numberEnemiesDestroyed << ";" << playerList[i].totalTime;
-	}
-	if (playerList.size() > 10)
-	{
-		playerList.resize(10);
-	}
+		if (playerList.size() < 10)
+		{
+			for (int i = 0; i < playerList.size(); i++)
+			{
+				outFile << playerList[i].name << ";" << playerList[i].numberEnemiesDestroyed << ";" << playerList[i].totalTime;
+			}
 
+		}
+		else if(playerList.size() > 10)
+		{
+			playerList.resize(10);
+			for (int i = 0; i < playerList.size(); i++)
+			{
+				outFile << playerList[i].name << ";" << playerList[i].numberEnemiesDestroyed << ";" << playerList[i].totalTime;
+			}
+		}
+	}
 	return playerList;
 }
 
