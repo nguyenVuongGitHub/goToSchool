@@ -112,6 +112,8 @@ void GameState::processInputMenu(SDL_Event& e)
 			if (t_play.getCollision())
 			{
 				runGameLoop();
+				opMusic();
+
 			}
 			else if (t_ranking.getCollision())
 			{

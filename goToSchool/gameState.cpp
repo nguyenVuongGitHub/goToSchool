@@ -96,7 +96,7 @@ GameState::GameState() :
 	totalTime(0),
 	isEndGameRunning(0),
 	frameMagazine(0),
-	isType(1)
+	isType(1),
 	frameLaze(0),
 	isReturnMenu(0),
 	isContinueGame(0),
@@ -678,7 +678,7 @@ void GameState::renderGameLoop()
 	renderMouse();
 
 	// vẽ render lên màn hình
-	SDL_RenderPresent(renderer);
+	//SDL_RenderPresent(renderer);
 }
 
 void GameState::cleanRenderGameLoop()

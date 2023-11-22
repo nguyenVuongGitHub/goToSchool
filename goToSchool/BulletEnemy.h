@@ -11,7 +11,7 @@ class BulletEnemy :
     float angleFlip;
 public:
     BulletEnemy() { frameLaze = 0; angleFlip = 0; }
-    void setFrameLaze(int x) { frameLaze = x; }
+    void setFrameLaze(float x) { frameLaze = x; }
     float getFrameLaze() { return frameLaze; }
     void setAngleflip(float x)
     {
