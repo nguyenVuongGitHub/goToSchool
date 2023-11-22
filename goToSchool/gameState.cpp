@@ -63,6 +63,18 @@ vector<InfoPlayer> GameState::Read_File()
 	//{
 	//	cout << playerList[i].name << "\t" << playerList[i].numberEnemiesDestroyed << "\t" << playerList[i].totalTime << endl;
 	//}
+	ofstream outFile;
+	outFile.open("rank.txt", ios::out);
+
+	for (int i = 0; i < 10; i++)
+	{
+		outFile << playerList[i].name << ";" << playerList[i].numberEnemiesDestroyed << ";" << playerList[i].totalTime;
+	}
+	if (playerList.size() > 10)
+	{
+		playerList.resize(10);
+	}
+
 	return playerList;
 }
 
