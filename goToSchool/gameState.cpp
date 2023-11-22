@@ -757,7 +757,7 @@ void GameState::collisionGameLoop()
 			}
 			
 			// kiểm tra va chạm giữa đạn và quái
-			if (PolygonCollisionDetect(bulletList[i].vertices, bulletList[i].f_rect, enemyList[j].vertices, enemyList[j].f_rect))
+			if (CirclePolygonCollisionDetectPolygonStatic(bulletList[i].vertices, enemyList[j].center(), enemyList[j].getRadius(), enemyList[j].f_rect))
 			{
 				//enemyhurt();
 				bulletList[i].setActive(0);
@@ -960,7 +960,7 @@ void GameState::updateTurnGame()
 		{
 			totalTime += countdownTime - remainingTime;
 		}
-		turnGame = rand()%10 ;
+		turnGame = 7 ;
 		resetTime();
 		runShop();
 
