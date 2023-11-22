@@ -146,6 +146,7 @@
     <ClCompile Include="map.cpp" />
     <ClCompile Include="Melle.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="pause.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Shop.cpp" />
     <ClCompile Include="Text.cpp" />

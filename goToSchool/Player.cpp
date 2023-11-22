@@ -5,8 +5,6 @@ Player::Player()
 	memset(moveKey, 0, sizeof(moveKey));
 	hp = 0;
 }
-
-
 Player::~Player()
 {
 }

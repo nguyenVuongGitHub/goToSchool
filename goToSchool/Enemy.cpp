@@ -8,6 +8,7 @@ Enemy::Enemy()
 	distanceAI = 0;
 	countAI = 0;
 	damage = 0;
+	activeBoss = 0;
 }
 
 Enemy::~Enemy()
@@ -53,6 +54,15 @@ void Enemy::init(SDL_Renderer* renderer, short type)
 		radius = 45;
 		damage = 12;
 	}
+	else if (type == 4)
+	{
+		path = "img/boss.png";
+		f_rect = { 64,64,500,500};
+		hp = 150;
+		speed = 4;
+		radius = 90;
+		damage = 15;
+	}
 	Character::init(renderer, path);
 	flip = SDL_FLIP_NONE;
 	distanceAI = 50;
@@ -60,7 +70,7 @@ void Enemy::init(SDL_Renderer* renderer, short type)
 	angle = rand() % 360;
 	active = 1;
 	this->type = type;
-
+	activeBoss = MOVE;
 	vertices.push_back({ f_rect.x, f_rect.y });
 	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y });
 	vertices.push_back({ f_rect.x + f_rect.w, f_rect.y + f_rect.h });
@@ -73,31 +83,55 @@ void Enemy::setPos(float x, float y)
 }
 void Enemy::update(SDL_Renderer* renderer, Player& player, vector<BulletEnemy> &bulletEnemyList)
 {
-	// nếu nhìn thấy người chơi
-	if (seePlayer(player.f_rect.x,player.f_rect.y))
+	if (type == 4)
 	{
-		// cài đặt hướng di chuyển vào người chơi
+		if (hp <= 0)
+		{
+			activeBoss = DIE;
+		}
+		else if (isAttack)
+		{
+			activeBoss = ATTACK;
+		}
+		else {
+			activeBoss = MOVE;
+		}
 		setTargetToPlayer(player);
 		move(player);
 	}
-	else { // ngược lại
-
-		// cài đặt hướng di chuyển tự do cho quái vật
-		setAI();
-
-		// distanceAT là khoảng cách di chuyển khi đang trong trạng thái AI
-		// nếu khoảng cách này lớn hơn 0 thì tiếp tục di chuyển
-		// ngược lại sẽ được tính góc di chuyển khác trong hàm setAI()
-		if (distanceAI > 0)
+	else
+	{
+		// nếu nhìn thấy người chơi
+		if (seePlayer(player.f_rect.x, player.f_rect.y))
 		{
+			// cài đặt hướng di chuyển vào người chơi
+			setTargetToPlayer(player);
 			move(player);
-			distanceAI--;
 		}
+		else { // ngược lại
 
+			// cài đặt hướng di chuyển tự do cho quái vật
+			setAI();
+
+			// distanceAT là khoảng cách di chuyển khi đang trong trạng thái AI
+			// nếu khoảng cách này lớn hơn 0 thì tiếp tục di chuyển
+			// ngược lại sẽ được tính góc di chuyển khác trong hàm setAI()
+			if (distanceAI > 0)
+			{
+				move(player);
+				distanceAI--;
+			}
+
+		}
 	}
+
 	// khả năng tấn công của quái vật tùy theo loại quái vật có khả năng tấn công ( tấn công từ xa )
-	if(type == 1 || type == 3)
-		attack(renderer,player,bulletEnemyList);
+	if (type == 1 || type == 3)
+	{
+		attack(renderer, player, bulletEnemyList);
+	}
+	else if (type == 4)
+		attack2(renderer, player, bulletEnemyList);
 }
 
 float Enemy::distanceToPlayer(float xPlayer, float yPlayer)
@@ -165,6 +199,26 @@ void Enemy::move(Player& player)
 	if (active && type == 3)
 	{
 		if (distanceToPlayer(player.f_rect.x, player.f_rect.y) >= 400)
+		{
+			f_rect.x += cos(angle) * speed;
+			f_rect.y += sin(angle) * speed;
+		}
+		if (f_rect.x > player.f_rect.x + player.f_rect.w / 2)
+		{
+			flip = SDL_FLIP_HORIZONTAL;
+		}
+		else
+		{
+			flip = SDL_FLIP_NONE;
+		}
+		vertices[0] = { f_rect.x, f_rect.y };
+		vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
+		vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h };
+		vertices[3] = { f_rect.x, f_rect.y + f_rect.h };
+	}
+	if (active && type == 4)
+	{
+		if (distanceToPlayer(player.f_rect.x, player.f_rect.y) >= 1000)
 		{
 			f_rect.x += cos(angle) * speed;
 			f_rect.y += sin(angle) * speed;
@@ -295,6 +349,61 @@ void Enemy::spawnAt7()
 	f_rect.y = y;
 }
 
+void Enemy::spawnBoss1()
+{
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(354, 784);
+	std::uniform_real_distribution<float> disY(946, 1521);
+
+	float x = disX(gen);
+	float y = disY(gen);
+
+	f_rect.x = x;
+	f_rect.y = y;
+}
+void Enemy::spawnBoss2()
+{
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(1014, 1529);
+	std::uniform_real_distribution<float> disY(184, 534);
+
+	float x = disX(gen);
+	float y = disY(gen);
+
+	f_rect.x = x;
+	f_rect.y = y;
+}
+void Enemy::spawnBoss3()
+{
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(1061, 1826);
+	std::uniform_real_distribution<float> disY(2094, 2304);
+
+	float x = disX(gen);
+	float y = disY(gen);
+
+	f_rect.x = x;
+	f_rect.y = y;
+}
+
+void Enemy::spawnBoss4()
+{
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(2017, 2242);
+	std::uniform_real_distribution<float> disY(895, 1860);
+
+	float x = disX(gen);
+	float y = disY(gen);
+
+	f_rect.x = x;
+	f_rect.y = y;
+}
+
+
 void Enemy::setTargetToPlayer(Player &player)
 {
 	// tính toán góc cần di chuyển đến giữa người chơi và quái vật
@@ -384,18 +493,30 @@ void Enemy::attack(SDL_Renderer* renderer, Player& player, vector<BulletEnemy> &
 	if (timeShot >= 1500 && distanceToPlayer(player.f_rect.x, player.f_rect.y) <= 400)
 	{
 		BulletEnemy b;
-		b.init(renderer,player);
-		b.f_rect.x = f_rect.x + f_rect.w / 2;
-		b.f_rect.y = f_rect.y + f_rect.h / 2;
-		if (type == 3)
-		{
-			b.f_rect.w = 144;
-			b.f_rect.h = 36;
-		}
+		b.setType(1);
+		b.init(renderer, player,"img/bulletThreat.png",f_rect.x,f_rect.y,type);
 		b.setDamage(damage);
 		bulletEnemyList.push_back(b);
 		lastShotTime = curentTime;
 	}
+}
+
+void Enemy::attack2(SDL_Renderer* renderer, Player& player, vector<BulletEnemy>& bulletEnemyList)
+{
+	Uint32 curentTime = SDL_GetTicks();
+	Uint32 timeShot = curentTime - lastShotTime;
+	if (timeShot >= 2000 && distanceToPlayer(player.f_rect.x, player.f_rect.y) <= 1000)
+	{
+		isAttack = true;
+		BulletEnemy b;
+		b.setType(0);
+		b.setDamage(damage);
+		b.setFrameLaze(0);
+		b.init(renderer, player, "img/laze.png",f_rect.x, f_rect.y,type);
+		bulletEnemyList.push_back(b);
+		lastShotTime = curentTime;
+	}
+	else isAttack = false;
 }
 
 void Enemy::render1(SDL_Renderer* renderer, float scrollX, float scrollY, int curFrame)
@@ -412,11 +533,32 @@ void Enemy::render0(SDL_Renderer* renderer, float scrollX, float scrollY, int cu
 	SDL_RenderCopyExF(renderer, texture, &srcRect, &tmp, 0, NULL, flip);
 }
 
-void Enemy::freeRender(SDL_Renderer* renderer, vector<coin>& coins,vector<BulletDropped> &bulletsDropped, vector<Enemy>& enemyList, int i)
+void Enemy::renderBoss(SDL_Renderer* renderer, float scrollX, float scrollY, FlatVector frameBoss)
+{
+	srcRect.x = (int)frameBoss.x * 100;
+	srcRect.y = (int)frameBoss.y * 100;
+	srcRect.w = 100;
+	srcRect.h = 100;
+	SDL_FRect tmp = { f_rect.x - scrollX, f_rect.y - scrollY, f_rect.w, f_rect.h };
+	SDL_RenderCopyExF(renderer, texture, &srcRect, &tmp, 0, NULL, flip);
+}
+
+void Enemy::freeRender(SDL_Renderer* renderer, vector<coin>& coins,vector<BulletDropped> &bulletsDropped, vector<Enemy>& enemyList, int i, FlatVector frameBoss)
 {
 	if (!enemyList[i].active)
 	{
-		itemDroped(renderer, coins,bulletsDropped);
-		enemyList.erase(enemyList.begin() + i);
+		if (type == 4)
+		{
+			if (frameBoss.x > 12)
+			{
+				itemDroped(renderer, coins,bulletsDropped);
+				enemyList.erase(enemyList.begin() + i);
+
+			}
+		}
+		else {
+			itemDroped(renderer, coins, bulletsDropped);
+			enemyList.erase(enemyList.begin() + i);
+		}
 	}
 }

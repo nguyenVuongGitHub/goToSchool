@@ -97,6 +97,10 @@ GameState::GameState() :
 	isEndGameRunning(0),
 	frameMagazine(0),
 	isType(1)
+	frameLaze(0),
+	isReturnMenu(0),
+	isContinueGame(0),
+	isPauseGame(0)
 {
 	hp = { 0,0,0,0 };
 	hp_frame = { 0,0,0,0 };
@@ -119,6 +123,7 @@ void GameState::initData()
 	scrollY = 0;
 	isGameRunning = 1;
 	isMenuRunning = 1;
+	isPauseGame = false;
 	window = SDL_CreateWindow("game test", 0, 0, widthWindow, heightWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 	IMG_Init(IMG_INIT_PNG);
@@ -155,6 +160,18 @@ void GameState::resetTime()
 	startTime = SDL_GetTicks();
 	remainingTime = 0;
 	elapsedTime = 0;
+}
+
+void GameState::folowMouse()
+{
+	SDL_GetMouseState(&mouseX, &mouseY);
+	centerMass.f_rect = { (float)mouseX - 32/2 ,(float)mouseY - 32/2,32,32 };
+}
+
+void GameState::renderMouse()
+{
+	SDL_ShowCursor(SDL_DISABLE);
+	centerMass.render(renderer);
 }
 
 void GameState::initInfomation()
@@ -242,6 +259,7 @@ void GameState::initGame()
 	{
 		backgroundMusic();
 
+		centerMass.init(renderer, "img/centerMass.png");
 		numberWeaponHad = 4;
 		curWeapon = 0;
 		Melle m1;
@@ -273,6 +291,8 @@ void GameState::initGame()
 		}
 		m.loadMap(renderer);
 		hadInit = true;
+		frameBoss.x = 0;
+		frameBoss.y = 0;
 		// Bắt đầu thời gian
 		startTime = SDL_GetTicks();
 		countdownTime = 60000;
@@ -301,6 +321,12 @@ void GameState::runGameLoop()
 		
 		cleanRenderGameLoop();
 	}
+	SDL_ShowCursor(SDL_ENABLE);
+	if (isReturnMenu)
+	{
+		isReturnMenu = false;
+		return;
+	}
 	runEndGame();
 	if (isGameRunning)
 	{
@@ -318,9 +344,18 @@ void GameState::processInputGameLoop(SDL_Event &e)
 		if (e.type == SDL_QUIT)
 			isGameRunning = 0;
 
-		// thoát khi bấm "esc"
+		// bấm esc sẽ bật pause
 		if (e.key.keysym.sym == SDLK_ESCAPE)
-			isGameRunning = 0;
+		{	
+			runPauseGame();
+			curTime = currentTime;
+			isPauseGame = true;
+			if (!isGameRunning)
+			{
+				return;
+			}
+		}
+
 
 		if (e.type == SDL_KEYUP)
 		{
@@ -411,6 +446,9 @@ void GameState::updateGameLoop()
 		player.setTouchable(true);
 	}
 	if (countLoop == 1000000) countLoop = 0;
+
+	// ============= update mouse =============
+	folowMouse();
 	// ============= update infomation =============
 	updateInfomation();
 	// ============= update turn game  =============
@@ -419,7 +457,7 @@ void GameState::updateGameLoop()
 	frameCoin += 0.259784;
 	if (frameCoin >= 7.0) frameCoin = 0;
 	
-	frameMagazine += 0.259784;
+	frameMagazine += 0.159784;
 	if (frameMagazine >= 7.0) frameMagazine = 0;
 
 	frameSlime += 0.259784;
@@ -439,6 +477,36 @@ void GameState::updateGameLoop()
 	{
 		player.framAni.y = 0;
 	}
+	
+	// had init
+	if (turnGame == 7)
+	{
+		frameBoss.x += 0.259784;
+		if (frameBoss.x >= 13)
+		{
+			frameBoss.x = 0;
+		}
+		for (auto enemy : enemyList)
+		{
+			if (enemy.getType() == 4)
+			{
+				if (enemy.getActiveBoss() == MOVE)
+				{
+					frameBoss.y = 0;
+				}
+				else if (enemy.getActiveBoss() == ATTACK)
+				{
+					frameBoss.y = 1;
+				}
+				else if (enemy.getActiveBoss() == DIE)
+				{
+					frameBoss.y = 2;
+				}
+			}
+		}
+		
+	}
+	
 
 	frameSke += 0.059784;
 	if (frameSke >= 4.0) frameSke = 0;
@@ -451,7 +519,7 @@ void GameState::updateGameLoop()
 		player.update(weaponList[curWeapon].melle);
 	}
 	
-	/*cout << "X: " << player.f_rect.x << " Y: " << player.f_rect.y << endl;*/
+	//cout << "X: " << player.f_rect.x << " Y: " << player.f_rect.y << endl;
 	// ============== update enemy ==============
 	for (int i = 0; i < enemyList.size(); i++)
 		enemyList[i].update(renderer,player,bulletEnemyList);
@@ -479,24 +547,51 @@ void GameState::updateGameLoop()
 		bulletsDropped[i].update(player.f_rect);
 	}
 	// ============== update bulletEnemyList ==============
-	for (int i = 0; i < bulletEnemyList.size(); i++)
+	int valueToFind = 0;
+	auto it = std::find_if(enemyList.begin(), enemyList.end(),
+		[valueToFind](const Enemy& obj) {
+			return Enemy::findType(obj, valueToFind);
+		});
+
+	int index;
+	if (it != enemyList.end())
 	{
-		bulletEnemyList[i].update(player);
+		index = std::distance(enemyList.begin(), it);
+	}
+	else {
+		index = 0;
+	}
+	if (enemyList.size() > 0)
+	{
+		for (int i = 0; i < bulletEnemyList.size(); i++)
+		{
+			bulletEnemyList[i].update(player,enemyList[index].f_rect.x, enemyList[index].f_rect.y);
+		}
+
 	}
 	// ============== update danh sách đạn ==============
 	for (int i = 0; i < bulletList.size(); i++)
 		bulletList[i].update(player.f_rect.x,player.f_rect.w);
 
-	// Lấy thời gian hiện tại
-	currentTime = SDL_GetTicks();
+	if (!isPauseGame)
+	{
+		// Lấy thời gian hiện tại
+		currentTime = SDL_GetTicks();
+		// Tính thời gian trôi qua từ lúc bắt đầu
+		elapsedTime = currentTime - startTime;
+		// Tính thời gian còn lại
+		remainingTime = countdownTime > elapsedTime ? countdownTime - elapsedTime : 0;
+	}
+	else {
+		currentTime = curTime;
+		// Tính thời gian trôi qua từ lúc bắt đầu
+		elapsedTime = currentTime - startTime;
+		// Tính thời gian còn lại
+		remainingTime = countdownTime > elapsedTime ? countdownTime - elapsedTime : 0;
+		isPauseGame = false;
+		startTime = 0;
 
-	// Tính thời gian trôi qua từ lúc bắt đầu
-	elapsedTime = currentTime - startTime;
-
-	
-	// Tính thời gian còn lại
-	remainingTime = countdownTime > elapsedTime ? countdownTime - elapsedTime : 0;
-
+	}
 
 
 }
@@ -505,7 +600,7 @@ void GameState::renderGameLoop()
 {
 	FolowCam();
 	// xóa render cũ đi
-	SDL_RenderClear(renderer);
+	//SDL_RenderClear(renderer);
 	m.render(renderer, scrollX, scrollY);
 
 	// tạo render danh sách đạn
@@ -514,10 +609,7 @@ void GameState::renderGameLoop()
 		bulletList[i].render(renderer, scrollX, scrollY);
 	}
 
-	for (int i = 0; i < bulletEnemyList.size(); i++)
-	{
-		bulletEnemyList[i].render(renderer, scrollX, scrollY);
-	}
+	
 	// tạo render người chơi
 
 	player.render(renderer, scrollX, scrollY);
@@ -555,8 +647,19 @@ void GameState::renderGameLoop()
 		{
 			enemyList[i].render1(renderer, scrollX, scrollY, frameSke);
 		}
+		else if (enemyList[i].getType() == 4)
+		{
+			enemyList[i].renderBoss(renderer, scrollX, scrollY, frameBoss);
+		}
 	}
-
+	if (enemyList.size() > 0)
+	{
+		for (int i = 0; i < bulletEnemyList.size(); i++)
+		{
+			bulletEnemyList[i].render(renderer, scrollX, scrollY);
+		}
+	}
+	
 	// render item dropped
 	
 	for (int i = 0; i < coins.size(); i++)
@@ -572,7 +675,10 @@ void GameState::renderGameLoop()
 	}
 
 	renderInfomation();
+	renderMouse();
 
+	// vẽ render lên màn hình
+	SDL_RenderPresent(renderer);
 }
 
 void GameState::cleanRenderGameLoop()
@@ -594,7 +700,9 @@ void GameState::cleanRenderGameLoop()
 	}
 	// xóa quái vật nếu như quái không còn hoạt động nữa
 	for (int i = 0; i < enemyList.size(); i++)
-		enemyList[i].freeRender(renderer,coins,bulletsDropped, enemyList,i);
+	{
+		enemyList[i].freeRender(renderer,coins,bulletsDropped, enemyList,i,frameBoss);
+	}
 
 
 	// xóa item nếu item không còn hoạt động nữa
@@ -711,20 +819,39 @@ void GameState::collisionGameLoop()
 	}
 	for (int i = 0; i < bulletEnemyList.size(); i++)
 	{
-		if (collisionTwoRect(player.f_rect, bulletEnemyList[i].f_rect))
+		if (PolygonCollisionDetectTwoSatic(player.vertices, bulletEnemyList[i].vertices))
 		{
-			bulletEnemyList[i].setActive(0);
-			if (player.getTouchable())
+			if (bulletEnemyList[i].getType() == 0 && bulletEnemyList[i].getFrameLaze() >= 9)
 			{
-				player.setTouchable(false);
-				int newHp = player.getHP() - bulletEnemyList[i].getDamage();
-				player.setHP(newHp);
-				dameSound();
+				if (player.getTouchable())
+				{
+					dameSound();
+					player.setTouchable(false);
+					int newHp = player.getHP() - bulletEnemyList[i].getDamage();
+					player.setHP(newHp);
+					if (newHp <= 0)
+					{
+						isGameRunning = false;
+						totalTime += countdownTime - remainingTime;
+						break;
+					}
+				}
 			}
-			if (player.getHP() <= 0)
-			{
-				isGameRunning = false;
-				dameSound();	
+			else if(bulletEnemyList[i].getType() == 1 || bulletEnemyList[i].getType() == 3){
+				if (player.getTouchable())
+				{
+					dameSound();
+					player.setTouchable(false);
+					int newHp = player.getHP() - bulletEnemyList[i].getDamage();
+					player.setHP(newHp);
+					if (newHp <= 0)
+					{
+						isGameRunning = false;
+						totalTime += countdownTime - remainingTime;
+						break;
+					}
+				}
+				bulletEnemyList[i].setActive(0);
 			}
 		}
 	}
@@ -741,6 +868,8 @@ void GameState::collisionGameLoop()
 		}
 	}
 }
+
+
 
 
 void GameState::playAgain()
@@ -763,7 +892,7 @@ void GameState::playAgain()
 		money = 0;
 		resetTime();
 		totalTime = 0;
-		//cout << enemyList.size() << endl;
+
 		isGameRunning = true;
 		hadInit = false;
 		isShopRunning = false;
@@ -879,9 +1008,9 @@ void GameState::updateTurnGame()
 			else if (spawnAt == 4)
 				boss.spawnAt4();
 			else if (spawnAt == 5)
-				boss.spawnAt0();
+				boss.spawnAt5();
 			else if (spawnAt == 6)
-				boss.spawnAt1();
+				boss.spawnAt6();
 			else if (spawnAt == 7)
 				boss.spawnAt7();
 			enemyList.push_back(boss);
@@ -917,6 +1046,23 @@ void GameState::updateTurnGame()
 					e.spawnAt7();
 				enemyList.push_back(e);
 			}
+		}
+		else if (turnGame == 7)
+		{
+			Enemy bossFinal;
+			bossFinal.init(renderer, 4);
+			spawnAt = rand() % 4;
+			if (spawnAt == 0)
+				bossFinal.spawnBoss1();
+			else if (spawnAt == 1)
+				bossFinal.spawnBoss2();
+			else if (spawnAt == 2)
+				bossFinal.spawnBoss3();
+			else if (spawnAt == 3)
+				bossFinal.spawnBoss4();
+
+			enemyList.push_back(bossFinal);
+		
 		}
 
 	}
