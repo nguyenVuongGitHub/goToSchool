@@ -3,6 +3,7 @@
 
 #include "bullet.h"
 #include "Player.h"
+#include "audio.h"
 class BulletEnemy :
     public Bullet
 {
@@ -19,7 +20,7 @@ public:
     }
     float getAngleflip() { return angleFlip; }
     void init(SDL_Renderer* renderer, Player& player, string path, float xEnemy, float yEnemy, int typeEnemy);
-    void update(Player& player, float xenemy, float yenemy);
+    void update(Player& player);
     void render(SDL_Renderer* renderer, float scrollX, float scrollY);
 };
 

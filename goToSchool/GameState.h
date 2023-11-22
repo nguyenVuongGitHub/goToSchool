@@ -45,6 +45,7 @@ private:
 	float scrollX;
 	float scrollY;
 	bool isPauseGame;
+	int countShop; // đếm số lần shop được chạy ( 1 - hết 60s, 2 - hết quái)
 	Uint32 startTime;
 	Uint32 countdownTime;
 	Uint32 countdownShopTime;
@@ -129,6 +130,8 @@ private:
 	Text continuePause;
 	Text returnPause;
 	Text titlePause;
+	Uint32 startPause;
+	Uint32 pauseDuration;
 	void initPauseGame();
 	void processInputPauseGame(SDL_Event &e);
 	void renderPauseGame();

@@ -9,7 +9,7 @@
 #include <random>
 #include <time.h>
 #include "BulletEnemy.h"
-
+#include "audio.h"
 #define DIE 0
 #define ATTACK 1
 #define MOVE 2

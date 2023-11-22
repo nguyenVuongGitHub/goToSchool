@@ -1,7 +1,6 @@
-#pragma once
 #include "audio.h"
 
-Mix_Chunk* soundEffect[6];
+Mix_Chunk* soundEffect[7];
 Mix_Music* soundBackground[6];
 int initAudio()
 {
@@ -22,10 +21,11 @@ int initAudio()
     soundEffect[3] = Mix_LoadWAV("audio/laserShoot (2).wav");
     soundEffect[4] = Mix_LoadWAV("audio/pickup.wav");
     soundEffect[5] = Mix_LoadWAV("audio/enemydead.wav");
+    soundEffect[6] = Mix_LoadWAV("audio/bossshot.wav");
     soundBackground[0] = Mix_LoadMUS("audio/background.mp3");
     soundBackground[1] = Mix_LoadMUS("audio/ED.mp3");
     soundBackground[2] = Mix_LoadMUS("audio/OP.mp3");
-    soundBackground[3] = Mix_LoadMUS("Boss.mp3");
+    soundBackground[3] = Mix_LoadMUS("audio/boss.mp3");
     soundBackground[4] = Mix_LoadMUS("Win.mp3");
 
 
@@ -81,6 +81,10 @@ void pickup()
 void enemydead()
 {
     Mix_PlayChannel(4, soundEffect[5], 0);
+}
+void bossShoot()
+{
+    Mix_PlayChannel(5, soundEffect[6], 0);
 }
 
 void backgroundMusic()

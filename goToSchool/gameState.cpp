@@ -100,7 +100,10 @@ GameState::GameState() :
 	frameLaze(0),
 	isReturnMenu(0),
 	isContinueGame(0),
-	isPauseGame(0)
+	isPauseGame(0),
+	countShop(0),
+	startPause(0),
+	pauseDuration(0)
 {
 	hp = { 0,0,0,0 };
 	hp_frame = { 0,0,0,0 };
@@ -156,7 +159,6 @@ void GameState::menuMain()
 
 void GameState::resetTime()
 {
-	totalTime += countdownTime - remainingTime;
 	startTime = SDL_GetTicks();
 	remainingTime = 0;
 	elapsedTime = 0;
@@ -170,7 +172,6 @@ void GameState::folowMouse()
 
 void GameState::renderMouse()
 {
-	SDL_ShowCursor(SDL_DISABLE);
 	centerMass.render(renderer);
 }
 
@@ -347,9 +348,10 @@ void GameState::processInputGameLoop(SDL_Event &e)
 		// bấm esc sẽ bật pause
 		if (e.key.keysym.sym == SDLK_ESCAPE)
 		{	
+			startPause = SDL_GetTicks();
 			runPauseGame();
-			curTime = currentTime;
-			isPauseGame = true;
+
+			pauseDuration += SDL_GetTicks() - startPause;
 			if (!isGameRunning)
 			{
 				return;
@@ -547,7 +549,7 @@ void GameState::updateGameLoop()
 		bulletsDropped[i].update(player.f_rect);
 	}
 	// ============== update bulletEnemyList ==============
-	int valueToFind = 0;
+	/*int valueToFind = 0;
 	auto it = std::find_if(enemyList.begin(), enemyList.end(),
 		[valueToFind](const Enemy& obj) {
 			return Enemy::findType(obj, valueToFind);
@@ -560,38 +562,27 @@ void GameState::updateGameLoop()
 	}
 	else {
 		index = 0;
-	}
+	}*/
 	if (enemyList.size() > 0)
 	{
 		for (int i = 0; i < bulletEnemyList.size(); i++)
 		{
-			bulletEnemyList[i].update(player,enemyList[index].f_rect.x, enemyList[index].f_rect.y);
+			bulletEnemyList[i].update(player);
 		}
-
 	}
 	// ============== update danh sách đạn ==============
 	for (int i = 0; i < bulletList.size(); i++)
 		bulletList[i].update(player.f_rect.x,player.f_rect.w);
 
-	if (!isPauseGame)
-	{
-		// Lấy thời gian hiện tại
-		currentTime = SDL_GetTicks();
-		// Tính thời gian trôi qua từ lúc bắt đầu
-		elapsedTime = currentTime - startTime;
-		// Tính thời gian còn lại
-		remainingTime = countdownTime > elapsedTime ? countdownTime - elapsedTime : 0;
-	}
-	else {
-		currentTime = curTime;
-		// Tính thời gian trôi qua từ lúc bắt đầu
-		elapsedTime = currentTime - startTime;
-		// Tính thời gian còn lại
-		remainingTime = countdownTime > elapsedTime ? countdownTime - elapsedTime : 0;
-		isPauseGame = false;
-		startTime = 0;
 
-	}
+	// Lấy thời gian hiện tại
+	currentTime = SDL_GetTicks();
+	// Tính thời gian trôi qua từ lúc bắt đầu, trừ đi thời gian đã tạm dừng
+	elapsedTime = currentTime - startTime - pauseDuration;
+	// Tính thời gian còn lại
+	remainingTime = countdownTime > elapsedTime ? countdownTime - elapsedTime : 0;
+
+
 
 
 }
@@ -812,11 +803,13 @@ void GameState::collisionGameLoop()
 			{
 				isGameRunning = false;
 				totalTime += countdownTime - remainingTime;
+				totalTime += countdownTime * countShop;
 				dameSound();
-				break;
+				return;
 			}
 		}
 	}
+	// va chạm giữa đạn quái và người chơi
 	for (int i = 0; i < bulletEnemyList.size(); i++)
 	{
 		if (PolygonCollisionDetectTwoSatic(player.vertices, bulletEnemyList[i].vertices))
@@ -833,7 +826,9 @@ void GameState::collisionGameLoop()
 					{
 						isGameRunning = false;
 						totalTime += countdownTime - remainingTime;
-						break;
+						totalTime += countdownTime * countShop;
+						dameSound();
+						return;
 					}
 				}
 			}
@@ -848,7 +843,9 @@ void GameState::collisionGameLoop()
 					{
 						isGameRunning = false;
 						totalTime += countdownTime - remainingTime;
-						break;
+						totalTime += countdownTime * countShop;
+						dameSound();
+						return;
 					}
 				}
 				bulletEnemyList[i].setActive(0);
@@ -934,9 +931,14 @@ void GameState::updateTurnGame()
 {
 	if (enemyList.size() <= 0 || remainingTime <= 0)
 	{
-		turnGame = rand() % 10;
+		if (money > 0 && remainingTime > 0)
+		{
+			totalTime += countdownTime - remainingTime;
+		}
+		turnGame = 7 ;
 		resetTime();
 		runShop();
+
 		resetTime();
 		isShopRunning = true;
 		int numberEnemy = numberEnemyOnTurnGame[turnGame];
@@ -1049,6 +1051,7 @@ void GameState::updateTurnGame()
 		}
 		else if (turnGame == 7)
 		{
+			bossMusic();
 			Enemy bossFinal;
 			bossFinal.init(renderer, 4);
 			spawnAt = rand() % 4;
@@ -1099,7 +1102,7 @@ void GameState::enterName()
 		}
 	}
 	SDL_StopTextInput();
-	cout << player.name;
+	//cout << player.name;
 }
 
 

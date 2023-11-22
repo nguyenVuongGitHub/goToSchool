@@ -9,6 +9,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_MIXER.h>
 #include <string>
 #include <fstream>
 using namespace std;
@@ -38,8 +39,8 @@ using namespace std;
 #define NUMBER_BULLET_MP5 9
 
 #define DAMAGE_USP 3
-#define DAMAGE_AK 10
-#define DAMAGE_MP5 7
+#define DAMAGE_AK 12
+#define DAMAGE_MP5 9
 
 // từ khóa để người chơi di chuyển
 #define UP 0

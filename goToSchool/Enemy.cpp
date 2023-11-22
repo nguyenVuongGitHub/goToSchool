@@ -58,7 +58,7 @@ void Enemy::init(SDL_Renderer* renderer, short type)
 	{
 		path = "img/boss.png";
 		f_rect = { 64,64,500,500};
-		hp = 150;
+		hp = 300;
 		speed = 4;
 		radius = 90;
 		damage = 15;
@@ -507,6 +507,7 @@ void Enemy::attack2(SDL_Renderer* renderer, Player& player, vector<BulletEnemy>&
 	Uint32 timeShot = curentTime - lastShotTime;
 	if (timeShot >= 2000 && distanceToPlayer(player.f_rect.x, player.f_rect.y) <= 1000)
 	{
+		bossShoot();
 		isAttack = true;
 		BulletEnemy b;
 		b.setType(0);
@@ -551,9 +552,10 @@ void Enemy::freeRender(SDL_Renderer* renderer, vector<coin>& coins,vector<Bullet
 		{
 			if (frameBoss.x > 12)
 			{
+				backgroundMusic();
 				itemDroped(renderer, coins,bulletsDropped);
 				enemyList.erase(enemyList.begin() + i);
-
+				
 			}
 		}
 		else {

@@ -168,6 +168,7 @@ void GameState::collisionShop()
 }
 void GameState::runShop()
 {
+	SDL_ShowCursor(SDL_ENABLE);
 	if (isShopRunning)
 	{
 		SDL_Event e;
@@ -181,5 +182,11 @@ void GameState::runShop()
 			collisionShop();
 			renderShop();
 		} while (remainingTime > 0);
+		if (enemyList.size() > 0)
+		{
+			countShop++;
+		}
 	}
+	SDL_ShowCursor(SDL_DISABLE);
+
 }

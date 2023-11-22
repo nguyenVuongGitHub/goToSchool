@@ -77,7 +77,7 @@ void BulletEnemy::init(SDL_Renderer* renderer, Player& player, string path, floa
 
 }
 
-void BulletEnemy::update(Player &player, float xenemy, float yenemy)
+void BulletEnemy::update(Player &player)
 {
 	frameLaze += 0.259784;
 	if (frameLaze >= 14)

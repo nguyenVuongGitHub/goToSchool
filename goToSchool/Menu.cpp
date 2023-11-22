@@ -25,11 +25,11 @@ void GameState::initEndGame()
 	backgroundEndGame.f_rect = { 0,0,1920,1080 };
 	titleEndGame.init(renderer, "GAME OVER", 92, widthWindow / 2 - (674 / 2), 179,"font/Minecraft.ttf");
 	numberEnemyDestroyed.init(renderer, "Number enemy detroyed :   " + to_string(numberEnemyDes), 52, 500, 369, "font/Minecraft.ttf");
-	totalTimeText.init(renderer, "Total time :   " + to_string( (int) ( (totalTime - countdownTime) / 1000.0) ) + " s", 52, 500, 559, "font/Minecraft.ttf");
+	totalTimeText.init(renderer, "Total time :   " + to_string( (int) ( totalTime / 1000.0) ) + " s", 52, 500, 559, "font/Minecraft.ttf");
 	playAgainText.init(renderer, "PLAY AGAIN", 52, 350, 700, "font/Minecraft.ttf");
 	returnMenu.init(renderer, "EXIT TO MENU", 52, 750, 700, "font/Minecraft.ttf");
 	int totalEnemiesDestroyed = numberEnemyDes;
-	int totalTimeInSeconds = static_cast<int>((totalTime - countdownTime) / 1000.0);
+	int totalTimeInSeconds = static_cast<int>((totalTime) / 1000.0);
 	cout << player.name;
 	// Gọi hàm Write_File để ghi thông tin vào tệp tin
 	Write_File(totalEnemiesDestroyed, totalTimeInSeconds, player.name);
