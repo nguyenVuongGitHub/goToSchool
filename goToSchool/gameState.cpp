@@ -3,14 +3,19 @@
 const int LEVEL_WIDTH = 1600;
 const int LEVEL_HEIGHT = 2020;
 
-void GameState::bubbleSort(vector<vector<int>>& data) {
-	int n = data.size();
-	for (int i = 0; i < n - 1; ++i) {
-		for (int j = 0; j < n - i - 1; ++j) {
-			if (data[j][2] > data[j + 1][2]) { 
-				std::swap(data[j], data[j + 1]);
-			}
+void GameState::insertSort(vector<InfoPlayer>& data) {
+	int  j;
+	InfoPlayer key;
+	for (int i = 1; i < data.size(); i++)
+	{
+		key = data[i];
+		j = i - 1;
+		while (j >= 0 && data[j].numberEnemiesDestroyed < key.numberEnemiesDestroyed)
+		{
+			data[j + 1] = data[j];
+			j--;
 		}
+		data[j + 1] = key;
 	}
 }
 
@@ -19,47 +24,46 @@ void GameState::Write_File(int totalEnemiesDestroyed, int totalTimeInSeconds, st
 {
 	ofstream outfile;
 	outfile.open("rank.txt", ios::app);
-	outfile << playerName << "; " << totalEnemiesDestroyed << " " << totalTimeInSeconds << endl;
+	outfile << playerName << ";" << totalEnemiesDestroyed << ";" << totalTimeInSeconds;
 	outfile.close();
 }
 
-void GameState::Read_File()
+vector<InfoPlayer> GameState::Read_File()
 {
-	vector<vector<int>> playerList;
+	vector<InfoPlayer> playerList;
 
-	ifstream infile("rank.txt");
+	ifstream infile;
+	infile.open("rank.txt", ios::in);
 
 	if (!infile.is_open())
 	{
 		std::cout << "Unable to open file." << std::endl;
-		return;
+		return playerList;
 	}
 
+	string playerName;
+	int enemiesDestroyed, totalTime;
+
 	while (!infile.eof()) {
-		string playerName;
-		int enemiesDestroyed, totalTime;
 
-		infile >> playerName >> enemiesDestroyed >> totalTime;
+		getline(infile, playerName, ';');
+		infile >> enemiesDestroyed;
+		infile.ignore(1);
+		infile >> totalTime;
 
-		vector<int> playerInfo = { enemiesDestroyed, totalTime };
-		playerList.push_back(playerInfo);
+		//cout << "do" << endl;
+		playerList.push_back({ playerName, enemiesDestroyed, totalTime });
 	}
 
 	infile.close();
-
-	bubbleSort(playerList);
-
-	ofstream outfile("rank.txt", std::ios::trunc);
-	outfile.close();
-
-	outfile.open("rank.txt", std::ios::app);
-
-	for (const auto& player : playerList) {
-		outfile << "Player Name: " << player[0] << ", Number enemy destroyed: "
-			<< player[1] << ", Total time: " << player[2] << "s" << std::endl;
-	}
-
-	outfile.close();
+	//cout << playerList.size() <<endl;
+	insertSort(playerList);
+	//cout << playerList.size() << endl;
+	//for (int i = 0; i < playerList.size(); i++)
+	//{
+	//	cout << playerList[i].name << "\t" << playerList[i].numberEnemiesDestroyed << "\t" << playerList[i].totalTime << endl;
+	//}
+	return playerList;
 }
 
 GameState::GameState() :
@@ -953,7 +957,6 @@ void GameState::enterName()
 		}
 	}
 	SDL_StopTextInput();
-	cout << player.name;
 }
 
 
