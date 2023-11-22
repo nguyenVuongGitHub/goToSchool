@@ -321,7 +321,7 @@ void GameState::initGame()
 		frameBoss.y = 0;
 		// Bắt đầu thời gian
 		startTime = SDL_GetTicks();
-		countdownTime = 6000;
+		countdownTime = 60000;
 		countdownShopTime = 15000;
 	}
 }
