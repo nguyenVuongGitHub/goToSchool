@@ -935,7 +935,7 @@ void GameState::updateTurnGame()
 		{
 			totalTime += countdownTime - remainingTime;
 		}
-		turnGame = 7 ;
+		turnGame = rand()%10 ;
 		resetTime();
 		runShop();
 
