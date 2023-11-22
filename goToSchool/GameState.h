@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <algorithm>
 #include "Common.h"
 #include "Player.h"
 #include "Enemy.h"
@@ -39,6 +40,7 @@ private:
 	/**
 	* các thông số của window
 	*/
+	EveryObject centerMass;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	int heightWindow, widthWindow;
@@ -50,15 +52,19 @@ private:
 	int countLoop;
 	float scrollX;
 	float scrollY;
+	bool isPauseGame;
 	Uint32 startTime;
 	Uint32 countdownTime;
 	Uint32 countdownShopTime;
 	Uint32 remainingTime;
 	Uint32 currentTime;
 	Uint32 elapsedTime;
+	Uint32 curTime;
 	Text countdownTimeText;
 	Text numberEnemyText;
 	void resetTime();
+	void folowMouse();
+	void renderMouse();
 	/*
 		infomation player
 	*/
@@ -83,10 +89,12 @@ private:
 	/**
 	* numberframe
 	*/
+	FlatVector frameBoss;
 	float frameCoin;
 	float frameMagazine;
 	float frameSlime;
 	float frameSke;
+	float frameLaze;
 	/**
 	* Thông tin người chơi và vũ khí
 	* 
@@ -119,6 +127,23 @@ private:
 	void cleanRenderGameLoop();
 	void collisionGameLoop();
 
+	/**
+	*	Xử lý pause game
+	*/
+	bool isReturnMenu;
+	bool isContinueGame;
+	EveryObject backgroundPauseGame;
+	bool isPauseGameRunning;
+	Text continuePause;
+	Text returnPause;
+	Text titlePause;
+	void initPauseGame();
+	void processInputPauseGame(SDL_Event &e);
+	void renderPauseGame();
+	void updatePauseGame();
+	void collisionPauseGame();
+	void runPauseGame();
+	
 
 	/*chèn map*/
 	Map m;
@@ -192,6 +217,7 @@ private:
 	bool CircleCollisionDetect(FlatVector center1, float radius1, SDL_FRect& r1, FlatVector center2, float radius2, SDL_FRect& r2);
 	bool CirclePolygonCollisionDetect(vector<FlatVector> vertices, SDL_FRect& r1, FlatVector centerCircle, float radius, SDL_FRect& r2);
 	bool CirclePolygonCollisionDetectPolygonStatic(vector<FlatVector> vertices, FlatVector centerCircle, float radius, SDL_FRect& r2);
+	bool PolygonCollisionDetectTwoSatic(vector<FlatVector> vertices1, vector<FlatVector> vertices2);
 	FlatVector FindArithmeticMean(vector<FlatVector> vertices);
 
 	void playAgain();
