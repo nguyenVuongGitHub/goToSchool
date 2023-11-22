@@ -321,13 +321,12 @@ void GameState::initGame()
 		frameBoss.y = 0;
 		// Bắt đầu thời gian
 		startTime = SDL_GetTicks();
-		countdownTime = 60000;
+		countdownTime = 6000;
 		countdownShopTime = 15000;
 	}
 }
 void GameState::runGameLoop()
 {
-	enterName();
 	label:
 	playAgain();
 	initGame();
@@ -960,10 +959,10 @@ void GameState::updateTurnGame()
 		{
 			totalTime += countdownTime - remainingTime;
 		}
-		turnGame = rand()%10 ;
+		turnGame = rand() % 10;
 		resetTime();
 		runShop();
-
+		player.reset2();
 		resetTime();
 		isShopRunning = true;
 		int numberEnemy = numberEnemyOnTurnGame[turnGame];
@@ -1100,6 +1099,7 @@ void GameState::enterName()
 {
 	SDL_Event e;
 	Text nameText;
+	player.name.clear();
 	SDL_StartTextInput();
 	while (isType)
 	{
@@ -1126,6 +1126,7 @@ void GameState::enterName()
 			SDL_RenderPresent(renderer);
 		}
 	}
+	isType = true;
 	SDL_StopTextInput();
 	//cout << player.name;
 }

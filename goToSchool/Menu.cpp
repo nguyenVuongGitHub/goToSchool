@@ -113,6 +113,7 @@ void GameState::processInputMenu(SDL_Event& e)
 		{
 			if (t_play.getCollision())
 			{
+				enterName();
 				runGameLoop();
 				opMusic();
 

@@ -2,6 +2,7 @@
 
 Mix_Chunk* soundEffect[7];
 Mix_Music* soundBackground[6];
+
 int initAudio()
 {
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {

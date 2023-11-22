@@ -190,7 +190,7 @@ private:
 	EveryObject shopItem2;
 	EveryObject shopItem3;
 	EveryObject shopItem4;
-
+	Text skipShop;
 	bool isOnShopItem1;
 	bool isOnShopItem2;
 	bool isOnShopItem3;

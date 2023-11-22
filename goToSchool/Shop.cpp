@@ -12,6 +12,8 @@ void GameState::initShop()
 	shopItem3.f_rect = { (float)widthWindow / 2 - 700 / 2 + 160, (float)heightWindow / 2 - 700 / 2 + 490, 220, 220 };
 	shopItem4.init(renderer, "img/ShopItem4.png");
 	shopItem4.f_rect = { (float)widthWindow / 2 - 700 / 2 + 380, (float)heightWindow / 2 - 700 / 2 + 430, 220, 220 };
+	skipShop.init(renderer,"skip",32, (float)widthWindow / 2 - 700 / 2 + 380 + 200, (float)heightWindow / 2 - 700 / 2 + 490+220,"font/Minecraft.ttf");
+
 }
 
 void GameState::processShop(SDL_Event& e)
@@ -49,12 +51,17 @@ void GameState::processShop(SDL_Event& e)
 				if (player.getHP() < 100 && money >= 200)
 				{
 					money -= 200;
-					player.setHP(player.getHP() + 10);
+					player.setHP(player.getHP() + 50);
 				}
 				if (player.getHP() > 100)
 				{
 					player.setHP(100);
 				}
+			}
+			else if (skipShop.getCollision())
+			{
+				remainingTime = 0;
+				return;
 			}
 		}
 	}
@@ -62,6 +69,8 @@ void GameState::processShop(SDL_Event& e)
 
 void GameState::updateShop()
 {
+
+	skipShop.updateText(renderer, skipShop.getColor(RED));
 	// Effect item 1
 	if (isOnShopItem1)
 	{
@@ -123,12 +132,20 @@ void GameState::renderShop()
 	shopItem2.render(renderer);
 	shopItem3.render(renderer);
 	shopItem4.render(renderer);
+	skipShop.render(renderer);
 	SDL_RenderPresent(renderer);
 }
 
 void GameState::collisionShop()
 {
 	SDL_GetMouseState(&mouseX, &mouseY);
+	if (skipShop.checkCollisonWithMouse(mouseX, mouseY))
+	{
+		skipShop.setCollision(true);
+	}
+	else {
+		skipShop.setCollision(false);
+	}
 	if (mouseX >= shopItem1.f_rect.x && mouseX <= shopItem1.f_rect.x + shopItem1.f_rect.w
 		&& mouseY >= shopItem1.f_rect.y && mouseY <= shopItem1.f_rect.y + shopItem1.f_rect.h)
 	{

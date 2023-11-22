@@ -33,7 +33,7 @@ public:
 	void setMoveKey(int x); // set move là true
 	void desetMoveKey(int x); // set move là false
 	void render(SDL_Renderer* renderer, float scrollX, float scrollY);
-
+	void reset2();
 	void reset();
 
 };

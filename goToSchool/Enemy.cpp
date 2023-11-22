@@ -60,7 +60,7 @@ void Enemy::init(SDL_Renderer* renderer, short type)
 		f_rect = { 64,64,500,500};
 		hp = 300;
 		speed = 4;
-		radius = 90;
+		radius = 45;
 		damage = 15;
 	}
 	Character::init(renderer, path);
@@ -83,6 +83,11 @@ void Enemy::setPos(float x, float y)
 }
 void Enemy::update(SDL_Renderer* renderer, Player& player, vector<BulletEnemy> &bulletEnemyList)
 {
+
+	if (f_rect.x < 0 || f_rect.y < 0 || f_rect.x > 2560 || f_rect.y > 2560)
+	{
+		spawnAt4();
+	}
 	if (type == 4)
 	{
 		if (hp <= 0)
@@ -231,10 +236,12 @@ void Enemy::move(Player& player)
 		{
 			flip = SDL_FLIP_NONE;
 		}
-		vertices[0] = { f_rect.x, f_rect.y };
-		vertices[1] = { f_rect.x + f_rect.w, f_rect.y };
-		vertices[2] = { f_rect.x + f_rect.w, f_rect.y + f_rect.h };
-		vertices[3] = { f_rect.x, f_rect.y + f_rect.h };
+		vertices[0] = { f_rect.x + 22, f_rect.y + 20 };
+		vertices[1] = { f_rect.x + f_rect.w - 223, f_rect.y + 20 };
+		vertices[2] = { f_rect.x + f_rect.w - 223, f_rect.y + f_rect.h - 226 };
+		vertices[3] = { f_rect.x + 22, f_rect.y + f_rect.h - 226 };
+
+		
 	}
 }
 
@@ -451,7 +458,7 @@ void Enemy::itemDroped(SDL_Renderer* renderer, vector<coin>& coins, vector<Bulle
 
 	int x = dropChance();
 	coin coin;
-	for (int i = 0; i <= 5; i++)
+	for (int i = 0; i <= (rand() % 10 + 5); i++)
 	{
 		coin.init(renderer, "img//coin.png");
 		coin.f_rect.x = f_rect.x + f_rect.w / 2 ;

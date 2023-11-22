@@ -146,6 +146,18 @@ void Player::render(SDL_Renderer* renderer, float scrollX, float scrollY)
 	
 }
 
+void Player::reset2()
+{
+	desetMoveKey(LEFT);
+	desetMoveKey(UP);
+	desetMoveKey(DOWN);
+	desetMoveKey(RIGHT);
+	desetMoveKey(FAST);
+	desetMoveKey(SLOW);
+	isMove = false;
+	isAttack = false;
+}
+
 void Player::reset()
 {
 	desetMoveKey(LEFT);
