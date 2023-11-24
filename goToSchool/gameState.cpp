@@ -322,7 +322,7 @@ void GameState::initGame()
 		// Bắt đầu thời gian
 		startTime = SDL_GetTicks();
 		countdownTime = 60000;
-		countdownShopTime = 15000;
+		countdownShopTime = 10000;
 	}
 }
 void GameState::runGameLoop()

@@ -1,1 +1,1 @@
-d;6;24r;5;19konglys;2;10konglys;9;51konglys;10;8konglys;11;10konglys;13;9kong;0;13kong;1;8kong;3;12
+konglys;107;261konglys;13;9konglys;11;10konglys;10;8konglys;9;51d;6;24r;5;19kong;3;12konglys;2;10kong;1;8kong;18;61
